@@ -1,22 +1,38 @@
-from keras import layers, models
+from tensorflow.keras import layers, models
+from tensorflow.keras.activations import relu, softmax, tanh
 
 
 class OhShuLih(models.Model):
-    """Oh, Shu Lih, et al. "Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
-    variable length heart beats." Computers in biology and medicine 102 (2018): 278-287. """
+    """
+    CNN+LSTM model described in:
 
-    def __init__(self):
+    Oh, Shu Lih, et al. "Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
+    variable length heart beats." Computers in biology and medicine 102 (2018): 278-287.
+
+    Args:
+         last_is_flatten (bool):  Include a Flatten layer as the last layer of the model. Default is True.
+
+    Attributes:
+        last_is_flatten (bool):  Boolean that indicates whether the last layer is a Flatten layer or not.
+    """
+
+    def __init__(self, last_is_flatten: bool = True):
         super(OhShuLih, self).__init__()
-        self.conv_A = layers.Conv1D(64, 3, activation="relu")
-        self.maxpooling_A = layers.MaxPooling1D(4)
-        self.dropout_A = layers.Dropout(0.3)
-        self.conv_B = layers.Conv1D(16, 3, activation="relu")
-        self.maxpooling_B = layers.MaxPooling1D(4)
-        self.dropout_B = layers.Dropout(0.3)
+        self.last_is_flatten = last_is_flatten
+
+        # Network Defintion:
+        self.conv_A = layers.Conv1D(filters=64, kernel_size=3, activation=relu)
+        self.maxpooling_A = layers.MaxPooling1D(pool_size=4)
+        self.dropout_A = layers.Dropout(rate=0.3)
+        self.conv_B = layers.Conv1D(filters=16, kernel_size=3, activation=relu)
+        self.maxpooling_B = layers.MaxPooling1D(pool_size=4)
+        self.dropout_B = layers.Dropout(rate=0.3)
         self.normalization_A = layers.BatchNormalization()
-        self.lstm_A = layers.LSTM(16)
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(1)
+        self.lstm_A = layers.LSTM(units=16)
+        if last_is_flatten:
+            self.flatten_A = layers.Flatten()
+
+        # self.dense_A = layers.Dense(1)
 
     def call(self, inputs):
         model = self.conv_A(inputs)
@@ -27,8 +43,9 @@ class OhShuLih(models.Model):
         model = self.dropout_B(model)
         model = self.normalization_A(model)
         model = self.lstm_A(model)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
+        if self.last_is_flatten:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
         return model
 
 
