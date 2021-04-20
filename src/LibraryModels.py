@@ -65,16 +65,19 @@ class KhanZulfiqar(models.Model):
     """Khan, Zulfiqar Ahmad, et al. "Towards Efficient Electricity Forecasting in Residential and Commercial
     Buildings: A Novel Hybrid CNN with a LSTM-AE based Framework." Sensors 20.5 (2020): 1399. """
 
-    def __init__(self):
+    def __init__(self, include_top: bool = True):
         super(KhanZulfiqar, self).__init__()
+        self.include_top = include_top
+
         self.conv_A = layers.Conv1D(filters=8, kernel_size=1, padding='same', activation='relu')
         self.dropout_A = layers.Dropout(0.1)
         self.conv_B = layers.Conv1D(filters=16, kernel_size=1, padding='same', activation='relu')
         self.dropout_B = layers.Dropout(0.1)
         self.lstm_A = layers.LSTM(50, activation='relu', return_sequences=True)
         self.lstm_B = layers.LSTM(50, activation='relu', return_sequences=True)
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(1)
+        if self.include_top:
+            self.flatten_A = layers.Flatten()
+        #self.dense_A = layers.Dense(1)
 
     def call(self, inputs):
         model = self.conv_A(inputs)
@@ -83,8 +86,9 @@ class KhanZulfiqar(models.Model):
         model = self.dropout_B(model)
         model = self.lstm_A(model)
         model = self.lstm_B(model)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
+        if self.include_top:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
         return model
 
 
@@ -92,8 +96,10 @@ class ZhengZhenyu(models.Model):
     """Zheng, Zhenyu, et al. "An Automatic Diagnosis of Arrhythmias Using a Combination of CNN and LSTM Technology."
     Electronics 9.1 (2020): 121. """
 
-    def __init__(self):
+    def __init__(self, include_top: bool = True):
         super(ZhengZhenyu, self).__init__()
+        self.include_top = include_top
+
         self.conv_A = layers.Conv1D(filters=64, kernel_size=3, strides=1, padding='same', activation='relu')
         self.conv_B = layers.Conv1D(filters=64, kernel_size=3, strides=1, padding='same', activation='relu')
         self.maxpooling_A = layers.MaxPooling1D(4, strides=1)
@@ -104,8 +110,9 @@ class ZhengZhenyu(models.Model):
         self.conv_F = layers.Conv1D(filters=256, kernel_size=3, strides=1, padding='same', activation='relu')
         self.maxpooling_C = layers.MaxPooling1D(4, strides=1)
         self.lstm_A = layers.LSTM(16, return_sequences=True)
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(1)
+        if self.include_top:
+            self.flatten_A = layers.Flatten()
+        #self.dense_A = layers.Dense(1)
 
     def call(self, inputs):
         model = self.conv_A(inputs)
@@ -118,11 +125,13 @@ class ZhengZhenyu(models.Model):
         model = self.conv_F(model)
         model = self.maxpooling_C(model)
         model = self.lstm_A(model)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
+        if self.include_top:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
         return model
 
 
+# This model has no flatten layers
 class HouBoroui(models.Model):
     """Hou, Borui, et al. "LSTM based auto-encoder model for ECG arrhythmias classification." IEEE Transactions on
     Instrumentation and Measurement (2019). """
@@ -131,12 +140,12 @@ class HouBoroui(models.Model):
         super(HouBoroui, self).__init__()
         self.lstm_A = layers.LSTM(146)
         self.lstm_B = layers.LSTM(31)
-        self.dense_A = layers.Dense(73)
+        #self.dense_A = layers.Dense(73)
 
     def call(self, inputs):
         model = self.lstm_A(inputs)
         model = self.lstm_B(model)
-        model = self.dense_A(model)
+        #model = self.dense_A(model)
         return model
 
 
@@ -144,8 +153,10 @@ class WangKejun(models.Model):
     """Wang, Kejun, Xiaoxia Qi, and Hongda Liu. "Photovoltaic power forecasting based LSTM-Convolutional Network."
     Energy 189 (2019): 116225. """
 
-    def __init__(self):
+    def __init__(self, include_top: bool = True):
         super(WangKejun, self).__init__()
+        self.include_top = include_top
+
         self.lstm_A = layers.LSTM(64, return_sequences=True)
         self.lstm_B = layers.LSTM(128, return_sequences=True)
         self.conv_A = layers.Conv1D(filters=64, kernel_size=3, strides=1)
@@ -153,10 +164,11 @@ class WangKejun(models.Model):
         self.conv_B = layers.Conv1D(filters=150, kernel_size=2, strides=1)
         self.maxpooling_B = layers.MaxPooling1D(2, strides=2)
         self.dropout_A = layers.Dropout(0.1)
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(2048)
-        self.dense_B = layers.Dense(1024)
-        self.dense_C = layers.Dense(1)
+        if self.include_top:
+            self.flatten_A = layers.Flatten()
+        #self.dense_A = layers.Dense(2048)
+        #self.dense_B = layers.Dense(1024)
+        #self.dense_C = layers.Dense(1)
 
     def call(self, inputs):
         model = self.lstm_A(inputs)
@@ -165,10 +177,11 @@ class WangKejun(models.Model):
         model = self.conv_B(model)
         model = self.maxpooling_B(model)
         model = self.dropout_A(model)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
-        model = self.dense_B(model)
-        model = self.dense_C(model)
+        if self.include_top:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
+        #model = self.dense_B(model)
+        #model = self.dense_C(model)
         return model
 
 
@@ -176,8 +189,10 @@ class ChenChen(models.Model):
     """Chen, Chen, et al. "Automated arrhythmia classification based on a combination network of CNN and LSTM."
     Biomedical Signal Processing and Control 57 (2020): 101819."""
 
-    def __init__(self):
+    def __init__(self, include_top: bool = True):
         super(ChenChen, self).__init__()
+        self.include_top = include_top
+
         self.conv_A = layers.Conv1D(filters=251, kernel_size=2, strides=1)
         self.maxpooling_A = layers.MaxPooling1D(2, strides=1)
         self.conv_B = layers.Conv1D(filters=150, kernel_size=2, strides=1)
@@ -192,8 +207,9 @@ class ChenChen(models.Model):
         self.maxpooling_F = layers.MaxPooling1D(2, strides=1)
         self.lstm_A = layers.LSTM(64, return_sequences=True)
         self.lstm_A = layers.LSTM(32)
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(1)
+        if self.include_top:
+            self.flatten_A = layers.Flatten()
+        #self.dense_A = layers.Dense(1)
 
     def call(self, inputs):
         model = self.conv_A(inputs)
@@ -206,8 +222,9 @@ class ChenChen(models.Model):
         model = self.conv_F(model)
         model = self.maxpooling_C(model)
         model = self.lstm_A(model)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
+        if self.include_top:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
         return model
 
 
@@ -215,16 +232,19 @@ class KimTaeYoung(models.Model):
     """Kim, Tae-Young, and Sung-Bae Cho. "Predicting residential energy consumption using CNN-LSTM neural networks."
     Energy 182 (2019): 72-81. """
 
-    def __init__(self):
+    def __init__(self, include_top: bool = True):
         super(KimTaeYoung, self).__init__()
+        self.include_top = include_top
+
         self.conv_A = layers.Conv1D(filters=64, kernel_size=2, strides=1)
         self.maxpooling_A = layers.MaxPooling1D(2, strides=1)
         self.conv_B = layers.Conv1D(filters=150, kernel_size=2, strides=1)
         self.maxpooling_B = layers.MaxPooling1D(2, strides=1)
         self.lstm_A = layers.LSTM(64, activation='tanh', return_sequences=True)
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(32)
-        self.dense_B = layers.Dense(1)
+        if self.include_top:
+            self.flatten_A = layers.Flatten()
+        #self.dense_A = layers.Dense(32)
+        #self.dense_B = layers.Dense(1)
 
     def call(self, inputs):
         model = self.conv_A(inputs)
@@ -232,9 +252,10 @@ class KimTaeYoung(models.Model):
         model = self.conv_B(model)
         model = self.maxpooling_B(model)
         model = self.lstm_A(model)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
-        model = self.dense_B(model)
+        if self.include_top:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
+        #model = self.dense_B(model)
         return model
 
 
@@ -242,16 +263,20 @@ class GenMinxing(models.Model):
     """Geng, Minxing, et al. "Epileptic Seizure Detection Based on Stockwell Transform and Bidirectional Long
     Short-Term Memory." IEEE Transactions on Neural Systems and Rehabilitation Engineering 28.3 (2020): 573-580. """
 
-    def __init__(self):
+    def __init__(self, include_top: bool = True):
         super(GenMinxing, self).__init__()
+        self.include_top = include_top
+
         self.bidirectional_A = layers.Bidirectional(layers.LSTM(units=40, return_sequences=True))
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(1)
+        if self.include_top:
+            self.flatten_A = layers.Flatten()
+        #self.dense_A = layers.Dense(1)
 
     def call(self, inputs):
         model = self.bidirectional_A(inputs)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
+        if self.include_top:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
         return model
 
 
@@ -259,20 +284,24 @@ class FuJiangmeng(models.Model):
     """Fu, Jiangmeng, et al. "A hybrid CNN-LSTM model based actuator fault diagnosis for six-rotor UAVs." 2019
     Chinese Control And Decision Conference (CCDC). IEEE, 2019. """
 
-    def __init__(self):
+    def __init__(self, include_top: bool = True):
         super(FuJiangmeng, self).__init__()
+        self.include_top = include_top
+
         self.conv_A = layers.Conv1D(filters=32, kernel_size=1, padding='same', activation='relu')
         self.maxpooling_A = layers.MaxPooling1D(2, strides=1)
         self.lstm_A = layers.LSTM(256, activation='relu', return_sequences=True)
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(1, activation='softmax')
+        if self.include_top:
+            self.flatten_A = layers.Flatten()
+        #self.dense_A = layers.Dense(1, activation='softmax')
 
     def call(self, inputs):
         model = self.conv_A(inputs)
         model = self.maxpooling_A(model)
         model = self.lstm_A(model)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
+        if self.include_top:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
         return model
 
 
@@ -280,8 +309,10 @@ class ShiHaotian(models.Model):
     """Shi, Haotian, et al. "Automated heartbeat classification based on deep neural network with multiple input
     layers." Knowledge-Based Systems 188 (2020): 105036. """
 
-    def __init__(self):
+    def __init__(self, include_top: bool = True):
         super(ShiHaotian, self).__init__()
+        self.include_top = include_top
+
         self.conv_A = layers.Conv1D(filters=32, activation='relu', kernel_size=13, strides=2)
         self.maxpooling_A = layers.MaxPooling1D(2, strides=2)
         self.conv_B = layers.Conv1D(filters=32, activation='relu', kernel_size=13, strides=1)
@@ -290,8 +321,9 @@ class ShiHaotian(models.Model):
         self.maxpooling_C = layers.MaxPooling1D(2, strides=2)
         self.concatenate_A = layers.Concatenate(axis=1)
         self.lstm_A = layers.LSTM(32, return_sequences=True)
-        self.flatten_A = layers.Flatten()
-        self.dense_A = layers.Dense(1)
+        if self.include_top:
+            self.flatten_A = layers.Flatten()
+        #self.dense_A = layers.Dense(1)
 
     def call(self, inputs):
         model_A = self.conv_A(inputs)
@@ -302,8 +334,9 @@ class ShiHaotian(models.Model):
         model_C = self.maxpooling_C(model_C)
         model = self.concatenate_A([model_A, model_B, model_C])
         model = self.lstm_A(model)
-        model = self.flatten_A(model)
-        model = self.dense_A(model)
+        if self.include_top:
+            model = self.flatten_A(model)
+        #model = self.dense_A(model)
         return model
 
 
