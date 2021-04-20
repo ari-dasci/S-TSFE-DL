@@ -59,8 +59,6 @@ class OhShuLih(models.Model):
         return model
 
 
-# PARTE DE NACHO
-
 class KhanZulfiqar(models.Model):
     """Khan, Zulfiqar Ahmad, et al. "Towards Efficient Electricity Forecasting in Residential and Commercial
     Buildings: A Novel Hybrid CNN with a LSTM-AE based Framework." Sensors 20.5 (2020): 1399. """
@@ -339,8 +337,6 @@ class ShiHaotian(models.Model):
         #model = self.dense_A(model)
         return model
 
-
-# PARTE DE ANGEL
 
 class HuangMeiLing(models.Model):
     """
