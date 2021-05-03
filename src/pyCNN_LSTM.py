@@ -1,6 +1,93 @@
+from _ast import arg
+
 from tensorflow import keras
 from tensorflow.keras import layers, models
-from tensorflow.keras.activations import relu, softmax, tanh
+from tensorflow.keras.activations import relu, softmax, sigmoid
+
+
+def transition_block(x, reduction, name):
+    """A transition block of densenet for 1D data.
+
+    Arguments:
+      x: input tensor.
+      reduction: float, compression rate at transition layers.
+      name: string, block label.
+
+    Returns:
+      output tensor for the block.
+    """
+    bn_axis = 2
+    x = layers.BatchNormalization(axis=2, epsilon=1.001e-5, name=name + '_bn')(x)
+    x = layers.Activation('relu', name=name + '_relu')(x)
+    x = layers.Conv1D(int(x.shape[bn_axis] * reduction), 1, use_bias=False, name=name + '_conv')(x)
+    x = layers.AveragePooling1D(2, strides=2, name=name + '_pool')(x)
+    return x
+
+
+def conv_block(x, growth_rate, name):
+    """A building block for a dense block from densenet for 1D data.
+
+    Arguments:
+      x: input tensor.
+      growth_rate: float, growth rate at dense layers.
+      name: string, block label.
+
+    Returns:
+      Output tensor for the block.
+    """
+    bn_axis = 2  # 3 if backend.image_data_format() == 'channels_last' else 1
+    x1 = layers.BatchNormalization(axis=bn_axis, epsilon=1.001e-5, name=name + '_0_bn')(x)
+    x1 = layers.Activation('relu', name=name + '_0_relu')(x1)
+    x1 = layers.Conv1D(4 * growth_rate, 1, use_bias=False, name=name + '_1_conv')(x1)
+    x1 = layers.BatchNormalization(axis=bn_axis, epsilon=1.001e-5, name=name + '_1_bn')(x1)
+    x1 = layers.Activation('relu', name=name + '_1_relu')(x1)
+    x1 = layers.Conv1D(growth_rate, 3, padding='same', use_bias=False, name=name + '_2_conv')(x1)
+    x = layers.Concatenate(axis=bn_axis, name=name + '_concat')([x, x1])
+    return x
+
+
+def dense_block(x, blocks, growth_rate, name):
+    """A dense block of densenet for 1D data.
+
+    Arguments:
+      x: input tensor.
+      blocks: integer, the number of building blocks.
+      name: string, block label.
+
+    Returns:
+      Output tensor for the block.
+    """
+    for i in range(blocks):
+        x = conv_block(x, growth_rate, name=name + '_block' + str(i + 1))
+    return x
+
+
+def se_module(x, dense_units):
+    """
+    SE Module of CaiWenjuan:
+
+    References
+    ----------
+     Squeeze-and-Excitation Networks, Jie Hu, Li Shen, Samuel Albanie, Gang Sun, Enhua Wu (arXiv:1709.01507v4)
+
+    Arguments
+    ---------
+      x: input tensor.
+      dense_units: integer, the number units on each dense layer
+
+    Returns
+    -------
+      Output tensor for the block.
+    """
+    se = layers.GlobalAveragePooling1D()(x)
+    # Reshape the output to mach the number of dimensions of the input shape: (None, 1, Channels)
+    se = layers.Reshape(target_shape=(1, x.shape[2]))(se)
+    se = layers.Dense(units=dense_units, activation=relu)(se)  # Fully-Connected 1
+    se = layers.Dense(units=x.shape[2], activation=sigmoid)(se)  # Fully-Connected 2
+
+    # Perform the element-wise multiplication between the inputs and the Squeeze
+    se = layers.multiply([x, se])
+    return se
 
 
 class OhShuLih(models.Model):
@@ -706,3 +793,35 @@ class YildirimOzal(models.Model):
         if self.include_top:
             model = self.flatten_A(model)
         return model
+
+# TODO: Change all models -> Use def instead of classes
+def CaiWenjuan(inputs, include_top=True):
+    """
+    DDNN network presented in:
+
+    Cai, Wenjuan, et al. "Accurate detection of atrial fibrillation from 12-lead ECG using deep neural network."
+    Computers in biology and medicine 116 (2020): 103378.
+
+    Args:
+        include_top (bool):  Include a Flatten layer as the last layer of the model. Default is True.
+   """
+    dense_layers = [2, 4, 6, 4]
+    x1 = layers.Conv1D(filters=8, kernel_size=1, strides=1, padding='same')(inputs)
+    x2 = layers.Conv1D(filters=16, kernel_size=3, strides=1, padding='same')(inputs)
+    x3 = layers.Conv1D(filters=24, kernel_size=5, strides=1, padding='same')(inputs)
+    x = layers.Concatenate(axis=2)([x1, x2, x3])
+
+    for i, n_blocks in enumerate(dense_layers):
+        x = se_module(x, dense_units=128)
+        x = dense_block(x, n_blocks, growth_rate=6, name="conv" + str(i + 1))
+        x = se_module(x, dense_units=128)
+        # Last dense block does not have transition block.
+        if i < len(dense_layers) - 1:
+            x = transition_block(x, reduction=0.5, name="transition" + str(i + 1))
+
+    x = layers.GlobalAveragePooling1D()(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+
+    return x
