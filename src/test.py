@@ -154,29 +154,40 @@ inp = keras.Input((X.shape[1], X.shape[2]))
 
 # Define the models to be tested
 models = {
-    'OhShuLih': pyCNN_LSTM.OhShuLih(),
-    'HuangMeiLing': pyCNN_LSTM.HuangMeiLing(),
-    'LihOhShu': pyCNN_LSTM.LihOhShu(),
-    'GaoJunli': pyCNN_LSTM.GaoJunli(),
-    'WeiXiaoyan': pyCNN_LSTM.WeiXiaoyan(),
-    'KongZhengmin': pyCNN_LSTM.KongZhengmin(),
-    'YildirimOzal': pyCNN_LSTM.YildirimOzal()
+    # 'KimMinGu': pyCNN_LSTM.KimMinGu(inp, X, y_hot_encoded, num_classes=5)
+    'CaiWenjuan': pyCNN_LSTM.CaiWenjuan(inp),
+    'OhShuLih': pyCNN_LSTM.OhShuLih(inp),
+    'KhanZulfiqar': pyCNN_LSTM.KhanZulfiqar(inp),
+    'ZhengZhenyu': pyCNN_LSTM.ZhengZhenyu(inp),
+    'HouBourui': pyCNN_LSTM.HouBoroui(inp),
+    'WangKejun': pyCNN_LSTM.WangKejun(inp),
+    'ChenChen': pyCNN_LSTM.ChenChen(inp),
+    'KimTaeYoung': pyCNN_LSTM.KimTaeYoung(inp),
+    'GenMixing': pyCNN_LSTM.GenMinxing(inp),
+    'FuJiangmeng': pyCNN_LSTM.FuJiangmeng(inp),
+    'ShiHaotian': pyCNN_LSTM.ShiHaotian(inp),
+    'HuangMeiLing': pyCNN_LSTM.HuangMeiLing(inp),
+    'LihOhShu': pyCNN_LSTM.LihOhShu(inp),
+    'GaoJunli': pyCNN_LSTM.GaoJunLi(inp),
+    'WeiXiaoyan': pyCNN_LSTM.WeiXiaoyan(inp),
+    'KongZhengmin': pyCNN_LSTM.KongZhengmin(inp),
+    # 'YildirimOzal': pyCNN_LSTM.YildirimOzal(inp)
 }
 
 # Run each model
 for name, model in models.items():
     # Define the model
-    x = model(inp)
-    x = keras.layers.Dense(10, activation='relu')(x)
+    x = keras.layers.Dense(10, activation='relu')(model)
     out = keras.layers.Dense(5, activation='softmax')(x)
     new_model = keras.Model(inputs=inp, outputs=out, name=name)
     new_model.summary()
 
     # Compile & fit
+    print("running ", name, " .....")
     new_model.compile(optimizer='Adam', loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
-    new_model.fit(X, y_hot_encoded, batch_size=256, epochs=25)
+    new_model.fit(X, y_hot_encoded, batch_size=256, epochs=25, verbose=0)
 
     # evaluate
-    pred = np.argmax(model.predict(X), axis=1)
+    pred = np.argmax(new_model.predict(X), axis=1)
     acc = accuracy_score(y, pred)
     print("Accuracy: " + str(acc))

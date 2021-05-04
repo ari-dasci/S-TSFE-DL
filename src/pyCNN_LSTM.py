@@ -1,11 +1,10 @@
-from _ast import arg
-
+import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers, models
 from tensorflow.keras.activations import relu, softmax, sigmoid
 
 
-def transition_block(x, reduction, name):
+def __transition_block(x, reduction, name):
     """A transition block of densenet for 1D data.
 
     Arguments:
@@ -24,7 +23,7 @@ def transition_block(x, reduction, name):
     return x
 
 
-def conv_block(x, growth_rate, name):
+def __conv_block(x, growth_rate, name):
     """A building block for a dense block from densenet for 1D data.
 
     Arguments:
@@ -46,7 +45,7 @@ def conv_block(x, growth_rate, name):
     return x
 
 
-def dense_block(x, blocks, growth_rate, name):
+def __dense_block(x, blocks, growth_rate, name):
     """A dense block of densenet for 1D data.
 
     Arguments:
@@ -58,11 +57,11 @@ def dense_block(x, blocks, growth_rate, name):
       Output tensor for the block.
     """
     for i in range(blocks):
-        x = conv_block(x, growth_rate, name=name + '_block' + str(i + 1))
+        x = __conv_block(x, growth_rate, name=name + '_block' + str(i + 1))
     return x
 
 
-def se_module(x, dense_units):
+def __se_module(x, dense_units):
     """
     SE Module of CaiWenjuan:
 
@@ -90,7 +89,7 @@ def se_module(x, dense_units):
     return se
 
 
-class OhShuLih(models.Model):
+def OhShuLih(inputs: keras.layers.Layer, include_top: bool = True):
     """
     CNN+LSTM model.
 
@@ -102,377 +101,383 @@ class OhShuLih(models.Model):
 
      Parameters
     ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
         include_top: bool, default=True
 
             Include a Flatten layer as the last layer of the model. Default is True.
 
-    Attributes
-    ----------
-        include_top: bool
-
-            Boolean that indicates whether the last layer is a Flatten layer or not.
-    """
-
-    def __init__(self, include_top: bool = True):
-        super(OhShuLih, self).__init__()
-        self.include_top = include_top
-
-        # Network Defintion:
-        self.conv_A = layers.Conv1D(filters=64, kernel_size=3, activation=relu)
-        self.maxpooling_A = layers.MaxPooling1D(pool_size=4)
-        self.dropout_A = layers.Dropout(rate=0.3)
-        self.conv_B = layers.Conv1D(filters=16, kernel_size=3, activation=relu)
-        self.maxpooling_B = layers.MaxPooling1D(pool_size=4)
-        self.dropout_B = layers.Dropout(rate=0.3)
-        self.normalization_A = layers.BatchNormalization()
-        self.lstm_A = layers.LSTM(units=16)
-        if include_top:
-            self.flatten_A = layers.Flatten()
-
-        # self.dense_A = layers.Dense(1)
-
-    def call(self, inputs):
-        model = self.conv_A(inputs)
-        model = self.maxpooling_A(model)
-        model = self.dropout_A(model)
-        model = self.conv_B(model)
-        model = self.maxpooling_B(model)
-        model = self.dropout_B(model)
-        model = self.normalization_A(model)
-        model = self.lstm_A(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        # model = self.dense_A(model)
-        return model
-
-
-class KhanZulfiqar(models.Model):
-    """Khan, Zulfiqar Ahmad, et al. "Towards Efficient Electricity Forecasting in Residential and Commercial
-    Buildings: A Novel Hybrid CNN with a LSTM-AE based Framework." Sensors 20.5 (2020): 1399. """
-
-    def __init__(self, include_top: bool = True):
-        super(KhanZulfiqar, self).__init__()
-        self.include_top = include_top
-
-        self.conv_A = layers.Conv1D(filters=8, kernel_size=1, padding='same', activation='relu')
-        self.dropout_A = layers.Dropout(0.1)
-        self.conv_B = layers.Conv1D(filters=16, kernel_size=1, padding='same', activation='relu')
-        self.dropout_B = layers.Dropout(0.1)
-        self.lstm_A = layers.LSTM(50, activation='relu', return_sequences=True)
-        self.lstm_B = layers.LSTM(50, activation='relu', return_sequences=True)
-        if self.include_top:
-            self.flatten_A = layers.Flatten()
-        #self.dense_A = layers.Dense(1)
-
-    def call(self, inputs):
-        model = self.conv_A(inputs)
-        model = self.dropout_A(model)
-        model = self.conv_B(model)
-        model = self.dropout_B(model)
-        model = self.lstm_A(model)
-        model = self.lstm_B(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        #model = self.dense_A(model)
-        return model
-
-
-class ZhengZhenyu(models.Model):
-    """Zheng, Zhenyu, et al. "An Automatic Diagnosis of Arrhythmias Using a Combination of CNN and LSTM Technology."
-    Electronics 9.1 (2020): 121. """
-
-    def __init__(self, include_top: bool = True):
-        super(ZhengZhenyu, self).__init__()
-        self.include_top = include_top
-
-        self.conv_A = layers.Conv1D(filters=64, kernel_size=3, strides=1, padding='same', activation='relu')
-        self.conv_B = layers.Conv1D(filters=64, kernel_size=3, strides=1, padding='same', activation='relu')
-        self.maxpooling_A = layers.MaxPooling1D(4, strides=1)
-        self.conv_C = layers.Conv1D(filters=128, kernel_size=3, strides=1, padding='same', activation='relu')
-        self.conv_D = layers.Conv1D(filters=128, kernel_size=3, strides=1, padding='same', activation='relu')
-        self.maxpooling_B = layers.MaxPooling1D(4, strides=1)
-        self.conv_E = layers.Conv1D(filters=256, kernel_size=3, strides=1, padding='same', activation='relu')
-        self.conv_F = layers.Conv1D(filters=256, kernel_size=3, strides=1, padding='same', activation='relu')
-        self.maxpooling_C = layers.MaxPooling1D(4, strides=1)
-        self.lstm_A = layers.LSTM(16, return_sequences=True)
-        if self.include_top:
-            self.flatten_A = layers.Flatten()
-        #self.dense_A = layers.Dense(1)
-
-    def call(self, inputs):
-        model = self.conv_A(inputs)
-        model = self.conv_B(model)
-        model = self.maxpooling_A(model)
-        model = self.conv_C(model)
-        model = self.conv_D(model)
-        model = self.maxpooling_B(model)
-        model = self.conv_E(model)
-        model = self.conv_F(model)
-        model = self.maxpooling_C(model)
-        model = self.lstm_A(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        #model = self.dense_A(model)
-        return model
-
-
-# This model has no flatten layers
-class HouBoroui(models.Model):
-    """Hou, Borui, et al. "LSTM based auto-encoder model for ECG arrhythmias classification." IEEE Transactions on
-    Instrumentation and Measurement (2019). """
-
-    def __init__(self):
-        super(HouBoroui, self).__init__()
-        self.lstm_A = layers.LSTM(146)
-        self.lstm_B = layers.LSTM(31)
-        #self.dense_A = layers.Dense(73)
-
-    def call(self, inputs):
-        model = self.lstm_A(inputs)
-        model = self.lstm_B(model)
-        #model = self.dense_A(model)
-        return model
-
-
-class WangKejun(models.Model):
-    """Wang, Kejun, Xiaoxia Qi, and Hongda Liu. "Photovoltaic power forecasting based LSTM-Convolutional Network."
-    Energy 189 (2019): 116225. """
-
-    def __init__(self, include_top: bool = True):
-        super(WangKejun, self).__init__()
-        self.include_top = include_top
-
-        self.lstm_A = layers.LSTM(64, return_sequences=True)
-        self.lstm_B = layers.LSTM(128, return_sequences=True)
-        self.conv_A = layers.Conv1D(filters=64, kernel_size=3, strides=1)
-        self.maxpooling_A = layers.MaxPooling1D(2, strides=2)
-        self.conv_B = layers.Conv1D(filters=150, kernel_size=2, strides=1)
-        self.maxpooling_B = layers.MaxPooling1D(2, strides=2)
-        self.dropout_A = layers.Dropout(0.1)
-        if self.include_top:
-            self.flatten_A = layers.Flatten()
-        #self.dense_A = layers.Dense(2048)
-        #self.dense_B = layers.Dense(1024)
-        #self.dense_C = layers.Dense(1)
-
-    def call(self, inputs):
-        model = self.lstm_A(inputs)
-        model = self.conv_A(model)
-        model = self.maxpooling_A(model)
-        model = self.conv_B(model)
-        model = self.maxpooling_B(model)
-        model = self.dropout_A(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        #model = self.dense_A(model)
-        #model = self.dense_B(model)
-        #model = self.dense_C(model)
-        return model
-
-
-class ChenChen(models.Model):
-    """Chen, Chen, et al. "Automated arrhythmia classification based on a combination network of CNN and LSTM."
-    Biomedical Signal Processing and Control 57 (2020): 101819."""
-
-    def __init__(self, include_top: bool = True):
-        super(ChenChen, self).__init__()
-        self.include_top = include_top
-
-        self.conv_A = layers.Conv1D(filters=251, kernel_size=2, strides=1)
-        self.maxpooling_A = layers.MaxPooling1D(2, strides=1)
-        self.conv_B = layers.Conv1D(filters=150, kernel_size=2, strides=1)
-        self.maxpooling_B = layers.MaxPooling1D(2, strides=1)
-        self.conv_C = layers.Conv1D(filters=100, kernel_size=2, strides=1)
-        self.maxpooling_C = layers.MaxPooling1D(2, strides=1)
-        self.conv_D = layers.Conv1D(filters=81, kernel_size=2, strides=1)
-        self.maxpooling_D = layers.MaxPooling1D(2, strides=1)
-        self.conv_E = layers.Conv1D(filters=61, kernel_size=2, strides=1)
-        self.maxpooling_E = layers.MaxPooling1D(2, strides=1)
-        self.conv_F = layers.Conv1D(filters=14, kernel_size=2, strides=1)
-        self.maxpooling_F = layers.MaxPooling1D(2, strides=1)
-        self.lstm_A = layers.LSTM(64, return_sequences=True)
-        self.lstm_A = layers.LSTM(32)
-        if self.include_top:
-            self.flatten_A = layers.Flatten()
-        #self.dense_A = layers.Dense(1)
-
-    def call(self, inputs):
-        model = self.conv_A(inputs)
-        model = self.conv_B(model)
-        model = self.maxpooling_A(model)
-        model = self.conv_C(model)
-        model = self.conv_D(model)
-        model = self.maxpooling_B(model)
-        model = self.conv_E(model)
-        model = self.conv_F(model)
-        model = self.maxpooling_C(model)
-        model = self.lstm_A(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        #model = self.dense_A(model)
-        return model
-
-
-class KimTaeYoung(models.Model):
-    """Kim, Tae-Young, and Sung-Bae Cho. "Predicting residential energy consumption using CNN-LSTM neural networks."
-    Energy 182 (2019): 72-81. """
-
-    def __init__(self, include_top: bool = True):
-        super(KimTaeYoung, self).__init__()
-        self.include_top = include_top
-
-        self.conv_A = layers.Conv1D(filters=64, kernel_size=2, strides=1)
-        self.maxpooling_A = layers.MaxPooling1D(2, strides=1)
-        self.conv_B = layers.Conv1D(filters=150, kernel_size=2, strides=1)
-        self.maxpooling_B = layers.MaxPooling1D(2, strides=1)
-        self.lstm_A = layers.LSTM(64, activation='tanh', return_sequences=True)
-        if self.include_top:
-            self.flatten_A = layers.Flatten()
-        #self.dense_A = layers.Dense(32)
-        #self.dense_B = layers.Dense(1)
-
-    def call(self, inputs):
-        model = self.conv_A(inputs)
-        model = self.maxpooling_A(model)
-        model = self.conv_B(model)
-        model = self.maxpooling_B(model)
-        model = self.lstm_A(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        #model = self.dense_A(model)
-        #model = self.dense_B(model)
-        return model
-
-
-class GenMinxing(models.Model):
-    """Geng, Minxing, et al. "Epileptic Seizure Detection Based on Stockwell Transform and Bidirectional Long
-    Short-Term Memory." IEEE Transactions on Neural Systems and Rehabilitation Engineering 28.3 (2020): 573-580. """
-
-    def __init__(self, include_top: bool = True):
-        super(GenMinxing, self).__init__()
-        self.include_top = include_top
-
-        self.bidirectional_A = layers.Bidirectional(layers.LSTM(units=40, return_sequences=True))
-        if self.include_top:
-            self.flatten_A = layers.Flatten()
-        #self.dense_A = layers.Dense(1)
-
-    def call(self, inputs):
-        model = self.bidirectional_A(inputs)
-        if self.include_top:
-            model = self.flatten_A(model)
-        #model = self.dense_A(model)
-        return model
-
-
-class FuJiangmeng(models.Model):
-    """Fu, Jiangmeng, et al. "A hybrid CNN-LSTM model based actuator fault diagnosis for six-rotor UAVs." 2019
-    Chinese Control And Decision Conference (CCDC). IEEE, 2019. """
-
-    def __init__(self, include_top: bool = True):
-        super(FuJiangmeng, self).__init__()
-        self.include_top = include_top
-
-        self.conv_A = layers.Conv1D(filters=32, kernel_size=1, padding='same', activation='relu')
-        self.maxpooling_A = layers.MaxPooling1D(2, strides=1)
-        self.lstm_A = layers.LSTM(256, activation='relu', return_sequences=True)
-        if self.include_top:
-            self.flatten_A = layers.Flatten()
-        #self.dense_A = layers.Dense(1, activation='softmax')
-
-    def call(self, inputs):
-        model = self.conv_A(inputs)
-        model = self.maxpooling_A(model)
-        model = self.lstm_A(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        #model = self.dense_A(model)
-        return model
-
-
-class ShiHaotian(models.Model):
-    """Shi, Haotian, et al. "Automated heartbeat classification based on deep neural network with multiple input
-    layers." Knowledge-Based Systems 188 (2020): 105036. """
-
-    def __init__(self, include_top: bool = True):
-        super(ShiHaotian, self).__init__()
-        self.include_top = include_top
-
-        self.conv_A = layers.Conv1D(filters=32, activation='relu', kernel_size=13, strides=2)
-        self.maxpooling_A = layers.MaxPooling1D(2, strides=2)
-        self.conv_B = layers.Conv1D(filters=32, activation='relu', kernel_size=13, strides=1)
-        self.maxpooling_B = layers.MaxPooling1D(2, strides=2)
-        self.conv_C = layers.Conv1D(filters=32, activation='relu', kernel_size=13, strides=2)
-        self.maxpooling_C = layers.MaxPooling1D(2, strides=2)
-        self.concatenate_A = layers.Concatenate(axis=1)
-        self.lstm_A = layers.LSTM(32, return_sequences=True)
-        if self.include_top:
-            self.flatten_A = layers.Flatten()
-        #self.dense_A = layers.Dense(1)
-
-    def call(self, inputs):
-        model_A = self.conv_A(inputs)
-        model_A = self.maxpooling_A(model_A)
-        model_B = self.conv_B(inputs)
-        model_B = self.maxpooling_B(model_B)
-        model_C = self.conv_C(inputs)
-        model_C = self.maxpooling_C(model_C)
-        model = self.concatenate_A([model_A, model_B, model_C])
-        model = self.lstm_A(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        #model = self.dense_A(model)
-        return model
-
-
-class HuangMeiLing(models.Model):
-    """
-    CNN model, employed for 2-D images of ECG data. This model is adapted for 1-D time series
-
-    References
+    Returns
     -------
-        Huang, Mei-Ling, and Yan-Sheng Wu. "Classification of atrial fibrillation and normal sinus rhythm based on
-        convolutional neural network." Biomedical Engineering Letters (2020): 1-11.
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+    """
+
+    x = layers.Conv1D(filters=64, kernel_size=3, activation=relu)(inputs)
+    x = layers.MaxPooling1D(pool_size=4)(x)
+    x = layers.Dropout(rate=0.3)(x)
+    x = layers.Conv1D(filters=16, kernel_size=3, activation=relu)(x)
+    x = layers.MaxPooling1D(pool_size=4)(x)
+    x = layers.Dropout(rate=0.3)(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.LSTM(units=16)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+
+    return x
+
+
+def KhanZulfiqar(inputs: keras.layers.Layer, include_top: bool = True):
+    """
+    References
+    ---------
+        Khan, Zulfiqar Ahmad, et al. "Towards Efficient Electricity Forecasting in Residential and Commercial
+        Buildings: A Novel Hybrid CNN with a LSTM-AE based Framework." Sensors 20.5 (2020): 1399.
+
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+
+     """
+
+    x = layers.Conv1D(filters=8, kernel_size=1, padding='same', activation=relu)(inputs)
+    x = layers.Dropout(0.1)(x)
+    x = layers.Conv1D(filters=16, kernel_size=1, padding='same', activation=relu)(x)
+    x = layers.Dropout(0.1)(x)
+    x = layers.LSTM(50, activation=relu, return_sequences=True)(x)
+    x = layers.LSTM(50, activation=relu, return_sequences=True)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+
+    return x
+
+
+def ZhengZhenyu(inputs: keras.layers.Layer, include_top: bool = True):
+    """
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+
+    """
+    x = inputs
+    for f in [64, 128, 256]:
+        x = layers.Conv1D(filters=f, kernel_size=3, strides=1, padding='same', activation='relu')(x)
+        x = layers.Conv1D(filters=f, kernel_size=3, strides=1, padding='same', activation='relu')(x)
+        x = layers.MaxPooling1D(4, strides=1)(x)
+
+    x = layers.LSTM(16, return_sequences=True)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+
+    return x
+
+
+def HouBoroui(inputs: keras.layers.Layer, include_top: bool = True):
+    """
+    References
+    ----------
+        Hou, Borui, et al. "LSTM based auto-encoder model for ECG arrhythmias classification." IEEE Transactions on
+        Instrumentation and Measurement (2019).
+
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+
+    """
+    x = layers.LSTM(units=146, return_sequences=True)(inputs)
+    x = layers.LSTM(units=31, return_sequences=True)(x)
+    if include_top:
+        x = layers.Flatten()(x)
+
+    return x
+
+
+def WangKejun(inputs: keras.layers.Layer, include_top: bool = True):
+    """
+    References
+    ----------
+        Wang, Kejun, Xiaoxia Qi, and Hongda Liu. "Photovoltaic power forecasting based LSTM-Convolutional Network."
+        Energy 189 (2019): 116225.
+
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+
+       """
+    x = layers.LSTM(64, return_sequences=True)(inputs)
+    x = layers.LSTM(128, return_sequences=True)(x)
+    x = layers.Conv1D(filters=64, kernel_size=3, strides=1)(x)
+    x = layers.MaxPooling1D(2, strides=2)(x)
+    x = layers.Conv1D(filters=150, kernel_size=2, strides=1)(x)
+    x = layers.MaxPooling1D(2, strides=2)(x)
+    x = layers.Dropout(0.1)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+
+    return x
+
+
+def ChenChen(inputs: keras.layers.Layer, include_top: bool=True):
+    """
+    References
+    ----------
+        Chen, Chen, et al. "Automated arrhythmia classification based on a combination network of CNN and LSTM."
+        Biomedical Signal Processing and Control 57 (2020): 101819.
+
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+
+
+    """
+
+    x = inputs
+    for f in [251, 150, 100, 81, 61, 14]:
+        x = layers.Conv1D(filters=f, kernel_size=2, strides=1)(x)
+        x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
+    x = layers.LSTM(units=64, return_sequences=True)(x)
+    x = layers.LSTM(units=32, return_sequences=True)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+
+    return x
+
+
+def KimTaeYoung(inputs: keras.layers.Layer, include_top: bool=True):
+    """
+    References
+    ----------
+        Kim, Tae-Young, and Sung-Bae Cho. "Predicting residential energy consumption using CNN-LSTM neural networks."
+        Energy 182 (2019): 72-81.
+
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+    """
+    x = inputs
+    for f in [64, 150]:
+        x = layers.Conv1D(filters=f, kernel_size=2, strides=1)(x)
+        x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
+    x = layers.LSTM(units=64, activation=keras.activations.tanh, return_sequences=True)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+
+    return x
+
+
+def GenMinxing(inputs: keras.layers.Layer, include_top: bool = True):
+    """
+    References
+    ----------
+        Geng, Minxing, et al. "Epileptic Seizure Detection Based on Stockwell Transform and Bidirectional Long
+        Short-Term Memory." IEEE Transactions on Neural Systems and Rehabilitation Engineering 28.3 (2020): 573-580.
+
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+    """
+    x = layers.Bidirectional(layers.LSTM(units=40, return_sequences=True))(inputs)
+    if include_top:
+        x = layers.Flatten()(x)
+    return x
+
+
+def FuJiangmeng(inputs: keras.layers.Layer, include_top: bool = True):
+    """
+    References
+    ----------
+        Fu, Jiangmeng, et al. "A hybrid CNN-LSTM model based actuator fault diagnosis for six-rotor UAVs." 2019
+        Chinese Control And Decision Conference (CCDC). IEEE, 2019.
+
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+    """
+
+    x = layers.Conv1D(filters=32, kernel_size=1, padding='same', activation=relu)(inputs)
+    x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
+    x = layers.LSTM(units=256, activation=relu, return_sequences=True)(x)
+    if include_top:
+        x = layers.Flatten()(x)
+    return x
+
+
+def ShiHaotian(inputs, include_top: bool = True):
+    """
+    References
+    ----------
+        Shi, Haotian, et al. "Automated heartbeat classification based on deep neural network with multiple input
+        layers." Knowledge-Based Systems 188 (2020): 105036.
+
+    Parameters
+    ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
+        include_top: bool, default=True
+
+            Include a Flatten layer as the last layer of the model. Default is True.
+
+    Returns
+    -------
+
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+    """
+
+    x1 = layers.Conv1D(filters=32, kernel_size=13, strides=2, activation=relu)(inputs)
+    x1 = layers.MaxPooling1D(pool_size=2, strides=2)(x1)
+
+    x2 = layers.Conv1D(filters=32, kernel_size=13, strides=1, activation=relu)(inputs)
+    x2 = layers.MaxPooling1D(pool_size=2, strides=2)(x2)
+
+    x3 = layers.Conv1D(filters=32, kernel_size=13, strides=2, activation=relu)(inputs)
+    x3 = layers.MaxPooling1D(pool_size=2, strides=2)(x3)
+
+    x = layers.Concatenate(axis=1)([x1, x2, x3])
+    x = layers.LSTM(units=32, return_sequences=True)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+    return x
+
+
+def HuangMeiLing(inputs, include_top: bool = True):
+    """
+     CNN model, employed for 2-D images of ECG data. This model is adapted for 1-D time series
+
+     References
+     -------
+         Huang, Mei-Ling, and Yan-Sheng Wu. "Classification of atrial fibrillation and normal sinus rhythm based on
+         convolutional neural network." Biomedical Engineering Letters (2020): 1-11.
 
 
     Parameters
     ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
         include_top: bool, default=True
 
             Include a Flatten layer as the last layer of the model. Default is True.
 
-    Attributes
-    ----------
-        include_top: bool
+    Returns
+    -------
 
-            Boolean that indicates whether the last layer is a Flatten layer or not.
-    """
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+     """
 
-    def __init__(self, include_top: bool = True):
-        super(HuangMeiLing, self).__init__()
-        self.include_top = include_top
+    x = inputs
+    for f, k, s in zip([48, 256],
+                       [15, 13],
+                       [6, 1]):
+        x = layers.Conv1D(filters=f, activation=relu, kernel_size=k, strides=s)(x)
+        x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
 
-        # Network definition
-        self.conv_A = layers.Conv1D(filters=48, activation=relu, kernel_size=15, strides=6)
-        self.maxpooling_A = layers.MaxPooling1D(pool_size=2, strides=1)
-        self.conv_B = layers.Conv1D(filters=256, activation=relu, kernel_size=13, strides=1)
-        self.maxpooling_B = layers.MaxPooling1D(pool_size=2, strides=1)
+    if include_top:
+        x = layers.Flatten()(x)
 
-        if include_top:
-            self.flatten_A = layers.Flatten()
-
-    def call(self, inputs):
-        model = self.conv_A(inputs)
-        model = self.maxpooling_A(model)
-        model = self.conv_B(model)
-        model = self.maxpooling_B(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-
-        return model
+    return x
 
 
-class LihOhShu(models.Model):
+def LihOhShu(inputs, include_top: bool = True):
     """
     CNN+LSTM model
 
@@ -483,77 +488,36 @@ class LihOhShu(models.Model):
 
     Parameters
     ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
         include_top: bool, default=True
 
             Include a Flatten layer as the last layer of the model. Default is True.
 
-    Attributes
-    ----------
-        include_top: bool
+    Returns
+    -------
 
-            Boolean that indicates whether the last layer is a Flatten layer or not.
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+
     """
 
-    def __init__(self, include_top: bool = True):
-        super(LihOhShu, self).__init__()
-        self.include_top = include_top
+    x = inputs
+    for filters, k_size in zip([3, 6, 6, 6, 6],
+                               [20, 10, 5, 5, 10]):
+        x = layers.Conv1D(filters=filters, activation=relu, kernel_size=k_size, strides=1)(x)
+        x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
 
-        # Network defintiion
-        self.conv_blocks = models.Sequential()
-        for filters, k_size in zip([3, 6, 6, 6, 6],
-                                   [20, 10, 5, 5, 10]):
-            self.conv_blocks.add(layers.Conv1D(filters=filters, activation=relu, kernel_size=k_size, strides=1))
-            self.conv_blocks.add(layers.MaxPooling1D(pool_size=2, strides=1))
-        # self.conv_A = layers.Conv1D(filters=3, activation=relu, kernel_size=20, strides=1)
-        # self.maxpooling_A = layers.MaxPooling1D(pool_size=2, strides=1)
-        # self.conv_B = layers.Conv1D(filters=6, activation=relu, kernel_size=10, strides=1)
-        # self.maxpooling_B = layers.MaxPooling1D(pool_size=2, strides=1)
-        # self.conv_C = layers.Conv1D(filters=6, activation=relu, kernel_size=5, strides=1)
-        # self.maxpooling_C = layers.MaxPooling1D(pool_size=2, strides=1)
-        # self.conv_D = layers.Conv1D(filters=6, activation=relu, kernel_size=5, strides=1)
-        # self.maxpooling_D = layers.MaxPooling1D(pool_size=2, strides=1)
-        # self.conv_E = layers.Conv1D(filters=6, activation=relu, kernel_size=10, strides=1)
-        # self.maxpooling_E = layers.MaxPooling1D(pool_size=2, strides=1)
+    x = layers.LSTM(units=10, return_sequences=True)(x)
 
-        self.lstm_A = layers.LSTM(units=10, return_sequences=True)
-        if include_top:
-            self.flatten_A = layers.Flatten()
+    if include_top:
+        x = layers.Flatten()(x)
 
-        # top_layers:
-        # self.dense_A = layers.Dense(8)
-        # self.dropout_A = layers.Dropout(0.5)
-        # self.dense_B = layers.Dense(4)
-        # self.dropout_B = layers.Dropout(0.5)
-        # self.dense_C = layers.Dense(4)
-        # self.dropout_C = layers.Dropout(0.5)
-        # self.dense_D = layers.Dense(1)
-
-    def call(self, inputs):
-        # model = self.conv_A(inputs)
-        # model = self.maxpooling_A(model)
-        # model = self.conv_B(model)
-        # model = self.maxpooling_B(model)
-        # model = self.conv_C(model)
-        # model = self.maxpooling_C(model)
-        # model = self.conv_D(model)
-        # model = self.maxpooling_D(model)
-        # model = self.conv_E(model)
-        # model = self.maxpooling_E(model)
-        model = self.conv_blocks(inputs)
-        model = self.lstm_A(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-        # model = self.dense_A(model)
-        # model = self.dropout_A(model)
-        # model = self.dense_B(model)
-        # model = self.dropout_B(model)
-        # model = self.dense_C(model)
-        # model = self.dropout_C(model)
-        # model = self.dense_D(model)
-        return model
+    return x
 
 
-class GaoJunli(models.Model):
+def GaoJunLi(inputs, include_top: bool = True):
     """
     LSTM network
 
@@ -564,99 +528,76 @@ class GaoJunli(models.Model):
 
     Parameters
     ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
         include_top: bool, default=True
 
             Include a Flatten layer as the last layer of the model. Default is True.
 
-    Attributes
-    ----------
-        include_top: bool
+    Returns
+    -------
 
-            Boolean that indicates whether the last layer is a Flatten layer or not.
-
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
     """
+    x = layers.LSTM(units=64, return_sequences=True)(inputs)
 
-    def __init__(self, include_top: bool = True):
-        super(GaoJunli, self).__init__()
-        self.include_top = include_top
+    if include_top:
+        x = layers.Flatten()(x)
 
-        # Network definiton
-        self.lstm_A = layers.LSTM(units=64, return_sequences=True)
-        if include_top:
-            self.flatten_A = layers.Flatten()
-
-        # self.dense_A = layers.Dense(32)
-        # self.dense_B = layers.Dense(8)
-        # self.dense_C = layers.Dense(1)
-
-    def call(self, inputs):
-        model = self.lstm_A(inputs)
-        if self.include_top:
-            model = self.flatten_A(model)
-        # model = self.dense_A(model)
-        # model = self.dense_B(model)
-        # model = self.dense_C(model)
-        return model
+    return x
 
 
-class WeiXiaoyan(models.Model):
+def WeiXiaoyan(inputs, include_top: bool = True):
     """
-    CNN+LSTM model employed for 2-D images of ECG data. This model is adapted for 1-D time series.
+     CNN+LSTM model employed for 2-D images of ECG data. This model is adapted for 1-D time series.
 
 
-    References
-    ----------
+     References
+     ----------
 
-        Wei, Xiaoyan, et al. "Early prediction of epileptic seizures using a long-term recurrent convolutional
-        network." Journal of neuroscience methods 327 (2019): 108395.
+         Wei, Xiaoyan, et al. "Early prediction of epileptic seizures using a long-term recurrent convolutional
+         network." Journal of neuroscience methods 327 (2019): 108395.
 
     Parameters
     ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
         include_top: bool, default=True
 
             Include a Flatten layer as the last layer of the model. Default is True.
 
-    Attributes
-    ----------
-        include_top: bool
+    Returns
+    -------
 
-             Boolean that indicates whether the last layer is a Flatten layer or not.
-    """
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
 
-    def __init__(self, include_top: bool = True):
-        super(WeiXiaoyan, self).__init__()
+     """
 
-        self.include_top = include_top
+    x = inputs
+    # Network Defintion (CNN)
+    for filters, kernel, strides in zip([32, 64, 128, 256, 512],
+                                        [5, 3, 3, 3, 3],
+                                        [1, 1, 1, 1, 1]):
+        x = layers.Conv1D(filters=filters, kernel_size=kernel, strides=strides)(x)
+        x = layers.LeakyReLU(alpha=0.01)(x)
+        x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
+        x = layers.BatchNormalization()(x)
 
-        # Network Defintion (CNN)
-        self.convolutional_blocks = keras.Sequential()
-        for filters, kernel, strides in zip([32, 64, 128, 256, 512],
-                                            [5, 3, 3, 3, 3],
-                                            [1, 1, 1, 1, 1]):
-            self.convolutional_blocks.add(layers.Conv1D(filters=filters, kernel_size=kernel, strides=strides))
-            self.convolutional_blocks.add(layers.LeakyReLU(alpha=0.01))
-            self.convolutional_blocks.add(layers.MaxPooling1D(pool_size=2, strides=2))
-            self.convolutional_blocks.add(layers.BatchNormalization())
+    # LSTM
+    x = layers.LSTM(units=512, return_sequences=True)(x)
+    x = layers.LSTM(units=512, return_sequences=True)(x)
 
-        # LSTM
-        self.lstm_A = layers.LSTM(units=512, return_sequences=True)
-        self.lstm_B = layers.LSTM(units=512, return_sequences=True)
+    if include_top:
+        x = layers.Flatten()(x)
 
-        if include_top:
-            self.flatten_A = layers.Flatten()
+    return x
 
 
-    def call(self, inputs):
-        model = self.convolutional_blocks(inputs)
-        model = self.lstm_A(model)
-        model = self.lstm_B(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-
-        return model
-
-
-class KongZhengmin(models.Model):
+def KongZhengmin(inputs, include_top: bool = True):
     """
     CNN+LSTM
 
@@ -667,134 +608,106 @@ class KongZhengmin(models.Model):
 
     Parameters
     ----------
+        inputs: keras.layers.Layer
+
+            The input layer for this model.
+
         include_top: bool, default=True
 
             Include a Flatten layer as the last layer of the model. Default is True.
 
-    Attributes
-    ----------
-        include_top: bool
+    Returns
+    -------
 
-            Boolean that indicates whether the last layer is a Flatten layer or not.
+        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+
     """
+    x = layers.Conv1D(filters=32, activation=relu, kernel_size=5, strides=1)(inputs)
+    x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
+    x = layers.LSTM(64, return_sequences=True)(x)
+    x = layers.LSTM(64, return_sequences=True)(x)
 
-    def __init__(self, include_top: bool = True):
-        super(KongZhengmin, self).__init__()
-        self.include_top = include_top
+    if include_top:
+        x = layers.Flatten()(x)
 
-        # Network Definition
-        self.conv_A = layers.Conv1D(filters=32, activation=relu, kernel_size=5, strides=1)
-        self.maxpooling_A = layers.MaxPooling1D(pool_size=2, strides=2)
-        self.lstm_A = layers.LSTM(64, return_sequences=True)
-        self.lstm_B = layers.LSTM(64, return_sequences=True)
-        if include_top:
-            self.flatten_A = layers.Flatten()
-
-    def call(self, inputs):
-        model = self.conv_A(inputs)
-        model = self.maxpooling_A(model)
-        model = self.lstm_A(model)
-        model = self.lstm_B(model)
-        if self.include_top:
-            model = self.flatten_A(model)
-
-        return model
+    return x
 
 
-class YildirimOzal(models.Model):
+def YildirimOzal(inputs, include_top: bool = True):
     """CAE-LSTM
 
-    References
-    ----------
-        Yildirim, Ozal, et al. "A new approach for arrhythmia classification using deep coded features and LSTM
-        networks." Computer methods and programs in biomedicine 176 (2019): 121-133.
+     References
+     ----------
+         Yildirim, Ozal, et al. "A new approach for arrhythmia classification using deep coded features and LSTM
+         networks." Computer methods and programs in biomedicine 176 (2019): 121-133.
 
-    Parameters
-    ----------
-    include_top: bool, default=True
-                     Include a Flatten layer as the last layer of the model. Default is True.
+     Parameters
+     ----------
+     include_top: bool, default=True
+                      Include a Flatten layer as the last layer of the model. Default is True.
 
-    Attributes
-    ----------
-    include_top: bool
+     Attributes
+     ----------
+     include_top: bool
 
-        Boolean that indicates whether the last layer is a Flatten layer or not.
+         Boolean that indicates whether the last layer is a Flatten layer or not.
 
-    encoder: keras.Model
+     encoder: keras.Model
 
-        The encoder part of the AutoEnconder
+         The encoder part of the AutoEnconder
 
-    decoder: keras.Model
+     decoder: keras.Model
 
-        The decoder part of the AutoEnconder.
+         The decoder part of the AutoEnconder.
 
-    lstm: keras.Model
+     lstm: keras.Model
 
-        The LSTM part of this model.
+         The LSTM part of this model.
 
-    Examples
-    --------
-    This method is composed of two parts: An Autoencoder and an LSTM that classifies the encoded data from the encoder
-    part. Therefore, it is necessary to firstly train the model:
+     Examples
+     --------
+     This method is composed of two parts: An Autoencoder and an LSTM that classifies the encoded data from the encoder
+     part. Therefore, it is necessary to firstly train the model:
 
-    >>> inputs = keras.Input((200, 1))
-    >>> yildirim = YildirimOzal()
-    >>> encoder = yildirim.encoder(inputs)
-    >>> x = yildirim.decoder(encoder)
-    >>> autoencoder = keras.Model(inputs=inputs, outputs=x)
+     >>> inputs = keras.Input((200, 1))
+     >>> yildirim = YildirimOzal()
+     >>> encoder = yildirim.encoder(inputs)
+     >>> x = yildirim.decoder(encoder)
+     >>> autoencoder = keras.Model(inputs=inputs, outputs=x)
 
-    Now, compile and train the autoencoder with .compile() and .fit()
+     Now, compile and train the autoencoder with .compile() and .fit()
 
-    After that, apply the LSTM classifier
-    >>> x = yildirim.lstm(encoder)
-    >>> classifier = keras.Model(inputs=inputs, outputs=x)
+     After that, apply the LSTM classifier
+     >>> x = yildirim.lstm(encoder)
+     >>> classifier = keras.Model(inputs=inputs, outputs=x)
 
-    Now, compile and train with .compile() and fit()
-    """
+     Now, compile and train with .compile() and fit()
+     """
+    # TODO: Check parameters of conv layers
+    encoder = layers.Conv1D(filters=260, kernel_size=16, strides=1)(inputs)
+    encoder = layers.MaxPooling1D(pool_size=2)(encoder)
+    encoder = layers.Conv1D(filters=130, kernel_size=64, strides=1)(encoder)
+    encoder = layers.BatchNormalization()(encoder)
+    encoder = layers.MaxPooling1D(pool_size=2)(encoder)
+    encoder = layers.Conv1D(filters=65, kernel_size=32, strides=1)(encoder)
+    encoder = layers.Conv1D(filters=65, kernel_size=1, strides=1)(encoder)
 
-    def __init__(self, include_top: bool = True):
-        super(YildirimOzal, self).__init__()
-        self.include_top = include_top
+    decoder = layers.MaxPooling1D(pool_size=2)(encoder)
+    decoder = layers.Conv1D(filters=32, kernel_size=1, strides=1)(decoder)
+    decoder = layers.Conv1D(filters=32, kernel_size=32, strides=1)(decoder)
+    decoder = layers.UpSampling1D(size=2)(decoder)
+    decoder = layers.Conv1D(filters=64, kernel_size=64, strides=1)(decoder)
+    decoder = layers.UpSampling1D(size=2)(decoder)
+    decoder = layers.Conv1D(filters=128, kernel_size=16, strides=1)(decoder)
 
-        # Network definition # TODO: CHECK DIMENSIONS OF KERNELS AND FILTERS
-        self.encoder = models.Sequential([
-            layers.Conv1D(filters=260, kernel_size=16, strides=5),
-            layers.MaxPooling1D(pool_size=2),
-            layers.Conv1D(filters=130, kernel_size=64, strides=5),
-            layers.BatchNormalization(),
-            layers.MaxPooling1D(pool_size=2),
-            layers.Conv1D(filters=65, kernel_size=32, strides=3),
-            layers.Conv1D(filters=65, kernel_size=1, strides=3)]
-        )
+    lstm = layers.LSTM(units=32, return_sequences=True)(encoder)
 
-        # decoder
-        self.decoder = models.Sequential([
-            layers.MaxPooling1D(pool_size=2),
-            layers.Conv1D(filters=32, kernel_size=1, strides=3),
-            layers.Conv1D(filters=32, kernel_size=32, strides=3),
-            layers.UpSampling1D(size=2),
-            layers.Conv1D(filters=64, kernel_size=64, strides=5),
-            layers.UpSampling1D(size=2),
-            layers.Conv1D(filters=128, kernel_size=16, strides=5)]
-        )
+    if include_top:
+        lstm = layers.Flatten()(lstm)
 
-        # lstm
-        self.lstm = layers.LSTM(units=32)
+    return encoder, decoder, lstm
 
-        if include_top:
-            self.flatten_A = layers.Flatten()
 
-    def call(self, inputs):
-
-        # This part only connects the already trained encoder with the LSTM classification layer
-        model = self.encoder(inputs)
-        model = self.lstm(model)
-
-        if self.include_top:
-            model = self.flatten_A(model)
-        return model
-
-# TODO: Change all models -> Use def instead of classes
 def CaiWenjuan(inputs, include_top=True):
     """
     DDNN network presented in:
@@ -812,12 +725,12 @@ def CaiWenjuan(inputs, include_top=True):
     x = layers.Concatenate(axis=2)([x1, x2, x3])
 
     for i, n_blocks in enumerate(dense_layers):
-        x = se_module(x, dense_units=128)
-        x = dense_block(x, n_blocks, growth_rate=6, name="conv" + str(i + 1))
-        x = se_module(x, dense_units=128)
+        x = __se_module(x, dense_units=128)
+        x = __dense_block(x, n_blocks, growth_rate=6, name="conv" + str(i + 1))
+        x = __se_module(x, dense_units=128)
         # Last dense block does not have transition block.
         if i < len(dense_layers) - 1:
-            x = transition_block(x, reduction=0.5, name="transition" + str(i + 1))
+            x = __transition_block(x, reduction=0.5, name="transition" + str(i + 1))
 
     x = layers.GlobalAveragePooling1D()(x)
 
@@ -825,3 +738,41 @@ def CaiWenjuan(inputs, include_top=True):
         x = layers.Flatten()(x)
 
     return x
+
+
+def KimMinGu(inputs, X, y, include_top=True, num_classes=89):  # NOTE: kernel sizes are not specified in the original paper.
+
+    epochs = [5, 5, 5, 5, 7, 7]#[500, 500, 500, 500, 750, 750]
+    b_sizes = [512, 512, 256, 512, 256]
+    dropout = [0.5, 0.6, 0.6, 0.7, 0.5, 0.7]
+
+    models = []
+    for d in dropout:
+        model = layers.Conv1D(filters=32, kernel_size=3, padding="same", activation=relu)(inputs)
+        model = layers.MaxPooling1D(pool_size=2)(model)
+        for f in [64, 128, 256, 512]:
+            model = layers.Conv1D(filters=f, kernel_size=3, padding="same", activation=relu)(model)
+            model = layers.MaxPooling1D(pool_size=2)(model)
+
+        if include_top:
+            model = layers.Flatten()(model)
+            model = layers.Dense(units=1028, activation=relu)(model)
+            model = layers.Dropout(d)(model)
+            model = layers.Dense(units=1028, activation=relu)(model)
+            model = layers.Dense(units=num_classes, activation=softmax)(model)
+
+        models.append(keras.Model(inputs=inputs, outputs=model))
+
+    # Train the models
+    for m, e, b in zip(models, epochs, b_sizes):
+        m.compile(optimizer='Adam', loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
+        m.fit(X, y, batch_size=b, epochs=e)
+
+    # Get the predictions of each model
+    preds = [np.argmax(m.predict(X), axis=1) for m in models]
+
+    # Join the predictions of each model
+    # TODO: Y a continuación, que?
+    newX = np.column_stack(preds)
+
+    return None  # TODO: not finished yet
