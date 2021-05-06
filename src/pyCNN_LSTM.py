@@ -1,6 +1,6 @@
-import numpy as np
+import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers, models
+from tensorflow.keras import layers
 from tensorflow.keras.activations import relu, softmax, sigmoid
 
 
@@ -89,7 +89,38 @@ def __se_module(x, dense_units):
     return se
 
 
-def OhShuLih(inputs: keras.layers.Layer, include_top: bool = True):
+def __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation):
+    """
+        Auxiliar function for checking the input parameters of the models.
+    """
+    if include_top:
+        if not isinstance(classes, int):
+            raise ValueError("'classes' must be an int value.")
+        act = keras.activations.get(classifier_activation)
+        if act not in {keras.activations.get('softmax'), keras.activations.get(None)}:
+            raise ValueError("'classifier_activation' must be 'softmax' or None.")
+
+    if weights is not None and not tf.io.gfile.exists(weights):
+        raise ValueError("'weights' path does not exists: ", weights)
+
+    # Determine input
+    if input_tensor is None:
+        if input_shape is not None:
+            inp = layers.Input(shape=input_shape)
+        else:
+            raise ValueError("One of input_tensor or input_shape should not be None.")
+    else:
+        inp = input_tensor
+
+    return inp
+
+
+def OhShuLih(include_top=True,
+             weights=None,
+             input_tensor=None,
+             input_shape=None,
+             classes=5,
+             classifier_activation="softmax"):
     """
     CNN+LSTM model.
 
@@ -99,23 +130,44 @@ def OhShuLih(inputs: keras.layers.Layer, include_top: bool = True):
         Oh, Shu Lih, et al. "Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
         variable length heart beats." Computers in biology and medicine 102 (2018): 278-287.
 
-     Parameters
+    Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
     """
 
-    x = layers.Conv1D(filters=64, kernel_size=3, activation=relu)(inputs)
+    # Initial checks
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model Definition
+    x = layers.Conv1D(filters=64, kernel_size=3, activation=relu)(inp)
     x = layers.MaxPooling1D(pool_size=4)(x)
     x = layers.Dropout(rate=0.3)(x)
     x = layers.Conv1D(filters=16, kernel_size=3, activation=relu)(x)
@@ -126,11 +178,23 @@ def OhShuLih(inputs: keras.layers.Layer, include_top: bool = True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="OhShuLih")
+
+    # Load weights
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def KhanZulfiqar(inputs: keras.layers.Layer, include_top: bool = True):
+def KhanZulfiqar(include_top=True,
+                 weights=None,
+                 input_tensor=None,
+                 input_shape=None,
+                 classes=5,
+                 classifier_activation="softmax"):
     """
     References
     ---------
@@ -139,22 +203,42 @@ def KhanZulfiqar(inputs: keras.layers.Layer, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
-
+        A `keras.Model` instance.
      """
 
-    x = layers.Conv1D(filters=8, kernel_size=1, padding='same', activation=relu)(inputs)
+    # Check inputs
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model Definition
+    x = layers.Conv1D(filters=8, kernel_size=1, padding='same', activation=relu)(inp)
     x = layers.Dropout(0.1)(x)
     x = layers.Conv1D(filters=16, kernel_size=1, padding='same', activation=relu)(x)
     x = layers.Dropout(0.1)(x)
@@ -163,29 +247,59 @@ def KhanZulfiqar(inputs: keras.layers.Layer, include_top: bool = True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="KhanZulfiqar")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def ZhengZhenyu(inputs: keras.layers.Layer, include_top: bool = True):
+def ZhengZhenyu(include_top=True,
+                weights=None,
+                input_tensor=None,
+                input_shape=None,
+                classes=5,
+                classifier_activation="softmax"):
     """
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
-
+        A `keras.Model` instance.
     """
-    x = inputs
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model Definition
+    x = inp
     for f in [64, 128, 256]:
         x = layers.Conv1D(filters=f, kernel_size=3, strides=1, padding='same', activation='relu')(x)
         x = layers.Conv1D(filters=f, kernel_size=3, strides=1, padding='same', activation='relu')(x)
@@ -195,11 +309,23 @@ def ZhengZhenyu(inputs: keras.layers.Layer, include_top: bool = True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="ZhengZhenyu")
+
+    # Load weights
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def HouBoroui(inputs: keras.layers.Layer, include_top: bool = True):
+def HouBoroui(include_top=True,
+              weights=None,
+              input_tensor=None,
+              input_shape=None,
+              classes=5,
+              classifier_activation="softmax"):
     """
     References
     ----------
@@ -208,29 +334,60 @@ def HouBoroui(inputs: keras.layers.Layer, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
-
+        A `keras.Model` instance.
     """
-    x = layers.LSTM(units=146, return_sequences=True)(inputs)
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model definition
+    x = layers.LSTM(units=146, return_sequences=True)(inp)
     x = layers.LSTM(units=31, return_sequences=True)(x)
+
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="HouBoroui")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def WangKejun(inputs: keras.layers.Layer, include_top: bool = True):
+def WangKejun(include_top=True,
+              weights=None,
+              input_tensor=None,
+              input_shape=None,
+              classes=5,
+              classifier_activation="softmax"):
     """
     References
     ----------
@@ -239,21 +396,40 @@ def WangKejun(inputs: keras.layers.Layer, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
+    """
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
-       """
-    x = layers.LSTM(64, return_sequences=True)(inputs)
+    # Model definition
+    x = layers.LSTM(64, return_sequences=True)(inp)
     x = layers.LSTM(128, return_sequences=True)(x)
     x = layers.Conv1D(filters=64, kernel_size=3, strides=1)(x)
     x = layers.MaxPooling1D(2, strides=2)(x)
@@ -263,11 +439,22 @@ def WangKejun(inputs: keras.layers.Layer, include_top: bool = True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="WangKejun")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def ChenChen(inputs: keras.layers.Layer, include_top: bool=True):
+def ChenChen(include_top=True,
+             weights=None,
+             input_tensor=None,
+             input_shape=None,
+             classes=5,
+             classifier_activation="softmax"):
     """
     References
     ----------
@@ -276,23 +463,40 @@ def ChenChen(inputs: keras.layers.Layer, include_top: bool=True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
-
-
+        A `keras.Model` instance.
     """
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
-    x = inputs
+    # Model definition
+    x = inp
     for f in [251, 150, 100, 81, 61, 14]:
         x = layers.Conv1D(filters=f, kernel_size=2, strides=1)(x)
         x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
@@ -301,11 +505,22 @@ def ChenChen(inputs: keras.layers.Layer, include_top: bool=True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="ChenChen")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def KimTaeYoung(inputs: keras.layers.Layer, include_top: bool=True):
+def KimTaeYoung(include_top=True,
+                weights=None,
+                input_tensor=None,
+                input_shape=None,
+                classes=5,
+                classifier_activation="softmax"):
     """
     References
     ----------
@@ -314,20 +529,40 @@ def KimTaeYoung(inputs: keras.layers.Layer, include_top: bool=True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
     """
-    x = inputs
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model definition
+    x = inp
     for f in [64, 150]:
         x = layers.Conv1D(filters=f, kernel_size=2, strides=1)(x)
         x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
@@ -335,11 +570,22 @@ def KimTaeYoung(inputs: keras.layers.Layer, include_top: bool=True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="KimTaeYoung")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def GenMinxing(inputs: keras.layers.Layer, include_top: bool = True):
+def GenMinxing(include_top=True,
+               weights=None,
+               input_tensor=None,
+               input_shape=None,
+               classes=5,
+               classifier_activation="softmax"):
     """
     References
     ----------
@@ -348,26 +594,58 @@ def GenMinxing(inputs: keras.layers.Layer, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
     """
-    x = layers.Bidirectional(layers.LSTM(units=40, return_sequences=True))(inputs)
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model definition
+    x = layers.Bidirectional(layers.LSTM(units=40, return_sequences=True))(inp)
     if include_top:
         x = layers.Flatten()(x)
-    return x
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="GenMixing")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def FuJiangmeng(inputs: keras.layers.Layer, include_top: bool = True):
+def FuJiangmeng(include_top=True,
+                weights=None,
+                input_tensor=None,
+                input_shape=None,
+                classes=5,
+                classifier_activation="softmax"):
     """
     References
     ----------
@@ -376,29 +654,61 @@ def FuJiangmeng(inputs: keras.layers.Layer, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
     """
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
-    x = layers.Conv1D(filters=32, kernel_size=1, padding='same', activation=relu)(inputs)
+    # Model definition
+    x = layers.Conv1D(filters=32, kernel_size=1, padding='same', activation=relu)(inp)
     x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
     x = layers.LSTM(units=256, activation=relu, return_sequences=True)(x)
+
     if include_top:
         x = layers.Flatten()(x)
-    return x
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="FuJiangmeng")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def ShiHaotian(inputs, include_top: bool = True):
+def ShiHaotian(include_top=True,
+               weights=None,
+               input_tensor=None,
+               input_shape=None,
+               classes=5,
+               classifier_activation="softmax"):
     """
     References
     ----------
@@ -407,27 +717,46 @@ def ShiHaotian(inputs, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
     """
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
-    x1 = layers.Conv1D(filters=32, kernel_size=13, strides=2, activation=relu)(inputs)
+    # Model Definition
+    x1 = layers.Conv1D(filters=32, kernel_size=13, strides=2, activation=relu)(inp)
     x1 = layers.MaxPooling1D(pool_size=2, strides=2)(x1)
 
-    x2 = layers.Conv1D(filters=32, kernel_size=13, strides=1, activation=relu)(inputs)
+    x2 = layers.Conv1D(filters=32, kernel_size=13, strides=1, activation=relu)(inp)
     x2 = layers.MaxPooling1D(pool_size=2, strides=2)(x2)
 
-    x3 = layers.Conv1D(filters=32, kernel_size=13, strides=2, activation=relu)(inputs)
+    x3 = layers.Conv1D(filters=32, kernel_size=13, strides=2, activation=relu)(inp)
     x3 = layers.MaxPooling1D(pool_size=2, strides=2)(x3)
 
     x = layers.Concatenate(axis=1)([x1, x2, x3])
@@ -435,10 +764,22 @@ def ShiHaotian(inputs, include_top: bool = True):
 
     if include_top:
         x = layers.Flatten()(x)
-    return x
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="ShiHaotian")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def HuangMeiLing(inputs, include_top: bool = True):
+def HuangMeiLing(include_top=True,
+                weights=None,
+                input_tensor=None,
+                input_shape=None,
+                classes=5,
+                classifier_activation="softmax"):
     """
      CNN model, employed for 2-D images of ECG data. This model is adapted for 1-D time series
 
@@ -450,34 +791,64 @@ def HuangMeiLing(inputs, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
      """
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
-    x = inputs
+    # Model definition
+    x = inp
     for f, k, s in zip([48, 256],
                        [15, 13],
                        [6, 1]):
-        x = layers.Conv1D(filters=f, activation=relu, kernel_size=k, strides=s)(x)
+        x = layers.Conv1D(filters=f, kernel_size=k, strides=s, activation=relu)(x)
         x = layers.MaxPooling1D(pool_size=2, strides=1)(x)
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="HuangMeiLing")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def LihOhShu(inputs, include_top: bool = True):
+def LihOhShu(include_top=True,
+             weights=None,
+             input_tensor=None,
+             input_shape=None,
+             classes=5,
+             classifier_activation="softmax"):
     """
     CNN+LSTM model
 
@@ -488,22 +859,41 @@ def LihOhShu(inputs, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
 
     """
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
-    x = inputs
+    # Model definition
+    x = inp
     for filters, k_size in zip([3, 6, 6, 6, 6],
                                [20, 10, 5, 5, 10]):
         x = layers.Conv1D(filters=filters, activation=relu, kernel_size=k_size, strides=1)(x)
@@ -513,11 +903,22 @@ def LihOhShu(inputs, include_top: bool = True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="LihOhShu")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def GaoJunLi(inputs, include_top: bool = True):
+def GaoJunLi(include_top=True,
+             weights=None,
+             input_tensor=None,
+             input_shape=None,
+             classes=5,
+             classifier_activation="softmax"):
     """
     LSTM network
 
@@ -528,28 +929,59 @@ def GaoJunLi(inputs, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
     """
-    x = layers.LSTM(units=64, return_sequences=True)(inputs)
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model definition
+    x = layers.LSTM(units=64, return_sequences=True)(inp)
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="GaoJunLi")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def WeiXiaoyan(inputs, include_top: bool = True):
+def WeiXiaoyan(include_top=True,
+               weights=None,
+               input_tensor=None,
+               input_shape=None,
+               classes=5,
+               classifier_activation="softmax"):
     """
      CNN+LSTM model employed for 2-D images of ECG data. This model is adapted for 1-D time series.
 
@@ -562,22 +994,41 @@ def WeiXiaoyan(inputs, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
 
      """
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
-    x = inputs
+    # Model definition
+    x = inp
     # Network Defintion (CNN)
     for filters, kernel, strides in zip([32, 64, 128, 256, 512],
                                         [5, 3, 3, 3, 3],
@@ -593,11 +1044,22 @@ def WeiXiaoyan(inputs, include_top: bool = True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="WeiXiaoyan")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def KongZhengmin(inputs, include_top: bool = True):
+def KongZhengmin(include_top=True,
+                 weights=None,
+                 input_tensor=None,
+                 input_shape=None,
+                 classes=5,
+                 classifier_activation="softmax"):
     """
     CNN+LSTM
 
@@ -608,32 +1070,64 @@ def KongZhengmin(inputs, include_top: bool = True):
 
     Parameters
     ----------
-        inputs: keras.layers.Layer
+         include_top: bool, default=True
 
-            The input layer for this model.
+           Whether to include the fully-connected layer at the top of the network.
 
-        include_top: bool, default=True
+        weights: str, default=None
 
-            Include a Flatten layer as the last layer of the model. Default is True.
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
 
-        A set of layers as a KerasTensor that conforms the model. Note that the model itself must be defined afterwards.
+        A `keras.Model` instance.
 
     """
-    x = layers.Conv1D(filters=32, activation=relu, kernel_size=5, strides=1)(inputs)
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model definition
+    x = layers.Conv1D(filters=32, activation=relu, kernel_size=5, strides=1)(inp)
     x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
     x = layers.LSTM(64, return_sequences=True)(x)
     x = layers.LSTM(64, return_sequences=True)(x)
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="KongZhengmin")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def YildirimOzal(inputs, include_top: bool = True):
+def YildirimOzal(include_top=True,
+                 autoencoder_weights=None,
+                 lstm_weights=None,
+                 input_tensor=None,
+                 input_shape=None,
+                 classes=5,
+                 classifier_activation="softmax"):
     """CAE-LSTM
 
      References
@@ -642,27 +1136,42 @@ def YildirimOzal(inputs, include_top: bool = True):
          networks." Computer methods and programs in biomedicine 176 (2019): 121-133.
 
      Parameters
-     ----------
-     include_top: bool, default=True
-                      Include a Flatten layer as the last layer of the model. Default is True.
+    ----------
+         include_top: bool, default=True
 
-     Attributes
-     ----------
-     include_top: bool
+           Whether to include the fully-connected layer at the top of the network.
 
-         Boolean that indicates whether the last layer is a Flatten layer or not.
+        autoencoder_weights: str, default=None
 
-     encoder: keras.Model
+            The path to the weights file to be loaded for the autoencoder network
 
-         The encoder part of the AutoEnconder
+        lstm_weights: str, defaults=None
 
-     decoder: keras.Model
+            The path to the weights file to be loaded for the lstm classifier network.
 
-         The decoder part of the AutoEnconder.
+        input_tensor: keras.Tensor, defaults=None
 
-     lstm: keras.Model
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
 
-         The LSTM part of this model.
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
+
+    Returns
+    -------
+
+        autoenconder -> A `keras.Model` instance with the autoencoder.
+        encoder      -> A `keras.Model` instance with only the encoder part
+        model        -> A `keras.Model` instance representing the classification model which uses de encoder.
 
      Examples
      --------
@@ -672,56 +1181,111 @@ def YildirimOzal(inputs, include_top: bool = True):
      >>> inputs = keras.Input((200, 1))
      >>> yildirim = YildirimOzal()
      >>> encoder = yildirim.encoder(inputs)
-     >>> x = yildirim.decoder(encoder)
+     >>> x = yildirim.decoder(e)
      >>> autoencoder = keras.Model(inputs=inputs, outputs=x)
 
      Now, compile and train the autoencoder with .compile() and .fit()
 
      After that, apply the LSTM classifier
-     >>> x = yildirim.lstm(encoder)
+     >>> x = yildirim.lstm(e)
      >>> classifier = keras.Model(inputs=inputs, outputs=x)
 
      Now, compile and train with .compile() and fit()
      """
-    # TODO: Check parameters of conv layers
-    encoder = layers.Conv1D(filters=260, kernel_size=16, strides=1)(inputs)
-    encoder = layers.MaxPooling1D(pool_size=2)(encoder)
-    encoder = layers.Conv1D(filters=130, kernel_size=64, strides=1)(encoder)
-    encoder = layers.BatchNormalization()(encoder)
-    encoder = layers.MaxPooling1D(pool_size=2)(encoder)
-    encoder = layers.Conv1D(filters=65, kernel_size=32, strides=1)(encoder)
-    encoder = layers.Conv1D(filters=65, kernel_size=1, strides=1)(encoder)
+    inp = __check_inputs(include_top, None, input_tensor, input_shape, classes, classifier_activation)
+    if autoencoder_weights is not None and not tf.io.gfile.exists(autoencoder_weights):
+        raise ValueError("'autoencoder_weights' path does not exists: ", autoencoder_weights)
+    if lstm_weights is not None and not tf.io.gfile.exists(lstm_weights):
+        raise ValueError("'lstm_weights' path does not exists: ", lstm_weights)
 
-    decoder = layers.MaxPooling1D(pool_size=2)(encoder)
-    decoder = layers.Conv1D(filters=32, kernel_size=1, strides=1)(decoder)
-    decoder = layers.Conv1D(filters=32, kernel_size=32, strides=1)(decoder)
+    # Model definition
+    e = layers.Conv1D(filters=16, kernel_size=5, padding='same', strides=1)(inp)
+    e = layers.MaxPooling1D(pool_size=2)(e)
+    e = layers.Conv1D(filters=64, kernel_size=5, padding='same', strides=1)(e)
+    e = layers.BatchNormalization()(e)
+    e = layers.MaxPooling1D(pool_size=2)(e)
+    e = layers.Conv1D(filters=32, kernel_size=3, padding='same', strides=1)(e)
+    e = layers.Conv1D(filters=1, kernel_size=3, padding='same', strides=1)(e)
+
+    bottleneck = layers.MaxPooling1D(pool_size=2)(e)
+    decoder = layers.Conv1D(filters=1, kernel_size=3, padding='same', strides=1)(bottleneck)
+    decoder = layers.Conv1D(filters=32, kernel_size=3, padding='same', strides=1)(decoder)
     decoder = layers.UpSampling1D(size=2)(decoder)
-    decoder = layers.Conv1D(filters=64, kernel_size=64, strides=1)(decoder)
+    decoder = layers.Conv1D(filters=64, kernel_size=5, padding='same', strides=1)(decoder)
     decoder = layers.UpSampling1D(size=2)(decoder)
-    decoder = layers.Conv1D(filters=128, kernel_size=16, strides=1)(decoder)
+    decoder = layers.Conv1D(filters=16, kernel_size=5, padding='same', strides=1)(decoder)
+    # Final Dense layer of the autoencoder
+    decoder = layers.Flatten()(decoder)
+    decoder = layers.Dense(units=inp.shape[1], activation=sigmoid)(decoder)
 
-    lstm = layers.LSTM(units=32, return_sequences=True)(encoder)
+    autoencoder = keras.Model(inputs=inp, outputs=decoder, name="YildirimOzal_autoencoder")
 
+    if autoencoder_weights is not None:
+        autoencoder.load_weights(autoencoder_weights)
+    encoder = keras.Model(inputs=inp, outputs=bottleneck, name="YildirimOzal_encoder")
+
+    lstm = layers.LSTM(units=32, return_sequences=True)(bottleneck)
     if include_top:
         lstm = layers.Flatten()(lstm)
+        lstm = layers.Dense(units=classes, activation=softmax)(lstm)
 
-    return encoder, decoder, lstm
+    model = keras.Model(inputs=inp, outputs=lstm, name="YildirimOzal_classifier")
+
+    return autoencoder, encoder, model
 
 
-def CaiWenjuan(inputs, include_top=True):
+def CaiWenjuan(include_top=True,
+               weights=None,
+               input_tensor=None,
+               input_shape=None,
+               classes=5,
+               classifier_activation="softmax"):
     """
     DDNN network presented in:
 
-    Cai, Wenjuan, et al. "Accurate detection of atrial fibrillation from 12-lead ECG using deep neural network."
-    Computers in biology and medicine 116 (2020): 103378.
+    References
+    ----------
+        Cai, Wenjuan, et al. "Accurate detection of atrial fibrillation from 12-lead ECG using deep neural network."
+        Computers in biology and medicine 116 (2020): 103378.
 
-    Args:
-        include_top (bool):  Include a Flatten layer as the last layer of the model. Default is True.
+    Parameters
+    ----------
+         include_top: bool, default=True
+
+           Whether to include the fully-connected layer at the top of the network.
+
+        weights: str, default=None
+
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
+
+    Returns
+    -------
+        A `keras.Model` instance.
    """
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model definition
     dense_layers = [2, 4, 6, 4]
-    x1 = layers.Conv1D(filters=8, kernel_size=1, strides=1, padding='same')(inputs)
-    x2 = layers.Conv1D(filters=16, kernel_size=3, strides=1, padding='same')(inputs)
-    x3 = layers.Conv1D(filters=24, kernel_size=5, strides=1, padding='same')(inputs)
+    x1 = layers.Conv1D(filters=8, kernel_size=1, strides=1, padding='same')(inp)
+    x2 = layers.Conv1D(filters=16, kernel_size=3, strides=1, padding='same')(inp)
+    x3 = layers.Conv1D(filters=24, kernel_size=5, strides=1, padding='same')(inp)
     x = layers.Concatenate(axis=2)([x1, x2, x3])
 
     for i, n_blocks in enumerate(dense_layers):
@@ -736,19 +1300,32 @@ def CaiWenjuan(inputs, include_top=True):
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
-    return x
+    model = keras.Model(inputs=inp, outputs=x, name="CaiWenjuan")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
 
 
-def KimMinGu(inputs, X, y, include_top=True, num_classes=89):  # NOTE: kernel sizes are not specified in the original paper.
+def KimMinGu(include_top=True,
+             weights=None,
+             input_tensor=None,
+             input_shape=None,
+             classes=5,
+             classifier_activation="softmax"):
 
-    epochs = [5, 5, 5, 5, 7, 7]#[500, 500, 500, 500, 750, 750]
-    b_sizes = [512, 512, 256, 512, 256]
+    # NOTE: kernel sizes are not specified in the original paper.
+    # TODO: weights must be individually checked for each model.
+    inp = __check_inputs(include_top, None, input_tensor, input_shape, classes, classifier_activation)
+
     dropout = [0.5, 0.6, 0.6, 0.7, 0.5, 0.7]
 
-    models = []
+    ensemble = []
     for d in dropout:
-        model = layers.Conv1D(filters=32, kernel_size=3, padding="same", activation=relu)(inputs)
+        model = layers.Conv1D(filters=32, kernel_size=3, padding="same", activation=relu)(inp)
         model = layers.MaxPooling1D(pool_size=2)(model)
         for f in [64, 128, 256, 512]:
             model = layers.Conv1D(filters=f, kernel_size=3, padding="same", activation=relu)(model)
@@ -759,20 +1336,8 @@ def KimMinGu(inputs, X, y, include_top=True, num_classes=89):  # NOTE: kernel si
             model = layers.Dense(units=1028, activation=relu)(model)
             model = layers.Dropout(d)(model)
             model = layers.Dense(units=1028, activation=relu)(model)
-            model = layers.Dense(units=num_classes, activation=softmax)(model)
+            model = layers.Dense(units=classes, activation=softmax)(model)
 
-        models.append(keras.Model(inputs=inputs, outputs=model))
+        ensemble.append(keras.Model(inputs=inp, outputs=model))
 
-    # Train the models
-    for m, e, b in zip(models, epochs, b_sizes):
-        m.compile(optimizer='Adam', loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
-        m.fit(X, y, batch_size=b, epochs=e)
-
-    # Get the predictions of each model
-    preds = [np.argmax(m.predict(X), axis=1) for m in models]
-
-    # Join the predictions of each model
-    # TODO: Y a continuación, que?
-    newX = np.column_stack(preds)
-
-    return None  # TODO: not finished yet
+    return ensemble  # TODO: not finished yet
