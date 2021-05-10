@@ -1171,26 +1171,7 @@ def YildirimOzal(include_top=True,
 
         autoenconder -> A `keras.Model` instance with the autoencoder.
         encoder      -> A `keras.Model` instance with only the encoder part
-        model        -> A `keras.Model` instance representing the classification model which uses de encoder.
-
-     Examples
-     --------
-     This method is composed of two parts: An Autoencoder and an LSTM that classifies the encoded data from the encoder
-     part. Therefore, it is necessary to firstly train the model:
-
-     >>> inputs = keras.Input((200, 1))
-     >>> yildirim = YildirimOzal()
-     >>> encoder = yildirim.encoder(inputs)
-     >>> x = yildirim.decoder(e)
-     >>> autoencoder = keras.Model(inputs=inputs, outputs=x)
-
-     Now, compile and train the autoencoder with .compile() and .fit()
-
-     After that, apply the LSTM classifier
-     >>> x = yildirim.lstm(e)
-     >>> classifier = keras.Model(inputs=inputs, outputs=x)
-
-     Now, compile and train with .compile() and fit()
+        model        -> A `keras.Model` instance representing the classification model which uses the encoder part.
      """
     inp = __check_inputs(include_top, None, input_tensor, input_shape, classes, classifier_activation)
     if autoencoder_weights is not None and not tf.io.gfile.exists(autoencoder_weights):
@@ -1311,16 +1292,60 @@ def CaiWenjuan(include_top=True,
 
 
 def KimMinGu(include_top=True,
-             weights=None,
+             weights=None,  # Here, weights is a vector of paths for each model
              input_tensor=None,
              input_shape=None,
              classes=5,
              classifier_activation="softmax"):
+    """
+    CNN ensemble model presented in:
+
+    References
+    ----------
+        Kim, M. G., Choi, C., & Pan, S. B. (2020). Ensemble Networks for User Recognition in Various Situations Based on
+        Electrocardiogram. IEEE Access, 8, 36527-36535.
+
+    Parameters
+    ----------
+         include_top: bool, default=True
+
+           Whether to include the fully-connected layer at the top of the network.
+
+        weights: array(str), default=None
+
+            An array with the paths of the weights file for each model of the ensemble.
+
+        input_tensor: keras.Tensor, defaults=None
+
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
+
+    Returns
+    -------
+        An array with six `keras.Model` instances. One for each model of the ensemble.
+   """
 
     # NOTE: kernel sizes are not specified in the original paper.
-    # TODO: weights must be individually checked for each model.
+    # Initial checks
     inp = __check_inputs(include_top, None, input_tensor, input_shape, classes, classifier_activation)
+    if weights is not None:
+        for w in weights:
+            if not tf.io.gfile.exists(w):
+                raise ValueError("'weights' path does not exists: ", weights)
 
+    # Begin model definition
     dropout = [0.5, 0.6, 0.6, 0.7, 0.5, 0.7]
 
     ensemble = []
@@ -1340,4 +1365,4 @@ def KimMinGu(include_top=True,
 
         ensemble.append(keras.Model(inputs=inp, outputs=model))
 
-    return ensemble  # TODO: not finished yet
+    return ensemble
