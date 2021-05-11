@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-from tensorflow.keras.activations import relu, softmax, sigmoid
+from tensorflow.keras.activations import relu, sigmoid
 
 
 def __transition_block(x, reduction, name):
@@ -1208,7 +1208,7 @@ def YildirimOzal(include_top=True,
     lstm = layers.LSTM(units=32, return_sequences=True)(bottleneck)
     if include_top:
         lstm = layers.Flatten()(lstm)
-        lstm = layers.Dense(units=classes, activation=softmax)(lstm)
+        lstm = layers.Dense(units=classes, activation=classifier_activation)(lstm)
 
     model = keras.Model(inputs=inp, outputs=lstm, name="YildirimOzal_classifier")
 
@@ -1361,8 +1361,196 @@ def KimMinGu(include_top=True,
             model = layers.Dense(units=1028, activation=relu)(model)
             model = layers.Dropout(d)(model)
             model = layers.Dense(units=1028, activation=relu)(model)
-            model = layers.Dense(units=classes, activation=softmax)(model)
+            model = layers.Dense(units=classes, activation=classifier_activation)(model)
 
         ensemble.append(keras.Model(inputs=inp, outputs=model))
 
     return ensemble
+
+
+def HaotianShi(include_top=True,
+               weights=None,
+               input_tensor=None,   # inputs are 4 tensors or shapes.
+               input_shape=None,
+               classes=5,
+               classifier_activation="softmax"):
+    """
+    Shi, H., Qin, C., Xiao, D., Zhao, L., & Liu, C. (2020). Automated heartbeat classification based on deep neural
+    network with multiple input layers. Knowledge-Based Systems, 188, 105036.
+    """
+
+    # Check input params
+    if input_shape is not None and isinstance(input_shape, list) and len(input_shape) != 4:
+        raise ValueError("For this model, a list of length 4 'input_shape' values are required.")
+    if input_tensor is not None and isinstance(input_tensor, list) and len(input_tensor) != 4:
+        raise ValueError("For this model, a list of length 4 'input_tensor' values are required.")
+
+    # Determine input
+    if input_tensor is None:
+        if input_shape is not None:
+            inp = layers.Input(shape=input_shape)
+        else:
+            raise ValueError("One of input_tensor or input_shape should not be None.")
+    else:
+        inp = input_tensor
+
+    # Model definition
+    x1 = layers.Conv1D(filters=32, kernel_size=13, strides=2)(inp[0])
+    x1 = layers.LeakyReLU()(x1)
+    x1 = layers.MaxPooling1D(pool_size=2)(x1)
+
+    x2 = layers.Conv1D(filters=32, kernel_size=13, strides=1)(inp[1])
+    x2 = layers.LeakyReLU()(x2)
+    x2 = layers.MaxPooling1D(pool_size=2)(x2)
+
+    x3 = layers.Conv1D(filters=32, kernel_size=13, strides=2)(inp[2])
+    x3 = layers.LeakyReLU()(x3)
+    x3 = layers.MaxPooling1D(pool_size=2)(x3)
+
+    x = layers.Concatenate(axis=2)([x1, x2, x3])
+    x = layers.LSTM(units=32)(x)
+    x = layers.Flatten()(x)
+
+    # N_h = sqrt(n_i * n_o)
+    if include_top:
+        x = layers.Dense(units=518, activation=relu)(x)  # TODO: nº of units is dynamic with respect inputs and outputs
+        x = layers.Dense(units=88, activation=relu)(x)
+        x = layers.Concatenate()([inp[3], x])
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="HaotianShi")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
+
+
+def HtetMyetLynn(include_top=True,
+                 weights=None,
+                 input_tensor=None,
+                 input_shape=None,
+                 classes=5,
+                 classifier_activation="softmax",
+                 use_rnn="gru"):  # use_gru -> one of None, "lstm" or "gru"
+    """
+   Lynn, H. M., Pan, S. B., & Kim, P. (2019). A deep bidirectional GRU network model for biometric electrocardiogram
+   classification based on recurrent neural networks. IEEE Access, 7, 145395-145405.
+
+   TODO Documentation
+    """
+    # Check inputs
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model definition
+    x = inp
+    for filt, ker, stride in zip([30, 30, 60, 60],
+                                 [5, 2, 5, 2],
+                                 [2, 2, 2, 2]):
+        x = layers.Conv1D(filters=filt, kernel_size=ker)(x)
+        x = layers.MaxPooling1D(pool_size=stride)(x)
+
+    # Only use the CNN, or add a Bi-directional GRU or LSTM after the CNN.
+    if use_rnn is None:
+        if include_top:
+            x = layers.Dense(units=40, activation=sigmoid)(x)
+            x = layers.Dense(units=classes, activation=classifier_activation)(x)
+    elif use_rnn.lower() == 'lstm':
+        # Note: Units of RNN are not specified in the original paper
+        x = layers.Bidirectional(layers.LSTM(units=40, dropout=0.2))(x)
+    elif use_rnn.lower() == 'gru':
+        x = layers.Bidirectional(layers.GRU(units=40, dropout=0.2))(x)
+    else:
+        raise ValueError("'use_rnn' parameter should one of: None, lstm or gru. Given: ", use_rnn)
+
+    # Adds classification layer only in the case of use bidrectional layers.
+    if use_rnn is not None:
+        if include_top:
+            x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="HtetMyetLynn")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
+
+
+def ZhangJin(include_top=True,
+                 weights=None,
+                 input_tensor=None,
+                 input_shape=None,
+                 classes=5,
+                 classifier_activation="softmax",
+             decrease_ratio=2):
+    """
+    Zhang, J., Liu, A., Gao, M., Chen, X., Zhang, X., & Chen, X. (2020). ECG-based multi-class arrhythmia detection
+    using spatio-temporal attention-based convolutional recurrent neural network.
+    Artificial Intelligence in Medicine, 106, 101856.
+
+    Note: The step size must be at least 1000.
+    TODO Documentation
+    """
+    def spatial_attention(x):
+        # Spatial attention module:
+        shared_dense1 = layers.Dense(units=x.shape[2] // decrease_ratio, activation=relu)
+        shared_dense2 = layers.Dense(units=x.shape[2], activation=relu)
+        x1 = layers.GlobalAveragePooling1D()(x)
+        x1 = shared_dense1(x1)
+        x1 = shared_dense2(x1)
+        x1 = layers.Reshape(target_shape=(1, x.shape[2]))(x1)
+
+        x2 = layers.GlobalMaxPool1D()(x)
+        x2 = shared_dense1(x2)
+        x2 = shared_dense2(x2)
+        x2 = layers.Reshape(target_shape=(1, x.shape[2]))(x2)
+
+        x = layers.add([x1, x2])
+        x = layers.Activation(activation=sigmoid)(x)
+        return x
+
+    def temporal_attention(x):
+        # Temporal attention module
+        x1 = layers.GlobalMaxPool1D(data_format='channels_first')(x)
+        x1 = layers.Reshape(target_shape=(x1.shape[1], 1))(x1)
+
+        x2 = layers.GlobalAveragePooling1D(data_format='channels_first')(x)
+        x2 = layers.Reshape(target_shape=(x2.shape[1], 1))(x2)
+
+        x = layers.Concatenate()([x1, x2])
+        x = layers.Conv1D(filters=1, kernel_size=7, padding="same")(x)
+        x = layers.Activation(activation=sigmoid)(x)
+        return x
+
+    # Check inputs
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+    x = inp
+
+    # Model definition
+    for conv_layers, filters in zip([2, 2, 3, 3, 3],
+                                    [64, 128, 256, 256, 256]):  # 5-block layers
+        for i in range(conv_layers):
+            x = layers.Conv1D(filters=filters, kernel_size=3, padding="same")(x)
+            x = layers.BatchNormalization()(x)
+            x = layers.Activation(activation=relu)(x)
+        x = layers.MaxPooling1D(pool_size=3)(x)
+        x = layers.Dropout(rate=0.2)(x)
+
+        # Adds attention module after each convolutional block
+        x_spatial = spatial_attention(x)
+        x = layers.multiply([x_spatial, x])
+        x_temporal = temporal_attention(x)
+        x = layers.multiply([x_temporal, x])
+
+    x = layers.Bidirectional(layers.GRU(units=12, return_sequences=True))(x)
+    x = layers.Dropout(rate=0.2)(x)
+    if include_top:
+        x = layers.GlobalMaxPool1D()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="ZhangJin")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
