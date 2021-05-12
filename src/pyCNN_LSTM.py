@@ -1,7 +1,9 @@
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow.keras import backend as K
 from tensorflow.keras import layers
 from tensorflow.keras.activations import relu, sigmoid
+from tensorflow.keras.initializers import orthogonal, he_uniform
 
 
 def __transition_block(x, reduction, name):
@@ -1224,41 +1226,36 @@ def CaiWenjuan(include_top=True,
     """
     DDNN network presented in:
 
-    References
-    ----------
-        Cai, Wenjuan, et al. "Accurate detection of atrial fibrillation from 12-lead ECG using deep neural network."
-        Computers in biology and medicine 116 (2020): 103378.
-
     Parameters
     ----------
-         include_top: bool, default=True
-
-           Whether to include the fully-connected layer at the top of the network.
+        include_top: bool, default=True
+            Whether to include the fully-connected layer at the top of the network.
 
         weights: str, default=None
-
             The path to the weights file to be loaded.
 
         input_tensor: keras.Tensor, defaults=None
-
             Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
 
         input_shape: Tuple, defaults=None
-
             If `input_tensor=None`, a tuple that defines the input shape for the model.
 
         classes: int, defaults=5
-
             If `include_top=True`, the number of units in the top layer to classify data.
 
         classifier_activation: str or callable, defaults='softmax'
-
             The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
             `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
+    `keras.Model`
         A `keras.Model` instance.
+
+    References
+    ----------
+        `Cai, Wenjuan, et al. "Accurate detection of atrial fibrillation from 12-lead ECG using deep neural network."
+        Computers in biology and medicine 116 (2020): 103378.`
    """
     inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
@@ -1554,3 +1551,151 @@ def ZhangJin(include_top=True,
         model.load_weights(weights)
 
     return model
+
+
+def YaoQihang(include_top=True,
+                 weights=None,
+                 input_tensor=None,
+                 input_shape=None,
+                 classes=5,
+                 classifier_activation="softmax"):
+    """
+    Yao, Q., Wang, R., Fan, X., Liu, J., & Li, Y. (2020). Multi-class Arrhythmia detection from 12-lead varied-length
+    ECG using Attention-based Time-Incremental Convolutional Neural Network. Information Fusion, 53, 174-182.
+    """
+    # Check inputs
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+    x = inp
+
+    # Model definition
+    # Convolutional layers (spatial):
+    for conv_layers, filters in zip([2, 2, 3, 3, 3],
+                                    [64, 128, 256, 256, 256]):  # 5-block layers
+        for i in range(conv_layers):
+            x = layers.Conv1D(filters=filters, kernel_size=3, padding="same", kernel_initializer=he_uniform)(x)
+            x = layers.BatchNormalization()(x)
+            x = layers.Activation(activation=relu)(x)
+        x = layers.MaxPooling1D(pool_size=3)(x)
+
+    # Temporal layers (2 LSTM layers):
+    x = layers.LSTM(units=32, return_sequences=True, dropout=0.2, kernel_initializer=orthogonal)(x)
+    x = layers.LSTM(units=32, return_sequences=True, dropout=0.2, kernel_initializer=orthogonal)(x)
+
+    # Attention module:
+    if include_top:
+        x1 = layers.Dense(units=32, activation=keras.activations.tanh, kernel_initializer=he_uniform)(x)
+        x1 = layers.Dense(units=classes, activation=classifier_activation, kernel_initializer=he_uniform)(x1)
+        x = tf.reduce_mean(x1, axis=1)
+
+    model = keras.Model(inputs=inp, outputs=x)
+
+    return model
+
+
+def YiboGao(include_top=True,
+            weights=None,
+            input_tensor=None,
+            input_shape=None,
+            classes=5,
+            classifier_activation="softmax",
+            return_loss=False): # If True, also return the loss function
+    """
+    Gao, Y., Wang, H., & Liu, Z. (2021). An end-to-end atrial fibrillation detection by a novel residual-based temporal
+    attention convolutional neural network with exponential nonlinearity loss. Knowledge-Based Systems, 212, 106589.
+
+
+    Code adapted from the original implementation available at:
+        https://github.com/o00O00o/RTA-CNN
+    """
+
+    def en_loss(y_true, y_pred):  # Custom loss function
+
+        epsilon = 1.e-7
+        gamma = float(0.3)
+
+        y_true = tf.cast(y_true, tf.float32)
+        y_pred = tf.clip_by_value(y_pred, epsilon, 1. - epsilon)
+        pos_pred = tf.pow(-tf.log(y_pred), gamma)
+        nag_pred = tf.pow(-tf.log(1 - y_pred), gamma)
+        y_t = tf.multiply(y_true, pos_pred) + tf.multiply(1 - y_true, nag_pred)
+        loss = tf.reduce_mean(y_t)
+
+        return loss
+
+    # Model definition
+    def conv_block(in_x, nb_filter, kernel_size):
+        x = layers.Conv1D(filters=nb_filter, kernel_size=kernel_size, padding='same')(in_x)
+        x = layers.BatchNormalization()(x)
+        x = layers.Activation(activation=relu)(x)
+        return x
+
+    def attention_branch(in_x, nb_filter, kernel_size):
+        x1 = conv_block(in_x, nb_filter, kernel_size)
+
+        x = layers.MaxPooling1D(pool_size=2)(x1)
+        x = conv_block(x, nb_filter, kernel_size)
+        x = layers.UpSampling1D(size=2)(x)
+
+        x2 = conv_block(x, nb_filter, kernel_size)
+
+        if (K.int_shape(x1) != K.int_shape(x2)):
+            x2 = layers.ZeroPadding1D(padding=1)(x2)
+            x2 = layers.Cropping1D((1, 0))(x2)
+
+        x = layers.add([x1, x2])
+
+        x = conv_block(x, nb_filter, kernel_size)
+
+        x = layers.Conv1D(filters=nb_filter, kernel_size=1, padding='same')(x)
+        x = layers.BatchNormalization()(x)
+        x = layers.Activation(activation=sigmoid)(x)
+
+        return x
+
+    def RTA_block(in_x, nb_filter, kernel_size):
+        x1 = conv_block(in_x, nb_filter, kernel_size)
+        x2 = conv_block(x1, nb_filter, kernel_size)
+
+        attention_map = attention_branch(x1, nb_filter, kernel_size)
+
+        x = layers.multiply([x2, attention_map])
+        x = layers.add([x, x1])
+
+        out = conv_block(x, nb_filter, kernel_size)
+
+        return out
+
+    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+    x = inp
+
+    for fil, ker, pool in zip([16, 32, 64, 64],
+                              [32, 16, 9, 9],
+                              [4, 4, 2, 2]):
+        x = RTA_block(x, fil, ker)
+        x = layers.MaxPooling1D(pool)(x)
+
+    x = layers.Dropout(0.6)(x)
+
+    x = RTA_block(x, 128, 3)
+    x = layers.MaxPooling1D(2)(x)
+    x = RTA_block(x, 128, 3)
+    x = layers.MaxPooling1D(2)(x)
+    x = layers.Dropout(0.6)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+        x = layers.Dropout(rate=0.7)(x)
+        x = layers.Dense(units=100, activation=relu)(x)
+        x = layers.Dropout(rate=0.7)(x)
+        x = layers.Dense(classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="YiboGao")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    # Return the model and its custom loss function
+    if return_loss:
+        return model, en_loss
+    else:
+        return model
