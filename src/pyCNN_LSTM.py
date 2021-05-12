@@ -126,36 +126,24 @@ def OhShuLih(include_top=True,
     """
     CNN+LSTM model.
 
-    References
-    ----------
-
-        Oh, Shu Lih, et al. "Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
-        variable length heart beats." Computers in biology and medicine 102 (2018): 278-287.
-
     Parameters
     ----------
-         include_top: bool, default=True
-
-           Whether to include the fully-connected layer at the top of the network.
+        include_top: bool, default=True
+          Whether to include the fully-connected layer at the top of the network.
 
         weights: str, default=None
-
             The path to the weights file to be loaded.
 
         input_tensor: keras.Tensor, defaults=None
-
             Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
 
         input_shape: Tuple, defaults=None
-
             If `input_tensor=None`, a tuple that defines the input shape for the model.
 
         classes: int, defaults=5
-
             If `include_top=True`, the number of units in the top layer to classify data.
 
         classifier_activation: str or callable, defaults='softmax'
-
             The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
             `classifier_activation=None` to return the logits of the "top" layer.
 
@@ -163,23 +151,32 @@ def OhShuLih(include_top=True,
     -------
 
         A `keras.Model` instance.
+
+    References
+    ----------
+        `Oh, Shu Lih, et al. "Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
+        variable length heart beats." Computers in biology and medicine 102 (2018): 278-287.`
     """
 
     # Initial checks
     inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
     # Model Definition
-    x = layers.Conv1D(filters=64, kernel_size=3, activation=relu)(inp)
-    x = layers.MaxPooling1D(pool_size=4)(x)
-    x = layers.Dropout(rate=0.3)(x)
-    x = layers.Conv1D(filters=16, kernel_size=3, activation=relu)(x)
-    x = layers.MaxPooling1D(pool_size=4)(x)
-    x = layers.Dropout(rate=0.3)(x)
-    x = layers.BatchNormalization()(x)
-    x = layers.LSTM(units=16)(x)
+    x = layers.ZeroPadding1D(padding=19)(inp)  # Full-convolution is carried out by zero-padding
+    x = layers.Conv1D(filters=3, kernel_size=20, activation=relu, use_bias=False, strides=1)(x)
+    x = layers.MaxPooling1D(pool_size=2)(x)
+    x = layers.ZeroPadding1D(padding=9)(x)
+    x = layers.Conv1D(filters=6, kernel_size=10, activation=relu, use_bias=False)(x)
+    x = layers.MaxPooling1D(pool_size=2)(x)
+    x = layers.ZeroPadding1D(padding=4)(x)
+    x = layers.Conv1D(filters=6, kernel_size=5, activation=relu, use_bias=False)(x)
+    x = layers.MaxPooling1D(pool_size=2)(x)
+    x = layers.LSTM(units=20, recurrent_dropout=0.2)(x)
 
     if include_top:
-        x = layers.Flatten()(x)
+        x = layers.Dropout(rate=0.2)(x)
+        x = layers.Dense(units=20, activation=relu)(x)
+        x = layers.Dense(units=10, activation=relu)(x)
         x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
     model = keras.Model(inputs=inp, outputs=x, name="OhShuLih")
