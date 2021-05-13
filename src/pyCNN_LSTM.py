@@ -334,66 +334,56 @@ def ZhengZhenyu(include_top=True,
     return model
 
 
-def HouBoroui(include_top=True,
-              weights=None,
+def HouBoroui(weights=None,
               input_tensor=None,
               input_shape=None,
-              classes=5,
-              classifier_activation="softmax"):
+              encoder_units=100):
     """
+    Basic LSTM Autoencoder, where the encoded features were introduced in an SVM.
+
+    Parameters
+    ----------
+        weights: str, default=None
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        encoder_units: int, defaults=100
+            The number of encoding features.
+
+    Returns
+    -------
+        autoencoder: keras.Model
+            A `keras.Model` instance representing the full autoencoder.
+        encoder: keras.Model
+            A `keras.Model` instance that representes the encoder.
+
     References
     ----------
         Hou, Borui, et al. "LSTM based auto-encoder model for ECG arrhythmias classification." IEEE Transactions on
         Instrumentation and Measurement (2019).
 
-    Parameters
-    ----------
-         include_top: bool, default=True
-
-           Whether to include the fully-connected layer at the top of the network.
-
-        weights: str, default=None
-
-            The path to the weights file to be loaded.
-
-        input_tensor: keras.Tensor, defaults=None
-
-            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
-
-        input_shape: Tuple, defaults=None
-
-            If `input_tensor=None`, a tuple that defines the input shape for the model.
-
-        classes: int, defaults=5
-
-            If `include_top=True`, the number of units in the top layer to classify data.
-
-        classifier_activation: str or callable, defaults='softmax'
-
-            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
-            `classifier_activation=None` to return the logits of the "top" layer.
-
-    Returns
-    -------
-
-        A `keras.Model` instance.
     """
-    inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+    inp = __check_inputs(True, weights, input_tensor, input_shape, 5, None)  # only check weights and inputs.
 
     # Model definition
-    x = layers.LSTM(units=146, return_sequences=True)(inp)
-    x = layers.LSTM(units=31, return_sequences=True)(x)
+    encoder = layers.LSTM(units=encoder_units)(inp)
+    x = layers.RepeatVector(inp.shape[1])(encoder)
+    x = layers.LSTM(units=encoder_units, return_sequences=True)(x)
+    x = layers.TimeDistributed(layers.Dense(units=1))(x)
 
-    if include_top:
-        x = layers.Flatten()(x)
-        x = layers.Dense(units=classes, activation=classifier_activation)(x)
-
-    model = keras.Model(inputs=inp, outputs=x, name="HouBoroui")
+    autoencoder = keras.Model(inputs=inp, outputs=x, name="HouBoroui")
 
     if weights is not None:
-        model.load_weights(weights)
+        autoencoder.load_weights(weights)
 
-    return model
+    encoder = keras.Model(inputs=inp, outputs=encoder)
+
+    return autoencoder, encoder
 
 
 def WangKejun(include_top=True,
@@ -410,49 +400,45 @@ def WangKejun(include_top=True,
 
     Parameters
     ----------
-         include_top: bool, default=True
-
-           Whether to include the fully-connected layer at the top of the network.
+        include_top: bool, default=True
+          Whether to include the fully-connected layer at the top of the network.
 
         weights: str, default=None
-
             The path to the weights file to be loaded.
 
         input_tensor: keras.Tensor, defaults=None
-
             Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
 
         input_shape: Tuple, defaults=None
-
             If `input_tensor=None`, a tuple that defines the input shape for the model.
 
         classes: int, defaults=5
-
             If `include_top=True`, the number of units in the top layer to classify data.
 
         classifier_activation: str or callable, defaults='softmax'
-
             The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
             `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
-
-        A `keras.Model` instance.
+        model: keras.Model
+            A `keras.Model` instance.
     """
     inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
     # Model definition
-    x = layers.LSTM(64, return_sequences=True)(inp)
-    x = layers.LSTM(128, return_sequences=True)(x)
-    x = layers.Conv1D(filters=64, kernel_size=3, strides=1)(x)
-    x = layers.MaxPooling1D(2, strides=2)(x)
-    x = layers.Conv1D(filters=150, kernel_size=2, strides=1)(x)
-    x = layers.MaxPooling1D(2, strides=2)(x)
-    x = layers.Dropout(0.1)(x)
+    x = layers.LSTM(units=64, return_sequences=True)(inp)
+    x = layers.LSTM(units=128, return_sequences=True)(x)
+    x = layers.Conv1D(filters=64, kernel_size=3, strides=1, activation=relu)(x)
+    x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
+    x = layers.Conv1D(filters=128, kernel_size=3, strides=1, activation=relu)(x)
+    x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
 
     if include_top:
         x = layers.Flatten()(x)
+        x = layers.Dropout(rate=0.1)(x)
+        x = layers.Dense(units=2048, activation=relu)(x)
+        x = layers.Dense(units=1024, activation=relu)(x)
         x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
     model = keras.Model(inputs=inp, outputs=x, name="WangKejun")
