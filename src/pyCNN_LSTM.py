@@ -124,7 +124,7 @@ def OhShuLih(include_top=True,
              classes=5,
              classifier_activation="softmax"):
     """
-    CNN+LSTM model.
+    CNN+LSTM model for Arrythmia classification.
 
     Parameters
     ----------
@@ -149,7 +149,7 @@ def OhShuLih(include_top=True,
 
     Returns
     -------
-
+    `keras.Model`
         A `keras.Model` instance.
 
     References
@@ -157,19 +157,21 @@ def OhShuLih(include_top=True,
         `Oh, Shu Lih, et al. "Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
         variable length heart beats." Computers in biology and medicine 102 (2018): 278-287.`
     """
+    def full_convolution(x, filters, kernel_size, **kwargs):
+        # Do a full convolution. Return a keras Tensor
+        x = layers.ZeroPadding1D(padding=kernel_size - 1)(x)
+        x = layers.Conv1D(filters=filters, kernel_size=kernel_size, **kwargs)(x)
+        return x
 
     # Initial checks
     inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
     # Model Definition
-    x = layers.ZeroPadding1D(padding=19)(inp)  # Full-convolution is carried out by zero-padding
-    x = layers.Conv1D(filters=3, kernel_size=20, activation=relu, use_bias=False, strides=1)(x)
+    x = full_convolution(inp, filters=3, kernel_size=20, activation=relu, use_bias=False, strides=1)
     x = layers.MaxPooling1D(pool_size=2)(x)
-    x = layers.ZeroPadding1D(padding=9)(x)
-    x = layers.Conv1D(filters=6, kernel_size=10, activation=relu, use_bias=False)(x)
+    x = full_convolution(x, filters=6, kernel_size=10, activation=relu, use_bias=False, strides=1)
     x = layers.MaxPooling1D(pool_size=2)(x)
-    x = layers.ZeroPadding1D(padding=4)(x)
-    x = layers.Conv1D(filters=6, kernel_size=5, activation=relu, use_bias=False)(x)
+    x = full_convolution(x, filters=6, kernel_size=5, activation=relu, use_bias=False, strides=1)
     x = layers.MaxPooling1D(pool_size=2)(x)
     x = layers.LSTM(units=20, recurrent_dropout=0.2)(x)
 
@@ -192,60 +194,66 @@ def KhanZulfiqar(include_top=True,
                  weights=None,
                  input_tensor=None,
                  input_shape=None,
+                 gru_units=(100, 50),
+                 return_sequences=False,
                  classes=5,
                  classifier_activation="softmax"):
     """
-    References
-    ---------
-        Khan, Zulfiqar Ahmad, et al. "Towards Efficient Electricity Forecasting in Residential and Commercial
-        Buildings: A Novel Hybrid CNN with a LSTM-AE based Framework." Sensors 20.5 (2020): 1399.
+    CNN+GRU model for electricity forecasting
 
     Parameters
     ----------
-         include_top: bool, default=True
-
-           Whether to include the fully-connected layer at the top of the network.
+        include_top: bool, default=True
+          Whether to include the fully-connected layer at the top of the network.
 
         weights: str, default=None
-
             The path to the weights file to be loaded.
 
         input_tensor: keras.Tensor, defaults=None
-
             Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
 
         input_shape: Tuple, defaults=None
-
             If `input_tensor=None`, a tuple that defines the input shape for the model.
 
-        classes: int, defaults=5
+        gru_units: Tuple of length=2, defaults=(100, 50)
+            The number of units within the 2 GRU layers.
 
+        return_sequences: bool, defaults=False
+            If True, the last GRU layer and Top layer if `include_top=True` returns the whole sequence instead of
+            the last value.
+
+        classes: int, defaults=5
             If `include_top=True`, the number of units in the top layer to classify data.
 
         classifier_activation: str or callable, defaults='softmax'
-
             The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
             `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
+        model: keras.Model
+            A `keras.Model` instance with the Full CNN-LSTM Autoencoder
 
-        A `keras.Model` instance.
+    References
+    ---------
+        Sajjad, M., Khan, Z. A., Ullah, A., Hussain, T., Ullah, W., Lee, M. Y., & Baik, S. W. (2020). A novel
+        CNN-GRU-based hybrid approach for short-term residential load forecasting. IEEE Access, 8, 143759-143768.
      """
 
     # Check inputs
     inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+    if len(gru_units) != 2:
+        raise ValueError("'gru_units' must be a tuple of length 2")
 
     # Model Definition
-    x = layers.Conv1D(filters=8, kernel_size=1, padding='same', activation=relu)(inp)
+    x = layers.Conv1D(filters=16, kernel_size=2, activation=relu)(inp)
     x = layers.Dropout(0.1)(x)
-    x = layers.Conv1D(filters=16, kernel_size=1, padding='same', activation=relu)(x)
+    x = layers.Conv1D(filters=8, kernel_size=2, activation=relu)(x)
     x = layers.Dropout(0.1)(x)
-    x = layers.LSTM(50, activation=relu, return_sequences=True)(x)
-    x = layers.LSTM(50, activation=relu, return_sequences=True)(x)
+    x = layers.GRU(units=gru_units[0], return_sequences=True)(x)
+    x = layers.GRU(units=gru_units[1], return_sequences=return_sequences)(x)
 
     if include_top:
-        x = layers.Flatten()(x)
         x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
     model = keras.Model(inputs=inp, outputs=x, name="KhanZulfiqar")
@@ -263,51 +271,58 @@ def ZhengZhenyu(include_top=True,
                 classes=5,
                 classifier_activation="softmax"):
     """
+
+    CNN+LSTM network for arrythmia detection. This model initialy was designed to deal with 2D images. It was adapted
+    to 1D time series.
+
     Parameters
     ----------
-         include_top: bool, default=True
-
-           Whether to include the fully-connected layer at the top of the network.
+        include_top: bool, default=True
+            Whether to include the fully-connected layer at the top of the network.
 
         weights: str, default=None
-
             The path to the weights file to be loaded.
 
         input_tensor: keras.Tensor, defaults=None
-
             Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
 
         input_shape: Tuple, defaults=None
-
             If `input_tensor=None`, a tuple that defines the input shape for the model.
 
         classes: int, defaults=5
-
             If `include_top=True`, the number of units in the top layer to classify data.
 
         classifier_activation: str or callable, defaults='softmax'
-
             The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
             `classifier_activation=None` to return the logits of the "top" layer.
 
     Returns
     -------
+        model: keras.Model
+            A `keras.Model` instance.
 
-        A `keras.Model` instance.
+    References
+    ----------
+        Zheng, Z., Chen, Z., Hu, F., Zhu, J., Tang, Q., & Liang, Y. (2020). An automatic diagnosis of arrhythmias using
+        a combination of CNN and LSTM technology. Electronics, 9(1), 121.
     """
     inp = __check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
     # Model Definition
     x = inp
     for f in [64, 128, 256]:
-        x = layers.Conv1D(filters=f, kernel_size=3, strides=1, padding='same', activation='relu')(x)
-        x = layers.Conv1D(filters=f, kernel_size=3, strides=1, padding='same', activation='relu')(x)
-        x = layers.MaxPooling1D(4, strides=1)(x)
+        x = layers.Conv1D(filters=f, kernel_size=3, strides=1, padding='same', activation=keras.activations.elu)(x)
+        x = layers.BatchNormalization()(x)
+        x = layers.Conv1D(filters=f, kernel_size=3, strides=1, padding='same', activation=keras.activations.elu)(x)
+        x = layers.BatchNormalization()(x)
+        x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
 
-    x = layers.LSTM(16, return_sequences=True)(x)
+    x = layers.LSTM(units=256)(x)
 
     if include_top:
-        x = layers.Flatten()(x)
+        x = layers.Dense(units=2048, activation=keras.activations.elu)(x)
+        x = layers.Dropout(rate=0.5)(x)
+        x = layers.Dense(units=2048, activation=keras.activations.elu)(x)
         x = layers.Dense(units=classes, activation=classifier_activation)(x)
 
     model = keras.Model(inputs=inp, outputs=x, name="ZhengZhenyu")
