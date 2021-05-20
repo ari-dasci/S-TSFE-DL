@@ -1,0 +1,849 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Models &#8212; pyCNN-LSTM  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pyCNN-LSTM" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+<p>Here the different deep learning models included in the library are summarised.</p>
+<div class="toctree-wrapper compound">
+</div>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.OhShuLih" title="src.pyCNN_LSTM.OhShuLih"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.OhShuLih</span></code></a>([include_top, …])</p></td>
+<td><p>CNN+LSTM model for Arrythmia classification.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.KhanZulfiqar" title="src.pyCNN_LSTM.KhanZulfiqar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.KhanZulfiqar</span></code></a>([include_top, …])</p></td>
+<td><p>CNN+GRU model for electricity forecasting</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.ZhengZhenyu" title="src.pyCNN_LSTM.ZhengZhenyu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.ZhengZhenyu</span></code></a>([include_top, …])</p></td>
+<td><p>CNN+LSTM network for arrythmia detection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.HouBoroui" title="src.pyCNN_LSTM.HouBoroui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.HouBoroui</span></code></a>([weights, …])</p></td>
+<td><p>Basic LSTM Autoencoder, where the encoded features were introduced in an SVM.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.WangKejun" title="src.pyCNN_LSTM.WangKejun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.WangKejun</span></code></a>([include_top, …])</p></td>
+<td><p><p class="rubric">References</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.ChenChen" title="src.pyCNN_LSTM.ChenChen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.ChenChen</span></code></a>([include_top, …])</p></td>
+<td><p>CNN+LSTM model for arrythmia classification.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.KimTaeYoung" title="src.pyCNN_LSTM.KimTaeYoung"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.KimTaeYoung</span></code></a>([include_top, …])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param include_top</dt>
+<dd class="field-odd"><p>Whether to include the fully-connected layer at the top of the network.</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.GenMinxing" title="src.pyCNN_LSTM.GenMinxing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.GenMinxing</span></code></a>([include_top, …])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param include_top</dt>
+<dd class="field-odd"><p>Whether to include the fully-connected layer at the top of the network.</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.FuJiangmeng" title="src.pyCNN_LSTM.FuJiangmeng"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.FuJiangmeng</span></code></a>([include_top, …])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param include_top</dt>
+<dd class="field-odd"><p>Whether to include the fully-connected layer at the top of the network.</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.ShiHaotian" title="src.pyCNN_LSTM.ShiHaotian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.ShiHaotian</span></code></a>([include_top, …])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param include_top</dt>
+<dd class="field-odd"><p>Whether to include the fully-connected layer at the top of the network.</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.HuangMeiLing" title="src.pyCNN_LSTM.HuangMeiLing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.HuangMeiLing</span></code></a>([include_top, …])</p></td>
+<td><p>CNN model, employed for 2-D images of ECG data. This model is adapted for 1-D time series</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.LihOhShu" title="src.pyCNN_LSTM.LihOhShu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.LihOhShu</span></code></a>([include_top, …])</p></td>
+<td><p>CNN+LSTM model</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.GaoJunLi" title="src.pyCNN_LSTM.GaoJunLi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.GaoJunLi</span></code></a>([include_top, …])</p></td>
+<td><p>LSTM network</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.WeiXiaoyan" title="src.pyCNN_LSTM.WeiXiaoyan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.WeiXiaoyan</span></code></a>([include_top, …])</p></td>
+<td><p>CNN+LSTM model employed for 2-D images of ECG data. This model is adapted for 1-D time series.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.KongZhengmin" title="src.pyCNN_LSTM.KongZhengmin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.KongZhengmin</span></code></a>([include_top, …])</p></td>
+<td><p>CNN+LSTM</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.YildirimOzal" title="src.pyCNN_LSTM.YildirimOzal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.YildirimOzal</span></code></a>([include_top, …])</p></td>
+<td><p>CAE-LSTM</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.CaiWenjuan" title="src.pyCNN_LSTM.CaiWenjuan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.CaiWenjuan</span></code></a>([include_top, …])</p></td>
+<td><p>DDNN network presented in:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.KimMinGu" title="src.pyCNN_LSTM.KimMinGu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.KimMinGu</span></code></a>([include_top, …])</p></td>
+<td><p>CNN ensemble model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.HtetMyetLynn" title="src.pyCNN_LSTM.HtetMyetLynn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.HtetMyetLynn</span></code></a>([include_top, …])</p></td>
+<td><p>Hybrid CNN+Bidirectional RNN</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.ZhangJin" title="src.pyCNN_LSTM.ZhangJin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.ZhangJin</span></code></a>([include_top, …])</p></td>
+<td><p>A CNN+Bi-Directional GRU with a spatio-temporal attention mechanism.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.YaoQihang" title="src.pyCNN_LSTM.YaoQihang"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.YaoQihang</span></code></a>([include_top, …])</p></td>
+<td><p>Attention-based time-incremental convolutional neural network (ATI-CNN)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.pyCNN_LSTM.YiboGao" title="src.pyCNN_LSTM.YiboGao"><code class="xref py py-obj docutils literal notranslate"><span class="pre">src.pyCNN_LSTM.YiboGao</span></code></a>([include_top, …])</p></td>
+<td><p>CNN using RTA blocks for end-to-end attrial fibrilation detection.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.OhShuLih">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">OhShuLih</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#OhShuLih"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.OhShuLih" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN+LSTM model for Arrythmia classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>keras.Model</cite></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><cite>Oh, Shu Lih, et al. “Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
+variable length heart beats.” Computers in biology and medicine 102 (2018): 278-287.</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.KhanZulfiqar">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">KhanZulfiqar</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gru_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(100,</span> <span class="pre">50)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sequences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#KhanZulfiqar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.KhanZulfiqar" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN+GRU model for electricity forecasting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>gru_units</strong> (<em>Tuple of length=2</em><em>, </em><em>defaults=</em><em>(</em><em>100</em><em>, </em><em>50</em><em>)</em>) – The number of units within the 2 GRU layers.</p></li>
+<li><p><strong>return_sequences</strong> (<em>bool</em><em>, </em><em>defaults=False</em>) – If True, the last GRU layer and Top layer if <cite>include_top=True</cite> returns the whole sequence instead of
+the last value.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance with the Full CNN-LSTM Autoencoder</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Sajjad, M., Khan, Z. A., Ullah, A., Hussain, T., Ullah, W., Lee, M. Y., &amp; Baik, S. W. (2020). A novel
+CNN-GRU-based hybrid approach for short-term residential load forecasting. IEEE Access, 8, 143759-143768.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.ZhengZhenyu">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">ZhengZhenyu</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#ZhengZhenyu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.ZhengZhenyu" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN+LSTM network for arrythmia detection. This model initialy was designed to deal with 2D images. It was adapted
+to 1D time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Zheng, Z., Chen, Z., Hu, F., Zhu, J., Tang, Q., &amp; Liang, Y. (2020). An automatic diagnosis of arrhythmias using
+a combination of CNN and LSTM technology. Electronics, 9(1), 121.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.HouBoroui">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">HouBoroui</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#HouBoroui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.HouBoroui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic LSTM Autoencoder, where the encoded features were introduced in an SVM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>encoder_units</strong> (<em>int</em><em>, </em><em>defaults=100</em>) – The number of encoding features.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>autoencoder</strong> (<em>keras.Model</em>) – A <cite>keras.Model</cite> instance representing the full autoencoder.</p></li>
+<li><p><strong>encoder</strong> (<em>keras.Model</em>) – A <cite>keras.Model</cite> instance that representes the encoder.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Hou, Borui, et al. “LSTM based auto-encoder model for ECG arrhythmias classification.” IEEE Transactions on
+Instrumentation and Measurement (2019).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.WangKejun">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">WangKejun</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#WangKejun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.WangKejun" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">References</p>
+<p>Wang, Kejun, Xiaoxia Qi, and Hongda Liu. “Photovoltaic power forecasting based LSTM-Convolutional Network.”
+Energy 189 (2019): 116225.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.ChenChen">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">ChenChen</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#ChenChen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.ChenChen" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN+LSTM model for arrythmia classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Chen, Chen, et al. “Automated arrhythmia classification based on a combination network of CNN and LSTM.”
+Biomedical Signal Processing and Control 57 (2020): 101819.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.KimTaeYoung">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">KimTaeYoung</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#KimTaeYoung"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.KimTaeYoung" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Kim, Tae-Young, and Sung-Bae Cho. “Predicting residential energy consumption using CNN-LSTM neural networks.”
+Energy 182 (2019): 72-81.</p>
+<p class="rubric">Notes</p>
+<p>In the original paper, the time-series is windowed. Therefore, a TimeDistributed layer is employed before the
+LSTM to traverse all the generated windows. Here, we do not implement this as it is problem-specific.
+Please note that if you need this layer then you should add it manually.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.GenMinxing">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">GenMinxing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#GenMinxing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.GenMinxing" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Geng, Minxing, et al. “Epileptic Seizure Detection Based on Stockwell Transform and Bidirectional Long
+Short-Term Memory.” IEEE Transactions on Neural Systems and Rehabilitation Engineering 28.3 (2020): 573-580.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.FuJiangmeng">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">FuJiangmeng</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#FuJiangmeng"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.FuJiangmeng" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Fu, Jiangmeng, et al. “A hybrid CNN-LSTM model based actuator fault diagnosis for six-rotor UAVs.” 2019
+Chinese Control And Decision Conference (CCDC). IEEE, 2019.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.ShiHaotian">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">ShiHaotian</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#ShiHaotian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.ShiHaotian" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Shi, Haotian, et al. “Automated heartbeat classification based on deep neural network with multiple input
+layers.” Knowledge-Based Systems 188 (2020): 105036.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.HuangMeiLing">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">HuangMeiLing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units_in_dense</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(512,</span> <span class="pre">256)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#HuangMeiLing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.HuangMeiLing" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>CNN model, employed for 2-D images of ECG data. This model is adapted for 1-D time series</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+<li><p><strong>units_in_dense</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>, </em><em>defaults=</em><em>(</em><em>512</em><em>, </em><em>256</em><em>)</em>) – If <cite>include_top=True</cite>, the number of hidden units of the two dense layers before the softmax. Note:
+The default values are arbitrarely set. The number of units in these layers are not specified in the
+original paper.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Huang, Mei-Ling, and Yan-Sheng Wu. “Classification of atrial fibrillation and normal sinus rhythm based on
+convolutional neural network.” Biomedical Engineering Letters (2020): 1-11.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.LihOhShu">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">LihOhShu</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#LihOhShu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.LihOhShu" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN+LSTM model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Lih, Oh Shu, et al. “Comprehensive electrocardiographic diagnosis based on deep learning.” Artificial
+Intelligence in Medicine 103 (2020): 101789.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.GaoJunLi">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">GaoJunLi</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#GaoJunLi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.GaoJunLi" title="Permalink to this definition">¶</a></dt>
+<dd><p>LSTM network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Gao, Junli, et al. “An Effective LSTM Recurrent Network to Detect Arrhythmia on Imbalanced ECG Dataset.”
+Journal of healthcare engineering 2019 (2019).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.WeiXiaoyan">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">WeiXiaoyan</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#WeiXiaoyan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.WeiXiaoyan" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>CNN+LSTM model employed for 2-D images of ECG data. This model is adapted for 1-D time series.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Wei, Xiaoyan, et al. “Early prediction of epileptic seizures using a long-term recurrent convolutional
+network.” Journal of neuroscience methods 327 (2019): 108395.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.KongZhengmin">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">KongZhengmin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sequences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#KongZhengmin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.KongZhengmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN+LSTM</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+<li><p><strong>return_sequences</strong> (<em>bool</em><em>, </em><em>defaults=False</em>) – If True, the last LSTM layer will return the whole sequence instead of the last value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.Model</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Kong, Zhengmin, et al. “Convolution and Long Short-Term Memory Hybrid Deep Neural Networks for Remaining
+Useful Life Prognostics.” Applied Sciences 9.19 (2019): 4156.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.YildirimOzal">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">YildirimOzal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoencoder_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lstm_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#YildirimOzal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.YildirimOzal" title="Permalink to this definition">¶</a></dt>
+<dd><p>CAE-LSTM</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>autoencoder_weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded for the autoencoder network</p></li>
+<li><p><strong>lstm_weights</strong> (<em>str</em><em>, </em><em>defaults=None</em>) – The path to the weights file to be loaded for the lstm classifier network.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>autoenconder</strong> (<em>keras.Model</em>) – A <cite>keras.Model</cite> instance with the autoencoder.</p></li>
+<li><p><strong>encoder</strong> (<em>keras.Model</em>) – A <cite>keras.Model</cite> instance with only the encoder part</p></li>
+<li><p><strong>model</strong> (<em>keras.Model</em>) – A <cite>keras.Model</cite> instance representing the classification model which uses the encoder part.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Yildirim, Ozal, et al. “A new approach for arrhythmia classification using deep coded features and LSTM
+networks.” Computer methods and programs in biomedicine 176 (2019): 121-133.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.CaiWenjuan">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">CaiWenjuan</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#CaiWenjuan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.CaiWenjuan" title="Permalink to this definition">¶</a></dt>
+<dd><p>DDNN network presented in:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+<li><p><strong>reduction_ratio</strong> (<em>float</em><em>, </em><em>defaults=0.5</em>) – The reduction ratio in the transition block.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>keras.Model</cite></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><cite>Cai, Wenjuan, et al. “Accurate detection of atrial fibrillation from 12-lead ECG using deep neural network.”
+Computers in biology and medicine 116 (2020): 103378.</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.KimMinGu">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">KimMinGu</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#KimMinGu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.KimMinGu" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN ensemble model. The same model is employed n-times in an ensemble. Then, the same model is employed retraining
+using the features extracted in the ensemble.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>array</em><em>(</em><em>str</em><em>)</em><em>, </em><em>default=None</em>) – An array with the paths of the weights file for each model of the ensemble.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ensemble</strong> – A list with six <cite>keras.Model</cite> instances. One for each model of the ensemble.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list[keras.Model]</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Kim, M. G., Choi, C., &amp; Pan, S. B. (2020). Ensemble Networks for User Recognition in Various Situations Based on
+Electrocardiogram. IEEE Access, 8, 36527-36535.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.HtetMyetLynn">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">HtetMyetLynn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rnn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gru'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnn_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#HtetMyetLynn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.HtetMyetLynn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hybrid CNN+Bidirectional RNN</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+<li><p><strong>use_rnn</strong> (<em>str</em><em>, </em><em>defaults='gru'</em>) – Whether to user a Bi-direccional RNN after the CNN. Options are <cite>‘gru’</cite> for a GRU, <cite>‘lstm’</cite> for an LSTM or
+<cite>None</cite> to not use the RNN.</p></li>
+<li><p><strong>rnn_units</strong> (<em>int</em><em>, </em><em>defatuls=40</em>) – If <cite>use_rnn</cite> is not <cite>None</cite>, the number of units in the chosen biderectional RNN.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>keras.Model</cite></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Lynn, H. M., Pan, S. B., &amp; Kim, P. (2019). A deep bidirectional GRU network model for biometric
+electrocardiogram classification based on recurrent neural networks. IEEE Access, 7, 145395-145405.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.ZhangJin">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">ZhangJin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decrease_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#ZhangJin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.ZhangJin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A CNN+Bi-Directional GRU with a spatio-temporal attention mechanism.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+<li><p><strong>decrease_ratio</strong> (<em>float</em><em>, </em><em>defaults=2</em>) – The decrease ratio of the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>keras.Model</cite></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Zhang, J., Liu, A., Gao, M., Chen, X., Zhang, X., &amp; Chen, X. (2020). ECG-based multi-class arrhythmia detection
+using spatio-temporal attention-based convolutional recurrent neural network.
+Artificial Intelligence in Medicine, 106, 101856.</p>
+<p class="rubric">Notes</p>
+<p>The time dimension must be at least 1000 as there is a huge reduction on each convolutional block.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.YaoQihang">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">YaoQihang</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#YaoQihang"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.YaoQihang" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attention-based time-incremental convolutional neural network (ATI-CNN)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>keras.Model</cite></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Yao, Q., Wang, R., Fan, X., Liu, J., &amp; Li, Y. (2020). Multi-class Arrhythmia detection from 12-lead varied-length
+ECG using Attention-based Time-Incremental Convolutional Neural Network. Information Fusion, 53, 174-182.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="src.pyCNN_LSTM.YiboGao">
+<code class="sig-prename descclassname"><span class="pre">src.pyCNN_LSTM.</span></code><code class="sig-name descname"><span class="pre">YiboGao</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'softmax'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pyCNN_LSTM.html#YiboGao"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pyCNN_LSTM.YiboGao" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN using RTA blocks for end-to-end attrial fibrilation detection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_top</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to include the fully-connected layer at the top of the network.</p></li>
+<li><p><strong>weights</strong> (<em>str</em><em>, </em><em>default=None</em>) – The path to the weights file to be loaded.</p></li>
+<li><p><strong>input_tensor</strong> (<em>keras.Tensor</em><em>, </em><em>defaults=None</em>) – Optional Keras tensor (i.e. output of <cite>layers.Input()</cite>) to use as input for the model.</p></li>
+<li><p><strong>input_shape</strong> (<em>Tuple</em><em>, </em><em>defaults=None</em>) – If <cite>input_tensor=None</cite>, a tuple that defines the input shape for the model.</p></li>
+<li><p><strong>classes</strong> (<em>int</em><em>, </em><em>defaults=5</em>) – If <cite>include_top=True</cite>, the number of units in the top layer to classify data.</p></li>
+<li><p><strong>classifier_activation</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>defaults='softmax'</em>) – The activation function to use on the “top” layer. Ignored unless <cite>include_top=True</cite>. Set
+<cite>classifier_activation=None</cite> to return the logits of the “top” layer.</p></li>
+<li><p><strong>return_loss</strong> (<em>bool</em><em>, </em><em>defaults=False</em>) – Whether to return the custom loss function (en_loss) employed for training this model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – A <cite>keras.Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>keras.Model</cite></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Gao, Y., Wang, H., &amp; Liu, Z. (2021). An end-to-end atrial fibrillation detection by a novel residual-based
+temporal attention convolutional neural network with exponential nonlinearity loss.
+Knowledge-Based Systems, 212, 106589.</p>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>Code adapted from the original implementation available at:</dt><dd><p><a class="reference external" href="https://github.com/o00O00o/RTA-CNN">https://github.com/o00O00o/RTA-CNN</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pyCNN-LSTM</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Models</a><ul class="simple">
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">pyCNN-LSTM</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Angel Miguel García Vico.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/models.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
