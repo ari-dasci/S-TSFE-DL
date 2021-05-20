@@ -1,20 +1,19 @@
-import pyCNN_LSTM
 import os
-import wfdb
-import numpy as np
-from tensorflow import keras
 from typing import Optional, Tuple
+
+import numpy as np
+import wfdb
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score
 
 
-def get_segments(data: wfdb.Record,
-                 annotations: wfdb.Annotation,
-                 labels: np.ndarray,
-                 left_offset: int = 99,
-                 right_offset: int = 160,
-                 fixed_length: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
-    """ It generates the segments of uninterrupted sequences of arrythmia beats into the corresponding arrythmia groups
+def get_mit_bih_segments(data: wfdb.Record,
+                         annotations: wfdb.Annotation,
+                         labels: np.ndarray,
+                         left_offset: int = 99,
+                         right_offset: int = 160,
+                         fixed_length: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    It generates the segments of uninterrupted sequences of arrythmia beats into the corresponding arrythmia groups
     in labels.
 
     :param data:            The arrythmia signal as a wfdb Record class
@@ -36,12 +35,12 @@ def get_segments(data: wfdb.Record,
 
     # Get the tuples for consecutive symbols. The tuple is (first, last, symbol) where first is the index of the first occurrence of symbol,
     # and last is the index of the last consecutive ocurrence.
-    while(i < len(annotations.symbol)):
+    while (i < len(annotations.symbol)):
         first = i
         current_symbol = annotations.symbol[i]
-        while(i < len(annotations.symbol) and annotations.symbol[i] == current_symbol):
+        while (i < len(annotations.symbol) and annotations.symbol[i] == current_symbol):
             i += 1
-        last = i-1
+        last = i - 1
         tup = (first, last, current_symbol)
         annot_segments.append(tup)
 
@@ -73,7 +72,6 @@ def get_segments(data: wfdb.Record,
                     new_segment = np.pad(new_segment, (0, number_of_zeros), mode='constant', constant_values=0)
 
             result.append(new_segment)
-
     result = np.stack(result, axis=0)
     result = np.reshape(result, (result.shape[0], result.shape[1], 1))  # shape[0] segments with 1 variable, with shape[1] timestamps each
     classes = np.array(classes, dtype=str)
@@ -91,7 +89,8 @@ def read_mit_bih(path: str,
                  left_offset: int = 99,
                  right_offset: int = 160,
                  fixed_length: Optional[int] = 1000) -> Tuple[np.ndarray, np.ndarray]:
-    """ It reads the MIT-BIH Arrythmia X with the specified default configuration of the work presented at:
+    """
+    It reads the MIT-BIH Arrythmia X with the specified default configuration of the work presented at:
     Oh, Shu Lih, et al. "Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
     variable length heart beats." Computers in biology and medicine 102 (2018): 278-287.
 
@@ -117,12 +116,12 @@ def read_mit_bih(path: str,
         data = wfdb.rdrecord(path + f)
         annotation = wfdb.rdann(path + f, 'atr')
 
-        s, clazz = get_segments(data=data,
-                                 annotations=annotation,
-                                 labels=labels,
-                                 left_offset=left_offset,
-                                 right_offset=right_offset,
-                                 fixed_length=fixed_length)
+        s, clazz = get_mit_bih_segments(data=data,
+                                        annotations=annotation,
+                                        labels=labels,
+                                        left_offset=left_offset,
+                                        right_offset=right_offset,
+                                        fixed_length=fixed_length)
 
         segments.append(s)
         classes.append(clazz)
@@ -132,62 +131,3 @@ def read_mit_bih(path: str,
     print("done.")
 
     return (segments, classes)
-
-
-# Leemos los datos
-dir = "../physionet.org/files/mitdb/1.0.0/"
-
-X, y = read_mit_bih(dir)
-
-# mostramos la forma de los datos de entrada. En total tenemos 16499 series temporales
-# de 1 variable con 1000 instantes de tiempo cada una de ellas.
-# Cada serie temporal tiene únicamente 1 valor asociado o clase que determina el tipo de arritmia
-print("X shape: ", X.shape)
-print("y shape: ", y.shape)
-
-y_hot_encoded = np.zeros((y.size, y.max()+1))
-y_hot_encoded[np.arange(y.size), y] = 1
-y_hot_encoded
-
-# Define the input
-inp = keras.Input((X.shape[1], X.shape[2]))
-
-# Define the models to be tested
-models = {
-    # 'KimMinGu': pyCNN_LSTM.KimMinGu(inp, X, y_hot_encoded, num_classes=5)
-    'CaiWenjuan': pyCNN_LSTM.CaiWenjuan(inp),
-    'OhShuLih': pyCNN_LSTM.OhShuLih(inp),
-    'KhanZulfiqar': pyCNN_LSTM.KhanZulfiqar(inp),
-    'ZhengZhenyu': pyCNN_LSTM.ZhengZhenyu(inp),
-    'HouBourui': pyCNN_LSTM.HouBoroui(inp),
-    'WangKejun': pyCNN_LSTM.WangKejun(inp),
-    'ChenChen': pyCNN_LSTM.ChenChen(inp),
-    'KimTaeYoung': pyCNN_LSTM.KimTaeYoung(inp),
-    'GenMixing': pyCNN_LSTM.GenMinxing(inp),
-    'FuJiangmeng': pyCNN_LSTM.FuJiangmeng(inp),
-    'ShiHaotian': pyCNN_LSTM.ShiHaotian(inp),
-    'HuangMeiLing': pyCNN_LSTM.HuangMeiLing(inp),
-    'LihOhShu': pyCNN_LSTM.LihOhShu(inp),
-    'GaoJunli': pyCNN_LSTM.GaoJunLi(inp),
-    'WeiXiaoyan': pyCNN_LSTM.WeiXiaoyan(inp),
-    'KongZhengmin': pyCNN_LSTM.KongZhengmin(inp),
-    # 'YildirimOzal': pyCNN_LSTM.YildirimOzal(inp)
-}
-
-# Run each model
-for name, model in models.items():
-    # Define the model
-    x = keras.layers.Dense(10, activation='relu')(model)
-    out = keras.layers.Dense(5, activation='softmax')(x)
-    new_model = keras.Model(inputs=inp, outputs=out, name=name)
-    new_model.summary()
-
-    # Compile & fit
-    print("running ", name, " .....")
-    new_model.compile(optimizer='Adam', loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
-    new_model.fit(X, y_hot_encoded, batch_size=256, epochs=25, verbose=0)
-
-    # evaluate
-    pred = np.argmax(new_model.predict(X), axis=1)
-    acc = accuracy_score(y, pred)
-    print("Accuracy: " + str(acc))
