@@ -1,6 +1,9 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+import torch
+from torch import nn
+from torch.nn import functional as F
 
 
 def check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation):
