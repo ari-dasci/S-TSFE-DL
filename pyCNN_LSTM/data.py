@@ -143,13 +143,17 @@ class MIT_BIH(Dataset):
                  labels=np.array(['N', 'L', 'R', 'A', 'V']),
                  length=1000,
                  left_offset=99,
-                 right_offset=160):
+                 right_offset=160,
+                 return_hot_coded=False):
         X, y = read_mit_bih(path, labels, left_offset=left_offset, right_offset=right_offset, fixed_length=length)
-        y_hot_encoded = np.zeros((y.size, y.max() + 1))
+        y_hot_encoded = np.zeros((y.size, y.max() + 1), dtype='int64')
         y_hot_encoded[np.arange(y.size), y] = 1
 
         self.x = X.reshape((X.shape[0], X.shape[2], X.shape[1]))
-        self.y = y
+        if return_hot_coded:
+            self.y = y_hot_encoded
+        else:
+            self.y = y
 
     def __len__(self):
         return len(self.y)
