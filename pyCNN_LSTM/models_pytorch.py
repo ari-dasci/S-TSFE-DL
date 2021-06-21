@@ -341,6 +341,114 @@ class YaoQihang(pyCNN_LSTM_BaseModule):
 
         return x
 
+class HtetMyetLynn(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 use_rnn: Optional[str] = 'gru',  # Options are 'gru' or 'lstm' or None
+                 top_module: Optional[nn.Module] = nn.Sequential(nn.LazyLinear(out_features=5), nn.Softmax()),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(HtetMyetLynn, self).__init__()
+        self.loss = loss
+        self.optimizer = optimizer
+        self.kwargs = kwargs
+
+        self.convLayers = nn.Sequential(
+            nn.LazyConv1d(out_channels=30, kernel_size=5, padding='same'),
+            nn.MaxPool1d(kernel_size=2),
+            nn.Conv1d(in_channels=30, out_channels=30, kernel_size=2, padding='same'),
+            nn.MaxPool1d(kernel_size=2),
+            nn.Conv1d(in_channels=30, out_channels=60, kernel_size=5, padding='same'),
+            nn.MaxPool1d(kernel_size=2),
+            nn.Conv1d(in_channels=60, out_channels=60, kernel_size=2, padding='same'),
+            nn.MaxPool1d(kernel_size=2),
+        )
+
+        if use_rnn is not None:
+            if use_rnn.lower() == 'gru':
+                self.rnn = nn.GRU(input_size=60, hidden_size=40, dropout=0.2, bidirectional=True, batch_first=True)
+            else:
+                self.rnn = nn.LSTM(input_size=60, hidden_size=40, dropout=0.2, bidirectional=True, batch_first=True)
+        else:
+            self.rnn = None
+
+        self.classifier = top_module
+
+    def forward(self, x):
+        x = self.convLayers(x)
+
+        if self.rnn is not None:
+            x = flip_indices_for_conv_to_lstm(x)
+            x, _ = self.rnn(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x[:, -1, :])  # get only the last timestep
+
+        return x
+
+
+# class ZhangJin(pyCNN_LSTM_BaseModule):  # TODO: Finish this model if possible
+#     def __init__(self,
+#                  decrease_ratio: int = 2,
+#                  top_module: Optional[nn.Module] = None,
+#                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+#                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
+#                  **kwargs
+#                  ):
+#         attention_modules = []
+#         convLayers[]
+#         for conv_layers, filters in zip([2, 2, 3, 3, 3],
+#                                         [64, 128, 256, 256, 256]):  # 5-block layers
+#             for i in range(conv_layers):
+#                 block = nn.Sequential(
+#                     nn.LazyConv1d(out_channels=filters, kernel_size=3, padding='same'),
+#                     nn.BatchNorm1d(num_features=filters),
+#                     nn.ReLU()
+#                 )
+#                 convLayers.append(block)
+#             convLayers.append(nn.MaxPool1d(kernel_size=3, stride=3))
+#             convLayers.append(nn.Dropout(p=0.2))
+#
+#         self.convolutions = nn.Sequential(*convLayers)
+#
+# def ZhangJin(include_top=True,
+#              weights=None,
+#              input_tensor=None,
+#              input_shape=None,
+#              classes=5,
+#              classifier_activation="softmax",
+#              decrease_ratio=2):
+#
+#
+#     # Model definition
+#     for conv_layers, filters in zip([2, 2, 3, 3, 3],
+#                                     [64, 128, 256, 256, 256]):  # 5-block layers
+#         for i in range(conv_layers):
+#             x = layers.Conv1D(filters=filters, kernel_size=3, padding="same")(x)
+#             x = layers.BatchNormalization()(x)
+#             x = layers.Activation(activation=relu)(x)
+#         x = layers.MaxPooling1D(pool_size=3)(x)
+#         x = layers.Dropout(rate=0.2)(x)
+#
+#         # Adds attention module after each convolutional block
+#         x_spatial = spatial_attention_block_ZhangJin(decrease_ratio, x)
+#         x = layers.multiply([x_spatial, x])
+#         x_temporal = temporal_attention_block_ZhangJin(x)
+#         x = layers.multiply([x_temporal, x])
+#
+#     x = layers.Bidirectional(layers.GRU(units=12, return_sequences=True))(x)
+#     x = layers.Dropout(rate=0.2)(x)
+#     if include_top:
+#         x = layers.GlobalMaxPool1D()(x)
+#         x = layers.Dense(units=classes, activation=classifier_activation)(x)
+#
+#     model = keras.Model(inputs=inp, outputs=x, name="ZhangJin")
+#
+#     if weights is not None:
+#         model.load_weights(weights)
+#
+#     return model
 
 ####################################
 #  SIMPLE TRAINING TEST
@@ -360,7 +468,7 @@ train_loader = torch.utils.data.DataLoader(mit_bih, batch_size=256, sampler=trai
 # Example of model using a different optimizer and loss function than defaults.
 # Default loss is nll_loss, here we use a modification for sparse_cce.
 # Default optimizer is Adam, here we use SGD with momentum.
-a = YaoQihang(optimizer=torch.optim.SGD,
+a = HtetMyetLynn(optimizer=torch.optim.SGD,
               loss=nn.CrossEntropyLoss(),
              lr=0.001,  ## Additional params of the  SGD optimizer
              momentum=0.01)
@@ -371,6 +479,6 @@ t = torch.randn(2, 1, 1000)
 r = a(t)
 
 # Train
-trainer = pl.Trainer(gpus=1, max_epochs=6)
+trainer = pl.Trainer(gpus=1, max_epochs=50)
 trainer.fit(a, train_dataloader=train_loader)
 
