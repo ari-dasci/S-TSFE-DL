@@ -1,15 +1,15 @@
 import os
 import numpy as np
 import torch
+import torchmetrics
 from torch import nn
 from torch.nn import functional as F
 import pytorch_lightning as pl
-from typing import Callable, Optional, List, Tuple
-from data import MIT_BIH
-from torch.utils.data.sampler import SubsetRandomSampler
-from blocks_pytorch import RTABlock, SqueezeAndExcitationModule, DenseNetDenseBlock, DenseNetTransitionBlock, \
+from typing import Callable, Optional, Dict, Tuple
+from pyCNN_LSTM.blocks_pytorch import RTABlock, SqueezeAndExcitationModule, DenseNetDenseBlock, DenseNetTransitionBlock, \
     SpatialAttentionBlockZhangJin, TemporalAttentionBlockZhangJin
 from pyCNN_LSTM.utils import flip_indices_for_conv_to_lstm
+
 
 
 class pyCNN_LSTM_BaseModule(pl.LightningModule):
@@ -18,10 +18,16 @@ class pyCNN_LSTM_BaseModule(pl.LightningModule):
 
     Parameters
     ----------
+        in_features: int,
+            The number of input features.
+
         loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
             The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
             a Tensor with the loss.
 
+        metrics: List[Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            A dictionary of metrics to be returned in the test phase. These metric are functions that accepts two tensors as
+            inputs, i.e., predictions and targets, and return another tensor with the metric value. Defaults contains the accuracy
 
         top_module: nn.Module, defaults=None
             The optional nn.Module to be used as additional top layers.
@@ -36,7 +42,8 @@ class pyCNN_LSTM_BaseModule(pl.LightningModule):
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = None,
-                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs
                  ):
@@ -46,6 +53,7 @@ class pyCNN_LSTM_BaseModule(pl.LightningModule):
         self.loss = loss
         self.optimizer = optimizer
         self.classifier = top_module
+        self.metrics = metrics
         pass
 
     def forward(self, x):
@@ -56,7 +64,22 @@ class pyCNN_LSTM_BaseModule(pl.LightningModule):
         y_hat = self(x)
         loss = self.loss(y_hat, y)
         self.log('train_loss', loss)
+        #self.log('train_acc', self.accuracy(y_hat, y))
         return loss
+
+    def test_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+
+        # compute test loss
+        loss = self.loss(y_hat, y)
+        self.log('test_loss', loss, on_step=True, on_epoch=True)
+
+        # compute the remaining test metrics
+        for name, f in self.metrics.items():
+            value = f(y_hat, y)
+            self.log(str('test_' + name), value, on_step=True, on_epoch=True)
+
 
     def configure_optimizers(self):
         opt = self.optimizer(self.parameters(), **self.kwargs)
@@ -76,8 +99,7 @@ class OhShuLih_Classifier(nn.Module):
             nn.ReLU(),
             nn.Linear(in_features=20, out_features=10),
             nn.ReLU(),
-            nn.Linear(in_features=10, out_features=n_classes),
-            nn.Softmax()
+            nn.Linear(in_features=10, out_features=n_classes)
         )
 
     def forward(self, x):
@@ -117,11 +139,12 @@ class OhShuLih(pyCNN_LSTM_BaseModule):
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = OhShuLih_Classifier(in_features=20, n_classes=5),
-                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs
                  ):
-        super(OhShuLih, self).__init__(in_features, top_module, loss, optimizer, **kwargs)
+        super(OhShuLih, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
 
         conv_layers = []
 
@@ -248,10 +271,11 @@ class YiboGao(pyCNN_LSTM_BaseModule):
                  in_features: int,
                  top_module: Optional[nn.Module] = YiboGaoClassifier(128, 5),
                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = en_loss,
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs
                  ):
-        super(YiboGao, self).__init__(in_features, top_module, loss, optimizer, **kwargs)
+        super(YiboGao, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
 
         # Model definition
         self.module = nn.Sequential(
@@ -289,12 +313,13 @@ class YaoQihangClassifier(nn.Module):
             nn.Linear(32, n_classes),
             # On each timestep it makes the softmax. Then, the final classification probablity is the average
             # throughout all the timesteps
-            nn.Softmax(dim=2)
+            # nn.Softmax(dim=2)
         )
 
     def forward(self, x):
         x1 = self.module(x)
-        mean = torch.mean(x1, dim=1)
+        # NOTE:  This classifier must return the mean softmax over ALL TIMESTEPS. TAKE CARE OF THE LOSS FUNCTION!
+        mean = torch.mean(F.softmax(x1, dim=2), dim=1)
         return mean
 
 
@@ -310,10 +335,11 @@ class YaoQihang(pyCNN_LSTM_BaseModule):
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = YaoQihangClassifier(32, 5),
-                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = None,
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs):
-        super(YaoQihang, self).__init__(in_features, top_module, loss, optimizer, **kwargs)
+        super(YaoQihang, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
 
         self.convolutions = nn.Sequential(
             self.__convBlock(in_features, 64),
@@ -356,12 +382,13 @@ class HtetMyetLynn(pyCNN_LSTM_BaseModule):
     def __init__(self,
                  in_features: int,
                  use_rnn: Optional[str] = 'gru',  # Options are 'gru' or 'lstm' or None
-                 top_module: Optional[nn.Module] = nn.Sequential(nn.Linear(in_features=80, out_features=5), nn.Softmax()),
-                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+                 top_module: Optional[nn.Module] = nn.Sequential(nn.Linear(in_features=80, out_features=5)),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs
                  ):
-        super(HtetMyetLynn, self).__init__(in_features, top_module, loss, optimizer, **kwargs)
+        super(HtetMyetLynn, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
 
         self.convLayers = nn.Sequential(
             nn.Conv1d(in_channels=in_features, out_channels=30, kernel_size=5, padding='same'),
@@ -401,11 +428,12 @@ class YildirimOzal(pyCNN_LSTM_BaseModule):
                  input_shape: Tuple[int, int],    # (Channels, seq_length)
                  train_autoencoder: bool = True,  # This is for training the autoencoder or the LSTM-classifier
                  top_module: Optional[nn.Module] = None,
-                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs
                  ):
-        super(YildirimOzal, self).__init__(input_shape[0], top_module, loss, optimizer, **kwargs)
+        super(YildirimOzal, self).__init__(input_shape[0], top_module, loss, metrics, optimizer, **kwargs)
         self.train_autoencoder = train_autoencoder
 
         self.encoder = nn.Sequential(
@@ -443,24 +471,42 @@ class YildirimOzal(pyCNN_LSTM_BaseModule):
     def forward(self, x):
         reduction = self.encoder(x)
         if self.train_autoencoder:
-            return self.decoder(reduction)
+            reconstruction = self.decoder(reduction)
+            reconstruction = reconstruction.view(reconstruction.size(0), 1, reconstruction.size(1))
+            return reconstruction
         else:
-            x, _ = self.lstm(reduction)
+            x = flip_indices_for_conv_to_lstm(x)
+            x, _ = self.lstm(x)
             if self.classifier is not None:
-                x = self.classifier(x)
+                x = self.classifier(x[:, -1, :])
             return x
+
+    def training_step(self, batch, batch_idx):
+        if self.train_autoencoder:
+            x, _ = batch
+            x_hat = self(x)
+            loss = self.loss(x_hat, x)
+            self.log('train_loss', loss)
+            return loss
+        else:
+            x, y = batch
+            y_hat = self(x)
+            loss = self.loss(y_hat, y)
+            self.log('train_loss', loss)
+            return loss
 
 
 class CaiWenjuan(pyCNN_LSTM_BaseModule):  # TODO: Squeeze and Activation units depends on input size.
     def __init__(self,
                  in_features: int,
                  reduction_ratio: float = 0.6,
-                 top_module: Optional[nn.Module] = nn.Sequential(nn.Linear(67, 5), nn.Softmax()),
-                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+                 top_module: Optional[nn.Module] = nn.Sequential(nn.Linear(67, 5)),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs
                  ):
-        super(CaiWenjuan, self).__init__(in_features, top_module, loss, optimizer, **kwargs)
+        super(CaiWenjuan, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
 
         # Convolutional inputs
         self.conv1 = nn.Conv1d(in_channels=in_features, out_channels=8, kernel_size=1, padding='same')
@@ -506,14 +552,11 @@ class ZhangJin_Classifier(nn.Module):
     def __init__(self, in_features, n_classes):
         super(ZhangJin_Classifier, self).__init__()
         self.linear = nn.Sequential(
-            nn.Linear(in_features, n_classes),
-            nn.Softmax()
+            nn.Linear(in_features, n_classes)
         )
 
     def forward(self, x):
-        x1 = torch.max(x, dim=1).values
-
-        return self.linear(x1)
+        return self.linear(x[:, -1, :])
 
 
 class ZhangJin(pyCNN_LSTM_BaseModule):
@@ -528,11 +571,12 @@ class ZhangJin(pyCNN_LSTM_BaseModule):
                  in_features: int,
                  decrease_ratio: int = 2,
                  top_module: Optional[nn.Module] = ZhangJin_Classifier(24, 5),
-                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = F.nll_loss,
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs
                  ):
-        super(ZhangJin, self).__init__(in_features, top_module, loss, optimizer, **kwargs)
+        super(ZhangJin, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
         self.decrease_ratio = decrease_ratio
 
         self.convolutions = nn.ModuleList(
@@ -596,36 +640,216 @@ class ZhangJin(pyCNN_LSTM_BaseModule):
         return x
 
 
-####################################
-#  SIMPLE TRAINING TEST
-################################
-def sparse_categorical_crossentropy(y_pred: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-    """
-    ONLY FOR TESTING PURPOSES: This functions simulates the Keras spares_categorical_crossentropy in PyTorch
-    """
-    return F.nll_loss(torch.log(y_pred), y)
+class KongZhengmin_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence=False):
+        super(KongZhengmin_Classifier, self).__init__()
+        self.return_sequnce = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(in_features=in_features, out_features=50),
+            nn.ReLU(),
+            nn.Linear(in_features=50, out_features=50),
+            nn.ReLU(),
+            nn.Linear(in_features=50, out_features=n_classes)
+        )
+
+    def forward(self, x):
+        if self.return_sequnce:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
 
 
-# Read the data as a DataLoader (I create a class for this in `data.py`)
-mit_bih = MIT_BIH(path="physionet.org/files/mitdb/1.0.0/", return_hot_coded=False)
-train_sampler = SubsetRandomSampler(range(len(mit_bih)))
-train_loader = torch.utils.data.DataLoader(mit_bih, batch_size=256, sampler=train_sampler, num_workers=1)
+class KongZhengmin(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = KongZhengmin_Classifier(64, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(KongZhengmin, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
 
-# Example of model using a different optimizer and loss function than defaults.
-# Default loss is nll_loss, here we use a modification for sparse_cce.
-# Default optimizer is Adam, here we use SGD with momentum.
-a = ZhangJin(in_features=1,
-            optimizer=torch.optim.SGD,
-            loss=nn.CrossEntropyLoss(),
-             lr=0.001,  ## Additional params of the  SGD optimizer
-             momentum=0.01)
+        self.convolution = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=32, kernel_size=5),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2)
+        )
 
-# Dry-run for Lazy initialisation, see
-# https://pytorch.org/docs/stable/generated/torch.nn.modules.lazy.LazyModuleMixin.html#torch.nn.modules.lazy.LazyModuleMixin
-t = torch.randn(2, 1, 1000)
-r = a(t)
+        self.lstm = nn.LSTM(batch_first=True, input_size=32, hidden_size=64, num_layers=2)
 
-# Train
-trainer = pl.Trainer(gpus=1, max_epochs=50)
-trainer.fit(a, train_dataloader=train_loader)
+    def forward(self, x):
+        x = self.convolution(x)
 
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+
+class WeiXiaoyan_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes):
+        super(WeiXiaoyan_Classifier, self).__init__()
+        self.module = nn.Sequential(
+            nn.Linear(in_features, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, n_classes),
+        )
+
+    def forward(self, x):
+        return self.module(x)
+
+
+class WeiXiaoyan(pyCNN_LSTM_BaseModule):
+
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = WeiXiaoyan_Classifier(512, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(WeiXiaoyan, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=32, kernel_size=5),
+            nn.LeakyReLU(negative_slope=0.01),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.BatchNorm1d(num_features=32),
+            nn.Conv1d(in_channels=32, out_channels=64, kernel_size=3),
+            nn.LeakyReLU(negative_slope=0.01),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.BatchNorm1d(num_features=64),
+            nn.Conv1d(in_channels=64, out_channels=128, kernel_size=3),
+            nn.LeakyReLU(negative_slope=0.01),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.BatchNorm1d(num_features=128),
+            nn.Conv1d(in_channels=128, out_channels=256, kernel_size=3),
+            nn.LeakyReLU(negative_slope=0.01),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.BatchNorm1d(num_features=256),
+            nn.Conv1d(in_channels=256, out_channels=512, kernel_size=3),
+            nn.LeakyReLU(negative_slope=0.01),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.BatchNorm1d(num_features=512),
+        )
+        self.lstm1 = nn.LSTM(input_size=512, hidden_size=512, batch_first=True)
+        self.batchNorm = nn.BatchNorm1d(num_features=512)
+        self.lstm2 = nn.LSTM(input_size=512, hidden_size=512, batch_first=True)
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm1(x)
+        x = x.reshape((x.size(0), x.size(2), x.size(1)))
+        x = self.batchNorm(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm2(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x[:, -1, :])
+        return x
+
+
+class GaoJunLi_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence=False):
+        super(GaoJunLi_Classifier, self).__init__()
+
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(in_features, 32),
+            nn.ReLU(),
+            nn.Linear(32, n_classes)
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:,-1,:])
+
+
+class GaoJunLi(pyCNN_LSTM_BaseModule):
+
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = GaoJunLi_Classifier(64, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(GaoJunLi, self).__init__(in_features, top_module, loss, optimizer, **kwargs)
+        self.lstm = nn.LSTM(input_size=in_features, hidden_size=64, dropout=0.3)
+
+    def forward(self, x):
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm(x)
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+
+class LiOhShu_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(LiOhShu_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(in_features, 8),
+            nn.ReLU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(8, 8),
+            nn.ReLU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(8, n_classes)
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class LihOhShu(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = LiOhShu_Classifier(10, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(LihOhShu, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=3, kernel_size=20, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=3, out_channels=6, kernel_size=10, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=6, out_channels=6, kernel_size=5, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=6, out_channels=6, kernel_size=5, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=6, out_channels=6, kernel_size=10, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2)
+        )
+
+        self.lstm = nn.LSTM(input_size=6, hidden_size=10, batch_first=True)
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
