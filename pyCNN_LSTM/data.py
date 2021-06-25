@@ -1,9 +1,10 @@
 import os
 from typing import Optional, Tuple
-
 import numpy as np
 import wfdb
 from sklearn.preprocessing import LabelEncoder
+from torch.utils.data import Dataset
+from sklearn.model_selection import train_test_split
 
 
 def get_mit_bih_segments(data: wfdb.Record,
@@ -131,3 +132,31 @@ def read_mit_bih(path: str,
     print("done.")
 
     return (segments, classes)
+
+
+class MIT_BIH(Dataset):
+    """
+        Reads the MIT-BIH datasets and return a data loader with Shape (N, C, L) where N is the batch size, C is the
+        number of channels (1 in this dataset) and L is the `length` of the time series (1000 by default).
+    """
+    def __init__(self, path,
+                 labels=np.array(['N', 'L', 'R', 'A', 'V']),
+                 length=1000,
+                 left_offset=99,
+                 right_offset=160,
+                 return_hot_coded=False):
+        X, y = read_mit_bih(path, labels, left_offset=left_offset, right_offset=right_offset, fixed_length=length)
+        y_hot_encoded = np.zeros((y.size, y.max() + 1), dtype='int64')
+        y_hot_encoded[np.arange(y.size), y] = 1
+
+        self.x = X.reshape((X.shape[0], X.shape[2], X.shape[1]))
+        if return_hot_coded:
+            self.y = y_hot_encoded
+        else:
+            self.y = y
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, index):
+        return self.x[index], self.y[index]
