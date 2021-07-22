@@ -9,6 +9,7 @@ from typing import Callable, Optional, Dict, Tuple
 from pyCNN_LSTM.blocks_pytorch import RTABlock, SqueezeAndExcitationModule, DenseNetDenseBlock, DenseNetTransitionBlock, \
     SpatialAttentionBlockZhangJin, TemporalAttentionBlockZhangJin
 from pyCNN_LSTM.utils import flip_indices_for_conv_to_lstm
+from pyCNN_LSTM.utils import TimeDistributed
 
 
 
@@ -849,6 +850,542 @@ class LihOhShu(pyCNN_LSTM_BaseModule):
         x = self.convolutions(x)
         x = flip_indices_for_conv_to_lstm(x)
         x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+#####################################################################
+
+class KhanZulfiqar_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(KhanZulfiqar_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(in_features, 8),
+            nn.ReLU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(8, 8),
+            nn.ReLU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(8, n_classes)
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class KhanZulfiqar(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = LiOhShu_Classifier(10, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(KhanZulfiqar, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=3, kernel_size=20, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=3, out_channels=6, kernel_size=10, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=6, out_channels=6, kernel_size=5, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=6, out_channels=6, kernel_size=5, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=6, out_channels=6, kernel_size=10, bias=False),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2)
+        )
+
+        self.lstm = nn.LSTM(input_size=6, hidden_size=10, batch_first=True)
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+class ZhengZhenyu_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(ZhengZhenyu_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(in_features, 2048),
+            nn.ELU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(2048, 2048),
+            nn.ELU(),
+            nn.Linear(2048, n_classes)
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class ZhengZhenyu(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = ZhengZhenyu_Classifier(256, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(ZhengZhenyu, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=64, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.BatchNorm1d(num_features=64),
+            nn.Conv1d(in_channels=64, out_channels=64, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=64, out_channels=128, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.BatchNorm1d(num_features=128),
+            nn.Conv1d(in_channels=128, out_channels=128, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=128, out_channels=256, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.BatchNorm1d(num_features=256),
+            nn.Conv1d(in_channels=256, out_channels=256, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.MaxPool1d(kernel_size=2, stride=2)
+        )
+
+        self.lstm = nn.LSTM(input_size=256, hidden_size=256, batch_first=True)
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+
+class HouBoroui(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 encoder_units: int = 100,
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(HouBoroui, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.encoder = nn.Sequential(
+            nn.LSTM(input_size=in_features, hidden_size=encoder_units, batch_first=True),
+            nn.LSTM(input_size=encoder_units, hidden_size=encoder_units, batch_first=True),
+            TimeDistributed(nn.Linear(encoder_units,1))
+        )
+
+    def forward(self, x):
+        x = self.encoder(x)
+
+        return x
+
+class WangKejun_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(WangKejun_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(in_features, 2048),
+            nn.ELU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(2048, 2048),
+            nn.ELU(),
+            nn.Linear(2048, n_classes)
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class WangKejun(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = ZhengZhenyu_Classifier(256, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(WangKejun, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=64, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.BatchNorm1d(num_features=64),
+            nn.Conv1d(in_channels=64, out_channels=64, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=64, out_channels=128, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.BatchNorm1d(num_features=128),
+            nn.Conv1d(in_channels=128, out_channels=128, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=128, out_channels=256, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.BatchNorm1d(num_features=256),
+            nn.Conv1d(in_channels=256, out_channels=256, kernel_size=3, stride=1, bias=True, padding="same"),
+            nn.ELU(),
+            nn.MaxPool1d(kernel_size=2, stride=2)
+        )
+
+        self.lstm = nn.LSTM(input_size=256, hidden_size=256, batch_first=True)
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+class ChenChen_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(ChenChen_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(in_features, n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class ChenChen(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = ChenChen_Classifier(64, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(ChenChen, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=251, kernel_size=5, stride=1, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=251, out_channels=150, kernel_size=5, stride=1, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=150, out_channels=100, kernel_size=10, stride=1, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=100, out_channels=81, kernel_size=20, stride=1, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=81, out_channels=61, kernel_size=20, stride=1, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+            nn.Conv1d(in_channels=61, out_channels=14, kernel_size=10, stride=1, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2),
+        )
+
+        self.lstm1 = nn.LSTM(input_size=14, hidden_size=32, batch_first=True)
+        self.lstm2 = nn.LSTM(input_size=32, hidden_size=64, batch_first=True)
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm1(x)
+        x, _ = self.lstm2(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+
+class KimTaeYoung_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(KimTaeYoung_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(in_features, 32),
+            nn.ReLU(),
+            nn.Linear(32, n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class KimTaeYoung(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = KimTaeYoung_Classifier(64, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(KimTaeYoung, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=64, kernel_size=2, stride=1, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=1),
+            nn.Conv1d(in_channels=64, out_channels=64, kernel_size=2, stride=1, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=1)
+        )
+
+        self.lstm = nn.LSTM(input_size=64, hidden_size=64, batch_first=True)
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+
+class GenMinxing_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(GenMinxing_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(in_features, n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class GenMinxing(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = GenMinxing_Classifier(40, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(GenMinxing, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.lstm = nn.LSTM(input_size=in_features, hidden_size=40, batch_first=True, bidirectional=True)
+
+    def forward(self, x):
+        x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+
+class FuJiangmeng_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(FuJiangmeng_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(in_features, 128),
+            nn.Tanh(),
+            nn.Dropout(p=0.3),
+            nn.Linear(128, n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class FuJiangmeng(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = FuJiangmeng_Classifier(40, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(FuJiangmeng, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=32, kernel_size=1, stride=1, bias=True, padding="same"),
+            nn.Tanh(),
+            nn.MaxPool1d(kernel_size=2, stride=1),
+        )
+
+        self.lstm = nn.LSTM(input_size=32, hidden_size=256, batch_first=True, dropout=0.3)
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm(x)
+        x, _ = self.lstm(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+
+class ShiHaotian_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, in_features_original, return_sequence = False):
+        super(ShiHaotian_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module1 = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(in_features, 518),
+            nn.ReLU(),
+            nn.Linear(518, 88),
+            nn.ReLU()
+        )
+        self.module2 = nn.Sequential(
+            nn.Linear(88+in_features_original, n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            x1 = self.module1(x)
+            x_conc = torch.cat((x1, x), 0)
+            return self.module2(x_conc)
+        else:
+            x1 = self.module1(x)
+            x_conc = torch.cat((x1, x), 0)
+            return self.module2(x_conc[:, -1, :])
+
+
+class ShiHaotian(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = None,
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(ShiHaotian, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+        if self.classifier is None:
+            self.classifier = ShiHaotian_Classifier(40, 5, in_features)
+
+        self.convolutions1 = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=32, kernel_size=13, stride=2, bias=True, padding="valid"),
+            nn.LeakyReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2)
+        )
+
+        self.convolutions2 = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=32, kernel_size=13, stride=1, bias=True, padding="valid"),
+            nn.LeakyReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2)
+        )
+
+        self.convolutions3 = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=32, kernel_size=13, stride=2, bias=True, padding="valid"),
+            nn.LeakyReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=2)
+        )
+
+        self.lstm = nn.LSTM(input_size=32*3, hidden_size=32, batch_first=True)
+
+    def forward(self, x):
+        x1 = self.convolutions1(x)
+        x2 = self.convolutions1(x)
+        x3 = self.convolutions1(x)
+        x_conc = torch.cat((x1, x2, x3), 1)
+        x_conc = flip_indices_for_conv_to_lstm(x_conc)
+        x, _ = self.lstm(x_conc)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+
+class HuangMeiLing_Classifier(nn.Module):
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(HuangMeiLing_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Flatten(),
+            nn.Dropout(p=0.5),
+            nn.Linear(in_features, 512),
+            nn.ReLU(),
+            nn.Linear(512, 256),
+            nn.ReLU(),
+            nn.Linear(256, n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class HuangMeiLing(pyCNN_LSTM_BaseModule):
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = HuangMeiLing_Classifier(256, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(HuangMeiLing, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.ConstantPad1d(padding=1, value=0),
+            nn.Conv1d(in_channels=in_features, out_channels=48, kernel_size=15, stride=6, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=1),
+            nn.ConstantPad1d(padding=3, value=0),
+            nn.Conv1d(in_channels=48, out_channels=256, kernel_size=7, stride=2, bias=True, padding="valid"),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2, stride=1),
+        )
+
+    def forward(self, x):
+        x = self.convolutions(x)
 
         if self.classifier is not None:
             x = self.classifier(x)
