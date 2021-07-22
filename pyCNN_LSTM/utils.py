@@ -5,6 +5,22 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+class TimeDistributed(nn.Module):
+    def init(self, module):
+        super(TimeDistributed, self).init()
+        self.module = module
+
+    def forward(self, x):
+        if len(x.size()) <= 2:
+            return self.module(x)
+        t, n = x.size(0), x.size(1)
+        # merge batch and seq dimensions
+        x_reshape = x.contiguous().view(t * n, *x.size()[2:])
+        y = self.module(x_reshape)
+        # We have to reshape Y
+        y = y.contiguous().view(t, n, *y.size()[1:])
+        return y
+
 
 def flip_indices_for_conv_to_lstm(x: torch.Tensor) -> torch.Tensor:
     """
