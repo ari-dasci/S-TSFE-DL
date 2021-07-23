@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+
 import unittest
 import torch
 import torch.nn as nn
@@ -25,8 +28,8 @@ class MyTestCase(unittest.TestCase):
         tra_size = int(len(mit_bih) * 0.8)
         tst_size = len(mit_bih) - tra_size
         train, test = torch.utils.data.random_split(mit_bih, [tra_size, tst_size])
-        train_loader = torch.utils.data.DataLoader(train, batch_size=256, num_workers=8)
-        test_loader = torch.utils.data.DataLoader(test, batch_size=256, num_workers=8)
+        train_loader = torch.utils.data.DataLoader(train, batch_size=256, num_workers=0)
+        test_loader = torch.utils.data.DataLoader(test, batch_size=256, num_workers=0)
         # train_sampler = SubsetRandomSampler(range(len(mit_bih)))
         # train_loader = torch.utils.data.DataLoader(mit_bih, batch_size=256, sampler=train_sampler, num_workers=8)
 
@@ -113,6 +116,6 @@ class MyTestCase(unittest.TestCase):
         acc = self.trainModel(model, 1000, 30, False, True)
 
         assert 1.0 >= acc >= 0.8
-        
+
 if __name__ == '__main__':
     unittest.main()
