@@ -8,7 +8,7 @@ import pytorch_lightning as pl
 from typing import Callable, Optional, Dict, Tuple
 from pyCNN_LSTM.blocks_pytorch import RTABlock, SqueezeAndExcitationModule, DenseNetDenseBlock, DenseNetTransitionBlock, \
     SpatialAttentionBlockZhangJin, TemporalAttentionBlockZhangJin
-from pyCNN_LSTM.utils import flip_indices_for_conv_to_lstm
+from pyCNN_LSTM.utils import flip_indices_for_conv_to_lstm, flip_indices_for_conv_to_lstm_reshape
 from pyCNN_LSTM.utils import TimeDistributed
 
 
@@ -881,7 +881,7 @@ class KhanZulfiqar_Classifier(nn.Module):
 class KhanZulfiqar(pyCNN_LSTM_BaseModule):
     def __init__(self,
                  in_features: int,
-                 top_module: Optional[nn.Module] = LiOhShu_Classifier(10, 5),
+                 top_module: Optional[nn.Module] = KhanZulfiqar_Classifier(10, 5),
                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
                  metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
@@ -981,29 +981,6 @@ class ZhengZhenyu(pyCNN_LSTM_BaseModule):
             x = self.classifier(x)
         return x
 
-
-class HouBoroui(pyCNN_LSTM_BaseModule):
-    def __init__(self,
-                 in_features: int,
-                 encoder_units: int = 100,
-                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
-                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
-                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
-                 **kwargs
-                 ):
-        super(HouBoroui, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
-
-        self.encoder = nn.Sequential(
-            nn.LSTM(input_size=in_features, hidden_size=encoder_units, batch_first=True),
-            nn.LSTM(input_size=encoder_units, hidden_size=encoder_units, batch_first=True),
-            TimeDistributed(nn.Linear(encoder_units,1))
-        )
-
-    def forward(self, x):
-        x = self.encoder(x)
-
-        return x
-
 class WangKejun_Classifier(nn.Module):
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(WangKejun_Classifier, self).__init__()
@@ -1028,7 +1005,7 @@ class WangKejun_Classifier(nn.Module):
 class WangKejun(pyCNN_LSTM_BaseModule):
     def __init__(self,
                  in_features: int,
-                 top_module: Optional[nn.Module] = ZhengZhenyu_Classifier(256, 5),
+                 top_module: Optional[nn.Module] = WangKejun_Classifier(256, 5),
                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
                  metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
@@ -1201,7 +1178,7 @@ class GenMinxing_Classifier(nn.Module):
 class GenMinxing(pyCNN_LSTM_BaseModule):
     def __init__(self,
                  in_features: int,
-                 top_module: Optional[nn.Module] = GenMinxing_Classifier(40, 5),
+                 top_module: Optional[nn.Module] = GenMinxing_Classifier(80, 5),
                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
                  metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
@@ -1241,7 +1218,7 @@ class FuJiangmeng_Classifier(nn.Module):
 class FuJiangmeng(pyCNN_LSTM_BaseModule):
     def __init__(self,
                  in_features: int,
-                 top_module: Optional[nn.Module] = FuJiangmeng_Classifier(40, 5),
+                 top_module: Optional[nn.Module] = FuJiangmeng_Classifier(256, 5),
                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
                  metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
@@ -1259,7 +1236,7 @@ class FuJiangmeng(pyCNN_LSTM_BaseModule):
 
     def forward(self, x):
         x = self.convolutions(x)
-        x = flip_indices_for_conv_to_lstm(x)
+        x = flip_indices_for_conv_to_lstm_reshape(x)
         x, _ = self.lstm(x)
 
         if self.classifier is not None:
@@ -1279,19 +1256,19 @@ class ShiHaotian_Classifier(nn.Module):
             nn.ReLU()
         )
         self.module2 = nn.Sequential(
-            nn.Linear(88+in_features_original, n_classes),
+            nn.Linear(88+32, n_classes),
             nn.Softmax()
         )
 
     def forward(self, x):
         if self.return_sequence:
             x1 = self.module1(x)
-            x_conc = torch.cat((x1, x), 0)
+            x_conc = torch.cat((x1, x[:,-1,:]), 1)
             return self.module2(x_conc)
         else:
             x1 = self.module1(x)
-            x_conc = torch.cat((x1, x), 0)
-            return self.module2(x_conc[:, -1, :])
+            x_conc = torch.cat((x1, x[:,-1,:]), 1)
+            return self.module2(x_conc)
 
 
 class ShiHaotian(pyCNN_LSTM_BaseModule):
@@ -1305,7 +1282,7 @@ class ShiHaotian(pyCNN_LSTM_BaseModule):
                  ):
         super(ShiHaotian, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
         if self.classifier is None:
-            self.classifier = ShiHaotian_Classifier(40, 5, in_features)
+            self.classifier = ShiHaotian_Classifier(7904, 5, in_features)
 
         self.convolutions1 = nn.Sequential(
             nn.Conv1d(in_channels=in_features, out_channels=32, kernel_size=13, stride=2, bias=True, padding="valid"),
@@ -1365,7 +1342,7 @@ class HuangMeiLing_Classifier(nn.Module):
 class HuangMeiLing(pyCNN_LSTM_BaseModule):
     def __init__(self,
                  in_features: int,
-                 top_module: Optional[nn.Module] = HuangMeiLing_Classifier(256, 5),
+                 top_module: Optional[nn.Module] = HuangMeiLing_Classifier(81, 5),
                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
                  metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
