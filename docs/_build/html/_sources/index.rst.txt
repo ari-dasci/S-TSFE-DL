@@ -25,6 +25,8 @@ To install pyCNN-LSTM, we recommend using ``pip``.
 
    models_pytorch
 
+   blocks_pytorch
+
 
 * :ref:`genindex`
 
