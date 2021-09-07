@@ -29,6 +29,10 @@ To install pyCNN-LSTM, we recommend using ``pip``.
 
    blocks
 
+   data
+
+   utils
+
 
 * :ref:`genindex`
 

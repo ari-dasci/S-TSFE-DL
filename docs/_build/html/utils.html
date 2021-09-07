@@ -1,0 +1,151 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Utils Functions &#8212; pyCNN-LSTM  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Data Functions" href="data.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="utils-functions">
+<h1>Utils Functions<a class="headerlink" href="#utils-functions" title="Permalink to this headline">¶</a></h1>
+<p>Here can be found the implementation of the auxiliary functions for the implementation of the architectures.</p>
+<div class="toctree-wrapper compound">
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.utils.TimeDistributed" title="pyCNN_LSTM.utils.TimeDistributed"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.utils.TimeDistributed</span></code></a>(module)</td>
+<td>TimeDistributed module implementation.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm" title="pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm</span></code></a>(x)</td>
+<td>Changes the (N, C, L) dimension to (N, L, C).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm_reshape" title="pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm_reshape"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm_reshape</span></code></a>(x)</td>
+<td>Changes the (N, C, L) dimension to (N, L, C).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pyCNN_LSTM.utils.check_inputs" title="pyCNN_LSTM.utils.check_inputs"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.utils.check_inputs</span></code></a>(include_top,&nbsp;…)</td>
+<td>Auxiliar function for checking the input parameters of the models.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.utils.full_convolution" title="pyCNN_LSTM.utils.full_convolution"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.utils.full_convolution</span></code></a>(x,&nbsp;…)</td>
+<td>It performs a Full convolution operation on the given keras Tensor.</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pyCNN_LSTM.utils.TimeDistributed">
+<code class="descclassname">pyCNN_LSTM.utils.</code><code class="descname">TimeDistributed</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/utils.html#TimeDistributed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.utils.TimeDistributed" title="Permalink to this definition">¶</a></dt>
+<dd><p>TimeDistributed module implementation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm">
+<code class="descclassname">pyCNN_LSTM.utils.</code><code class="descname">flip_indices_for_conv_to_lstm</code><span class="sig-paren">(</span><em>x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyCNN_LSTM/utils.html#flip_indices_for_conv_to_lstm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the (N, C, L) dimension to (N, L, C). This is due to features in PyTorch’s LSTMs are expected on the last dim.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm_reshape">
+<code class="descclassname">pyCNN_LSTM.utils.</code><code class="descname">flip_indices_for_conv_to_lstm_reshape</code><span class="sig-paren">(</span><em>x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyCNN_LSTM/utils.html#flip_indices_for_conv_to_lstm_reshape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm_reshape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the (N, C, L) dimension to (N, L, C). This is due to features in PyTorch’s LSTMs are expected on the last dim.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.utils.check_inputs">
+<code class="descclassname">pyCNN_LSTM.utils.</code><code class="descname">check_inputs</code><span class="sig-paren">(</span><em>include_top</em>, <em>weights</em>, <em>input_tensor</em>, <em>input_shape</em>, <em>classes</em>, <em>classifier_activation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/utils.html#check_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.utils.check_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Auxiliar function for checking the input parameters of the models.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.utils.full_convolution">
+<code class="descclassname">pyCNN_LSTM.utils.</code><code class="descname">full_convolution</code><span class="sig-paren">(</span><em>x</em>, <em>filters</em>, <em>kernel_size</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/utils.html#full_convolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.utils.full_convolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>It performs a Full convolution operation on the given keras Tensor.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="data.html" title="previous chapter">Data Functions</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, DaSCI, Ignacio Aguilera Martos, Ángel Miguel García Vico, Julian Luengo, Francisco Herrera.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

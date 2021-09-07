@@ -1,0 +1,184 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Data Functions &#8212; pyCNN-LSTM  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Keras Blocks" href="blocks.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="data-functions">
+<h1>Data Functions<a class="headerlink" href="#data-functions" title="Permalink to this headline">¶</a></h1>
+<p>Here can be found the implementation of the functions to read the data for the arrythmia classification.</p>
+<div class="toctree-wrapper compound">
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.data.get_mit_bih_segments" title="pyCNN_LSTM.data.get_mit_bih_segments"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.data.get_mit_bih_segments</span></code></a>(data,&nbsp;…)</td>
+<td>It generates the segments of uninterrupted sequences of arrythmia beats into the corresponding arrythmia groups in labels.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pyCNN_LSTM.data.read_mit_bih" title="pyCNN_LSTM.data.read_mit_bih"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.data.read_mit_bih</span></code></a>(path,&nbsp;labels,&nbsp;,&nbsp;…)</td>
+<td>It reads the MIT-BIH Arrythmia X with the specified default configuration of the work presented at: Oh, Shu Lih, et al.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.data.MIT_BIH" title="pyCNN_LSTM.data.MIT_BIH"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.data.MIT_BIH</span></code></a>(path[,&nbsp;labels,&nbsp;…])</td>
+<td>Reads the MIT-BIH datasets and return a data loader with Shape (N, C, L) where N is the batch size, C is the number of channels (1 in this dataset) and L is the <cite>length</cite> of the time series (1000 by default).</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pyCNN_LSTM.data.get_mit_bih_segments">
+<code class="descclassname">pyCNN_LSTM.data.</code><code class="descname">get_mit_bih_segments</code><span class="sig-paren">(</span><em>data: wfdb.io.record.Record</em>, <em>annotations: wfdb.io.annotation.Annotation</em>, <em>labels: numpy.ndarray</em>, <em>left_offset: int = 99</em>, <em>right_offset: int = 160</em>, <em>fixed_length: typing.Union[int</em>, <em>NoneType] = None</em><span class="sig-paren">)</span> &#x2192; typing.Tuple[numpy.ndarray, numpy.ndarray]<a class="reference internal" href="_modules/pyCNN_LSTM/data.html#get_mit_bih_segments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.data.get_mit_bih_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the segments of uninterrupted sequences of arrythmia beats into the corresponding arrythmia groups
+in labels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – The arrythmia signal as a wfdb Record class</li>
+<li><strong>annotations</strong> – The set of annotations as a wfdb Annotation class</li>
+<li><strong>labels</strong> – The set of valid labels for the different segments. Segments with different labels are discarded</li>
+<li><strong>left_offset</strong> – The number of instance at the left of the first R peak of the segment. Default to 99</li>
+<li><strong>right_offset</strong> – The number of instances at the right of the last R peak of the segment. Default to 160</li>
+<li><strong>fixed_length</strong> – Should the segments have a fixed length? If fixed_length is a number, then the segments will
+have the specified length. If the segment length is greater than fixed_length, it is truncated
+or padded with zeros otherwise. Default to None.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple that contains the data and the associated labels. Data has a shape of (N, T, V)
+where N is the number of segments (or instances), V is the number of variables (1 in this case)
+and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
+value passed in the :parameter labels param.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.data.read_mit_bih">
+<code class="descclassname">pyCNN_LSTM.data.</code><code class="descname">read_mit_bih</code><span class="sig-paren">(</span><em>path: str, labels: numpy.ndarray = array(['N', 'L', 'R', 'A', 'V'], dtype='&lt;U1'), left_offset: int = 99, right_offset: int = 160, fixed_length: typing.Union[int, NoneType] = 1000</em><span class="sig-paren">)</span> &#x2192; typing.Tuple[numpy.ndarray, numpy.ndarray]<a class="reference internal" href="_modules/pyCNN_LSTM/data.html#read_mit_bih"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.data.read_mit_bih" title="Permalink to this definition">¶</a></dt>
+<dd><p>It reads the MIT-BIH Arrythmia X with the specified default configuration of the work presented at:
+Oh, Shu Lih, et al. “Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
+variable length heart beats.” Computers in biology and medicine 102 (2018): 278-287.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>labels</strong> – The labels of the different types of arrythmia to be employed</li>
+<li><strong>path</strong> – The path of the directory where the X files are stored. Note: The X and annotations
+files must have the same name, but different extension (annotations must have .atr extension)</li>
+<li><strong>left_offset</strong> – The number of instances at the left of the first R peak of the segment. Defaults to 99</li>
+<li><strong>right_offset</strong> – The number of instances at the right of the last R peak of the segment. Defaults to 160</li>
+<li><strong>fixed_length</strong> – If different to None, the segment will have the specified number of instances. Note that
+if the segment length &gt; fixed_length it will be truncate or padded with zeros otherwise.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple that contains the data and the associated labels as an ndarray. Data has a shape of (N, T, V)
+where N is the number of segments (or instances), V is the number of variables (1 in this case)
+and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
+value passed in the :parameter labels param.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.data.MIT_BIH">
+<code class="descclassname">pyCNN_LSTM.data.</code><code class="descname">MIT_BIH</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/data.html#MIT_BIH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.data.MIT_BIH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the MIT-BIH datasets and return a data loader with Shape (N, C, L) where N is the batch size, C is the
+number of channels (1 in this dataset) and L is the <cite>length</cite> of the time series (1000 by default).</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="blocks.html" title="previous chapter">Keras Blocks</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/data.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, DaSCI, Ignacio Aguilera Martos, Ángel Miguel García Vico, Julian Luengo, Francisco Herrera.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/data.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
