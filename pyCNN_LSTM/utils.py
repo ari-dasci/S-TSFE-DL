@@ -6,6 +6,9 @@ from torch import nn
 from torch.nn import functional as F
 
 class TimeDistributed(nn.Module):
+    """
+    TimeDistributed module implementation.
+    """
     def __init__(self, module):
         super(TimeDistributed, self).__init__()
         self.module = module
