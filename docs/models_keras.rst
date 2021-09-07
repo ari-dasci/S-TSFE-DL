@@ -1,5 +1,5 @@
 ******
-Models
+Models Keras
 ******
 
 Here the different deep learning models included in the library are summarised. All of them are developed in Keras.

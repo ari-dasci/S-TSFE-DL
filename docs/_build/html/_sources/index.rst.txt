@@ -7,6 +7,8 @@ using hybrid deep learning models that uses both a Convolutional Neural Network 
 Neural Network (RNN). The use of these models allow both to capture the spatial features and the time
 dependencies between timesteps.
 
+This library contains the implementation of 22 architectures both in Tensorflow+Keras and PyTorch.
+
 Installation
 ============
 
@@ -19,7 +21,9 @@ To install pyCNN-LSTM, we recommend using ``pip``.
 .. toctree::
    :maxdepth: 2
 
-   models
+   models_keras
+
+   models_pytorch
 
 
 * :ref:`genindex`
