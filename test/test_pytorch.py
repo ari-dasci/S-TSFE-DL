@@ -143,6 +143,29 @@ class MyTestCase(unittest.TestCase):
         acc = self.trainModel(model, 1000, 30)
         assert 1.0 >= acc >= 0.8
 
+    # # No funciona
+    # #@unittest.skip
+    # def test_HouBoroui(self):
+    #     model = HouBoroui(
+    #         in_features=1,
+    #         top_module=nn.Linear(1, 5),
+    #         loss=nn.MSELoss(),
+    #         metrics={"acc": acc_from_logits},
+    #         optimizer=torch.optim.Adam,
+    #         lr=0.001
+    #     )
+    #     # First, train the autoencoder
+    #     self.trainModel(model, 1000, 30, False, False)
+    #
+    #     # Next, train the LSTM and the classifier with the encoded features.
+    #     model.train_autoencoder = False
+    #     model.encoder.requires_grad_(False)
+    #     model.decoder.requires_grad_(False)
+    #     model.loss = nn.CrossEntropyLoss()
+    #     acc = self.trainModel(model, 1000, 30, False, True)
+    #
+    #     assert 1.0 >= acc >= 0.8
+
     @unittest.skip
     def test_WangKejun(self):
         model = WangKejun(in_features=1,
