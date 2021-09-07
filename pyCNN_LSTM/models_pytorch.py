@@ -90,6 +90,19 @@ class pyCNN_LSTM_BaseModule(pl.LightningModule):
 class OhShuLih_Classifier(nn.Module):
     """
     Classifier of the OhShuLi model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
     """
 
     def __init__(self, in_features, n_classes):
@@ -113,13 +126,19 @@ class OhShuLih(pyCNN_LSTM_BaseModule):
 
     Parameters
     ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=OhShuLih_Classifier(20,5)
+            The optional  nn.Module to be used as additional top layers.
+
         loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
             The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
             a Tensor with the loss.
 
-
-        top_module: nn.Module, defaults=OhShuLih_Classifier(5)
-            The optional  nn.Module to be used as additional top layers.
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
 
         optimizer:  torch.optim.Optimizer
             The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
@@ -206,6 +225,22 @@ def en_loss(y_pred: torch.Tensor, y_true: torch.Tensor) -> torch.Tensor:
 
 
 class YiboGaoClassifier(nn.Module):
+    """
+    Classifier of the Yibo Gao model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes):
         super(YiboGaoClassifier, self).__init__()
         self.n_classes = n_classes
@@ -230,32 +265,30 @@ class YiboGao(pyCNN_LSTM_BaseModule):
 
     Parameters
     ----------
-        include_top: bool, default=True
-            Whether to include the fully-connected layer at the top of the network.
+        in_features: int
+            Number of features of the input tensors
 
-        weights: str, default=None
-            The path to the weights file to be loaded.
+        top_module: nn.Module, defaults=YiboGaoClassifier(128, 5)
+            The optional  nn.Module to be used as additional top layers.
 
-        input_tensor: keras.Tensor, defaults=None
-            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
 
-        input_shape: Tuple, defaults=None
-            If `input_tensor=None`, a tuple that defines the input shape for the model.
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
 
-        classes: int, defaults=5
-            If `include_top=True`, the number of units in the top layer to classify data.
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
 
-        classifier_activation: str or callable, defaults='softmax'
-            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
-            `classifier_activation=None` to return the logits of the "top" layer.
-
-        return_loss: bool, defaults=False
-            Whether to return the custom loss function (en_loss) employed for training this model.
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
 
     Returns
     -------
-        model: `keras.Model`
-            A `keras.Model` instance.
+        `LightningModule`
+            A pyTorch Lightning Module instance.
 
     References
     ----------
@@ -306,6 +339,22 @@ class YiboGao(pyCNN_LSTM_BaseModule):
 
 
 class YaoQihangClassifier(nn.Module):
+    """
+    Classifier of the Yao Qihang model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes):
         super(YaoQihangClassifier, self).__init__()
         self.module = nn.Sequential(
@@ -325,7 +374,42 @@ class YaoQihangClassifier(nn.Module):
 
 
 class YaoQihang(pyCNN_LSTM_BaseModule):
+    """
+    Attention-based time-incremental convolutional neural network (ATI-CNN)
 
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=YaoQihangClassifier(32, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Yao, Q., Wang, R., Fan, X., Liu, J., & Li, Y. (2020). Multi-class Arrhythmia detection from 12-lead varied-length
+        ECG using Attention-based Time-Incremental Convolutional Neural Network. Information Fusion, 53, 174-182.
+
+    """
     def __convBlock(self, in_features, filters) -> nn.Module:
         return nn.Sequential(
             nn.Conv1d(in_channels=in_features, out_channels=filters, kernel_size=3, padding='same'),
@@ -380,6 +464,44 @@ class YaoQihang(pyCNN_LSTM_BaseModule):
 
 
 class HtetMyetLynn(pyCNN_LSTM_BaseModule):
+    """
+    Hybrid CNN+Bidirectional RNN
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        use_rnn: str, ["gru", "lstm", None], defaults="gru"
+            This parameter controls wether to use RNN layers and what type to use
+
+        top_module: nn.Module
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Lynn, H. M., Pan, S. B., & Kim, P. (2019). A deep bidirectional GRU network model for biometric
+        electrocardiogram classification based on recurrent neural networks. IEEE Access, 7, 145395-145405.
+    """
     def __init__(self,
                  in_features: int,
                  use_rnn: Optional[str] = 'gru',  # Options are 'gru' or 'lstm' or None
@@ -424,7 +546,49 @@ class HtetMyetLynn(pyCNN_LSTM_BaseModule):
 
 
 class YildirimOzal(pyCNN_LSTM_BaseModule):
+    """CAE-LSTM
 
+    Parameters
+    ----------
+        input_shape: Tuple[int, int]
+            Shape of the input tensors (number of channels, sequence length)
+
+        train_autoencoder: bool, defaults=True
+            This parameter controls wether to train the autoencoder or the classifier
+
+        top_module: nn.Module
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        autoenconder: `LightningModule`
+            A pyTorch Lightning Module instance with the autoencoder.
+
+        encoder: `LightningModule`
+            A pyTorch Lightning Module instance with the encoder.
+
+        model: `LightningModule`
+            A pyTorch Lightning Module instance with the classifier.
+
+    References
+    ----------
+        Yildirim, Ozal, et al. "A new approach for arrhythmia classification using deep coded features and LSTM
+        networks." Computer methods and programs in biomedicine 176 (2019): 121-133.
+     """
     def __init__(self,
                  input_shape: Tuple[int, int],    # (Channels, seq_length)
                  train_autoencoder: bool = True,  # This is for training the autoencoder or the LSTM-classifier
@@ -498,6 +662,44 @@ class YildirimOzal(pyCNN_LSTM_BaseModule):
 
 
 class CaiWenjuan(pyCNN_LSTM_BaseModule):  # TODO: Squeeze and Activation units depends on input size.
+    """
+    DDNN network presented in:
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        reduction_ratio: float, defaults=0.6
+            This parameter controls the reduction of the dense transition block
+
+        top_module: nn.Module
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        `Cai, Wenjuan, et al. "Accurate detection of atrial fibrillation from 12-lead ECG using deep neural network."
+        Computers in biology and medicine 116 (2020): 103378.`
+   """
     def __init__(self,
                  in_features: int,
                  reduction_ratio: float = 0.6,
@@ -550,6 +752,22 @@ class CaiWenjuan(pyCNN_LSTM_BaseModule):  # TODO: Squeeze and Activation units d
 
 
 class ZhangJin_Classifier(nn.Module):
+    """
+    Classifier of the Zhang Jin model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes):
         super(ZhangJin_Classifier, self).__init__()
         self.linear = nn.Sequential(
@@ -561,6 +779,45 @@ class ZhangJin_Classifier(nn.Module):
 
 
 class ZhangJin(pyCNN_LSTM_BaseModule):
+    """
+    A CNN+Bi-Directional GRU with a spatio-temporal attention mechanism.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        decrease_ratio: int, defaults=2
+            This parameter controls the decrease ratio of the spatial attention block
+
+        top_module: nn.Module, defaults=ZhangJin_Classifier(24, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Zhang, J., Liu, A., Gao, M., Chen, X., Zhang, X., & Chen, X. (2020). ECG-based multi-class arrhythmia detection
+        using spatio-temporal attention-based convolutional recurrent neural network.
+        Artificial Intelligence in Medicine, 106, 101856.
+   """
     def __convBlock(self, in_features, filters) -> nn.Module:
         return nn.Sequential(
             nn.Conv1d(in_channels=in_features, out_channels=filters, kernel_size=3, padding='same'),
@@ -642,6 +899,25 @@ class ZhangJin(pyCNN_LSTM_BaseModule):
 
 
 class KongZhengmin_Classifier(nn.Module):
+    """
+    Classifier of the Kong Zhengmin model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence=False):
         super(KongZhengmin_Classifier, self).__init__()
         self.return_sequnce = return_sequence
@@ -661,6 +937,41 @@ class KongZhengmin_Classifier(nn.Module):
 
 
 class KongZhengmin(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=KongZhengmin_Classifier(64, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Kong, Zhengmin, et al. "Convolution and Long Short-Term Memory Hybrid Deep Neural Networks for Remaining
+        Useful Life Prognostics." Applied Sciences 9.19 (2019): 4156.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = KongZhengmin_Classifier(64, 5),
@@ -691,6 +1002,22 @@ class KongZhengmin(pyCNN_LSTM_BaseModule):
 
 
 class WeiXiaoyan_Classifier(nn.Module):
+    """
+    Classifier of the Wei Xiaoyan model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes):
         super(WeiXiaoyan_Classifier, self).__init__()
         self.module = nn.Sequential(
@@ -704,7 +1031,41 @@ class WeiXiaoyan_Classifier(nn.Module):
 
 
 class WeiXiaoyan(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM model employed for 2-D images of ECG data. This model is adapted for 1-D time series.
 
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=WeiXiaoyan_Classifier(512, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Wei, Xiaoyan, et al. "Early prediction of epileptic seizures using a long-term recurrent convolutional
+        network." Journal of neuroscience methods 327 (2019): 108395.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = WeiXiaoyan_Classifier(512, 5),
@@ -756,6 +1117,25 @@ class WeiXiaoyan(pyCNN_LSTM_BaseModule):
 
 
 class GaoJunLi_Classifier(nn.Module):
+    """
+    Classifier of the Gao Jun Li model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence=False):
         super(GaoJunLi_Classifier, self).__init__()
 
@@ -774,7 +1154,41 @@ class GaoJunLi_Classifier(nn.Module):
 
 
 class GaoJunLi(pyCNN_LSTM_BaseModule):
+    """
+    LSTM network
 
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=GaoJunLi_Classifier(64, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Gao, Junli, et al. "An Effective LSTM Recurrent Network to Detect Arrhythmia on Imbalanced ECG Dataset."
+        Journal of healthcare engineering 2019 (2019).
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = GaoJunLi_Classifier(64, 5),
@@ -795,6 +1209,22 @@ class GaoJunLi(pyCNN_LSTM_BaseModule):
 
 
 class LiOhShu_Classifier(nn.Module):
+    """
+    Classifier of the Li Oh Shu model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(LiOhShu_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -816,6 +1246,41 @@ class LiOhShu_Classifier(nn.Module):
 
 
 class LihOhShu(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM model
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=LiOhShu_Classifier(10, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Lih, Oh Shu, et al. "Comprehensive electrocardiographic diagnosis based on deep learning." Artificial
+        Intelligence in Medicine 103 (2020): 101789.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = LiOhShu_Classifier(10, 5),
@@ -858,6 +1323,25 @@ class LihOhShu(pyCNN_LSTM_BaseModule):
 #####################################################################
 
 class KhanZulfiqar_Classifier(nn.Module):
+    """
+    Classifier of the Khan Zulfiqar model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(KhanZulfiqar_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -879,6 +1363,41 @@ class KhanZulfiqar_Classifier(nn.Module):
 
 
 class KhanZulfiqar(pyCNN_LSTM_BaseModule):
+    """
+    CNN+GRU model for electricity forecasting
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=KhanZulfiqar_Classifier(10, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Sajjad, M., Khan, Z. A., Ullah, A., Hussain, T., Ullah, W., Lee, M. Y., & Baik, S. W. (2020). A novel
+        CNN-GRU-based hybrid approach for short-term residential load forecasting. IEEE Access, 8, 143759-143768.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = KhanZulfiqar_Classifier(10, 5),
@@ -919,6 +1438,25 @@ class KhanZulfiqar(pyCNN_LSTM_BaseModule):
         return x
 
 class ZhengZhenyu_Classifier(nn.Module):
+    """
+    Classifier of the Zheng Zhenyu model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(ZhengZhenyu_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -939,6 +1477,42 @@ class ZhengZhenyu_Classifier(nn.Module):
 
 
 class ZhengZhenyu(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM network for arrythmia detection. This model initialy was designed to deal with 2D images. It was adapted
+    to 1D time series.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=ZhengZhenyu_Classifier(256, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Zheng, Z., Chen, Z., Hu, F., Zhu, J., Tang, Q., & Liang, Y. (2020). An automatic diagnosis of arrhythmias using
+        a combination of CNN and LSTM technology. Electronics, 9(1), 121.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = ZhengZhenyu_Classifier(256, 5),
@@ -981,7 +1555,60 @@ class ZhengZhenyu(pyCNN_LSTM_BaseModule):
             x = self.classifier(x)
         return x
 
+#
+# class HouBoroui(pyCNN_LSTM_BaseModule):
+#     def __init__(self,
+#                  in_features: int,
+#                  encoder_units: int = 100,
+#                  top_module: Optional[nn.Module] = None,
+#                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+#                  metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+#                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
+#                  **kwargs
+#                  ):
+#         super(HouBoroui, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+#
+#         self.lstm1 = nn.LSTM(input_size=in_features, hidden_size=encoder_units, batch_first=True)
+#         self.lstm2 = nn.LSTM(input_size=encoder_units, hidden_size=encoder_units, batch_first=True)
+#         self.td = TimeDistributed(nn.Sequential(nn.Linear(encoder_units,1)))
+#
+#         # self.encoder = nn.Sequential(
+#         #     nn.LSTM(input_size=in_features, hidden_size=encoder_units, batch_first=True),
+#         #     nn.LSTM(input_size=encoder_units, hidden_size=encoder_units, batch_first=True),
+#         #     TimeDistributed(nn.Sequential(nn.Linear(encoder_units,1)))
+#         # )
+#
+#     def forward(self, x):
+#         x = flip_indices_for_conv_to_lstm(x)
+#         x, _ = self.lstm1(x)
+#         x, _ = self.lstm2(x)
+#         x = self.td(x)
+#
+#         if self.classifier is not None:
+#             x = self.classifier(x)
+#
+#         return x
+
 class WangKejun_Classifier(nn.Module):
+    """
+    Classifier of the Wang Kejun model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(WangKejun_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -1003,6 +1630,41 @@ class WangKejun_Classifier(nn.Module):
 
 
 class WangKejun(pyCNN_LSTM_BaseModule):
+    """
+    CNN 1D-LSTM
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=WangKejun_Classifier(256, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Wang, Kejun, Xiaoxia Qi, and Hongda Liu. "Photovoltaic power forecasting based LSTM-Convolutional Network."
+        Energy 189 (2019): 116225.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = WangKejun_Classifier(256, 5),
@@ -1046,6 +1708,25 @@ class WangKejun(pyCNN_LSTM_BaseModule):
         return x
 
 class ChenChen_Classifier(nn.Module):
+    """
+    Classifier of the Chen Chen model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(ChenChen_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -1063,6 +1744,41 @@ class ChenChen_Classifier(nn.Module):
 
 
 class ChenChen(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM model for arrythmia classification.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=ChenChen_Classifier(64, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Chen, Chen, et al. "Automated arrhythmia classification based on a combination network of CNN and LSTM."
+        Biomedical Signal Processing and Control 57 (2020): 101819.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = ChenChen_Classifier(64, 5),
@@ -1109,6 +1825,25 @@ class ChenChen(pyCNN_LSTM_BaseModule):
 
 
 class KimTaeYoung_Classifier(nn.Module):
+    """
+    Classifier of the Kim Tae Young model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(KimTaeYoung_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -1127,6 +1862,47 @@ class KimTaeYoung_Classifier(nn.Module):
 
 
 class KimTaeYoung(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM model for arrythmia classification.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=KimTaeYoung_Classifier(64, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Kim, Tae-Young, and Sung-Bae Cho. "Predicting residential energy consumption using CNN-LSTM neural networks."
+        Energy 182 (2019): 72-81.
+
+    Notes
+    -----
+        In the original paper, the time-series is windowed. Therefore, a TimeDistributed layer is employed before the
+        LSTM to traverse all the generated windows. Here, we do not implement this as it is problem-specific.
+        Please note that if you need this layer then you should add it manually.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = KimTaeYoung_Classifier(64, 5),
@@ -1159,6 +1935,25 @@ class KimTaeYoung(pyCNN_LSTM_BaseModule):
 
 
 class GenMinxing_Classifier(nn.Module):
+    """
+    Classifier of the Gen Minxing model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(GenMinxing_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -1176,6 +1971,41 @@ class GenMinxing_Classifier(nn.Module):
 
 
 class GenMinxing(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM model for arrythmia classification.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=GenMinxing_Classifier(80, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Geng, Minxing, et al. "Epileptic Seizure Detection Based on Stockwell Transform and Bidirectional Long
+        Short-Term Memory." IEEE Transactions on Neural Systems and Rehabilitation Engineering 28.3 (2020): 573-580.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = GenMinxing_Classifier(80, 5),
@@ -1197,6 +2027,25 @@ class GenMinxing(pyCNN_LSTM_BaseModule):
 
 
 class FuJiangmeng_Classifier(nn.Module):
+    """
+    Classifier of the Fu Jiangmeng model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(FuJiangmeng_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -1216,6 +2065,41 @@ class FuJiangmeng_Classifier(nn.Module):
 
 
 class FuJiangmeng(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM model for arrythmia classification.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=FuJiangmeng_Classifier(256, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Fu, Jiangmeng, et al. "A hybrid CNN-LSTM model based actuator fault diagnosis for six-rotor UAVs." 2019
+        Chinese Control And Decision Conference (CCDC). IEEE, 2019.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = FuJiangmeng_Classifier(256, 5),
@@ -1245,6 +2129,28 @@ class FuJiangmeng(pyCNN_LSTM_BaseModule):
 
 
 class ShiHaotian_Classifier(nn.Module):
+    """
+    Classifier of the Shi Haotian model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        in_features_original: int
+            Number of features of the original tensors in the main architecture
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, in_features_original, return_sequence = False):
         super(ShiHaotian_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -1272,6 +2178,41 @@ class ShiHaotian_Classifier(nn.Module):
 
 
 class ShiHaotian(pyCNN_LSTM_BaseModule):
+    """
+    CNN+LSTM model for arrythmia classification.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=None
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Shi, Haotian, et al. "Automated heartbeat classification based on deep neural network with multiple input
+        layers." Knowledge-Based Systems 188 (2020): 105036.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = None,
@@ -1318,6 +2259,25 @@ class ShiHaotian(pyCNN_LSTM_BaseModule):
 
 
 class HuangMeiLing_Classifier(nn.Module):
+    """
+    Classifier of the Huang Mei Ling model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
     def __init__(self, in_features, n_classes, return_sequence = False):
         super(HuangMeiLing_Classifier, self).__init__()
         self.return_sequence = return_sequence
@@ -1340,6 +2300,41 @@ class HuangMeiLing_Classifier(nn.Module):
 
 
 class HuangMeiLing(pyCNN_LSTM_BaseModule):
+    """
+     CNN model, employed for 2-D images of ECG data. This model is adapted for 1-D time series
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=None
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Huang, Mei-Ling, and Yan-Sheng Wu. "Classification of atrial fibrillation and normal sinus rhythm based on
+        convolutional neural network." Biomedical Engineering Letters (2020): 1-11.
+   """
     def __init__(self,
                  in_features: int,
                  top_module: Optional[nn.Module] = HuangMeiLing_Classifier(81, 5),
