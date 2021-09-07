@@ -144,6 +144,9 @@ class SqueezeAndExcitationModule(nn.Module):
 
 
 class DenseNetTransitionBlock(nn.Module):
+    """
+    Densenet Transition Block for CaiWenjuan model
+    """
     def __init__(self, in_features, reduction):
         super(DenseNetTransitionBlock, self).__init__()
         self.out_features = int(in_features * reduction)
@@ -159,6 +162,9 @@ class DenseNetTransitionBlock(nn.Module):
 
 
 class DenseNetConvBlock(nn.Module):
+    """
+    Densenet convolution block
+    """
     def __init__(self, in_features, growth_rate):
         super(DenseNetConvBlock, self).__init__()
         self.module = nn.Sequential(
@@ -176,6 +182,9 @@ class DenseNetConvBlock(nn.Module):
 
 
 class DenseNetDenseBlock(nn.Module):
+    """
+    Densenet dense block
+    """
     def __init__(self, in_features, layers, growth_rate):
         super(DenseNetDenseBlock, self).__init__()
         self.output_features = in_features + layers * growth_rate
