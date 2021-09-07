@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'pyCNN-LSTM'
-copyright = '2021, Angel Miguel García Vico'
-author = 'Angel Miguel García Vico, Ignacion Aguilera Martos, Julían Luengo, Francisco Herrera'
+copyright = '2021, DaSCI, Ignacio Aguilera Martos, Ángel Miguel García Vico, Julian Luengo, Francisco Herrera'
+author = 'Ignacio Aguilera Martos, Ángel Miguel García Vico, Julian Luengo, Francisco Herrera'
 
 
 # -- General configuration ---------------------------------------------------

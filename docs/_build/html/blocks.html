@@ -1,0 +1,259 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Keras Blocks &#8212; pyCNN-LSTM  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="PyTorch Blocks" href="blocks_pytorch.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="keras-blocks">
+<h1>Keras Blocks<a class="headerlink" href="#keras-blocks" title="Permalink to this headline">¶</a></h1>
+<p>Here can be found all blocks implemented in Keras for the architecture’s implementation in that framework.</p>
+<div class="toctree-wrapper compound">
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.densenet_transition_block" title="pyCNN_LSTM.blocks.densenet_transition_block"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.densenet_transition_block</span></code></a>(x,&nbsp;…)</td>
+<td>A transition block of densenet for 1D data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.densenet_conv_block" title="pyCNN_LSTM.blocks.densenet_conv_block"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.densenet_conv_block</span></code></a>(x,&nbsp;…)</td>
+<td>A building block for a dense block from densenet for 1D data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.densenet_dense_block" title="pyCNN_LSTM.blocks.densenet_dense_block"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.densenet_dense_block</span></code></a>(x,&nbsp;…)</td>
+<td>A dense block of densenet for 1D data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.squeeze_excitation_module" title="pyCNN_LSTM.blocks.squeeze_excitation_module"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.squeeze_excitation_module</span></code></a>(x,&nbsp;…)</td>
+<td>Squeeze-and-Excitation Module.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.conv_block_YiboGao" title="pyCNN_LSTM.blocks.conv_block_YiboGao"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.conv_block_YiboGao</span></code></a>(in_x,&nbsp;…)</td>
+<td>Convolutional block of YiboGao’s model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.attention_branch_YiboGao" title="pyCNN_LSTM.blocks.attention_branch_YiboGao"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.attention_branch_YiboGao</span></code></a>(…)</td>
+<td>Attention bronch of YiboGao’s model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.RTA_block" title="pyCNN_LSTM.blocks.RTA_block"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.RTA_block</span></code></a>(in_x,&nbsp;nb_filter,&nbsp;…)</td>
+<td>Residual-based Temporal Attention (RTA) block.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.spatial_attention_block_ZhangJin" title="pyCNN_LSTM.blocks.spatial_attention_block_ZhangJin"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.spatial_attention_block_ZhangJin</span></code></a>(…)</td>
+<td>Spatial attention module of ZhangJin’s model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.blocks.temporal_attention_block_ZhangJin" title="pyCNN_LSTM.blocks.temporal_attention_block_ZhangJin"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.blocks.temporal_attention_block_ZhangJin</span></code></a>(x)</td>
+<td>Temporal attention module of ZhangJin’s Model.</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.densenet_transition_block">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">densenet_transition_block</code><span class="sig-paren">(</span><em>x</em>, <em>reduction</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#densenet_transition_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.densenet_transition_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>A transition block of densenet for 1D data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – input tensor.</li>
+<li><strong>reduction</strong> – float, compression rate at transition layers.</li>
+<li><strong>name</strong> – string, block label.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">output tensor for the block.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.densenet_conv_block">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">densenet_conv_block</code><span class="sig-paren">(</span><em>x</em>, <em>growth_rate</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#densenet_conv_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.densenet_conv_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>A building block for a dense block from densenet for 1D data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – input tensor.</li>
+<li><strong>growth_rate</strong> – float, growth rate at dense layers.</li>
+<li><strong>name</strong> – string, block label.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Output tensor for the block.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.densenet_dense_block">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">densenet_dense_block</code><span class="sig-paren">(</span><em>x</em>, <em>blocks</em>, <em>growth_rate</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#densenet_dense_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.densenet_dense_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dense block of densenet for 1D data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – input tensor.</li>
+<li><strong>blocks</strong> – integer, the number of building blocks.</li>
+<li><strong>name</strong> – string, block label.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Output tensor for the block.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.squeeze_excitation_module">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">squeeze_excitation_module</code><span class="sig-paren">(</span><em>x</em>, <em>dense_units</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#squeeze_excitation_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.squeeze_excitation_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Squeeze-and-Excitation Module.</p>
+<p class="rubric">References</p>
+<p>Squeeze-and-Excitation Networks, Jie Hu, Li Shen, Samuel Albanie, Gang Sun, Enhua Wu (arXiv:1709.01507v4)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>keras.Tensor</em>) – The input tensor.</li>
+<li><strong>dense_units</strong> (<em>integer</em>) – The number units on each dense layer.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>se</strong> – Output tensor for the block.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Keras.Tensor</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.conv_block_YiboGao">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">conv_block_YiboGao</code><span class="sig-paren">(</span><em>in_x</em>, <em>nb_filter</em>, <em>kernel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#conv_block_YiboGao"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.conv_block_YiboGao" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convolutional block of YiboGao’s model</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.attention_branch_YiboGao">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">attention_branch_YiboGao</code><span class="sig-paren">(</span><em>in_x</em>, <em>nb_filter</em>, <em>kernel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#attention_branch_YiboGao"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.attention_branch_YiboGao" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attention bronch of YiboGao’s model</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.RTA_block">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">RTA_block</code><span class="sig-paren">(</span><em>in_x</em>, <em>nb_filter</em>, <em>kernel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#RTA_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.RTA_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Residual-based Temporal Attention (RTA) block.</p>
+<p class="rubric">References</p>
+<p>Gao, Y., Wang, H., &amp; Liu, Z. (2021). An end-to-end atrial fibrillation detection by a novel residual-based
+temporal attention convolutional neural network with exponential nonlinearity loss.
+Knowledge-Based Systems, 212, 106589.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.spatial_attention_block_ZhangJin">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">spatial_attention_block_ZhangJin</code><span class="sig-paren">(</span><em>decrease_ratio</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#spatial_attention_block_ZhangJin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.spatial_attention_block_ZhangJin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spatial attention module of ZhangJin’s model</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyCNN_LSTM.blocks.temporal_attention_block_ZhangJin">
+<code class="descclassname">pyCNN_LSTM.blocks.</code><code class="descname">temporal_attention_block_ZhangJin</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/blocks.html#temporal_attention_block_ZhangJin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.blocks.temporal_attention_block_ZhangJin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temporal attention module of ZhangJin’s Model.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="blocks_pytorch.html" title="previous chapter">PyTorch Blocks</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/blocks.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, DaSCI, Ignacio Aguilera Martos, Ángel Miguel García Vico, Julian Luengo, Francisco Herrera.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/blocks.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
