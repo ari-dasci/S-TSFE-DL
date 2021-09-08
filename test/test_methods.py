@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 
-import pyCNN_LSTM.models as pyCNN_LSTM
+import pyCNN_LSTM.models_keras as pyCNN_LSTM
 from pyCNN_LSTM.data import read_mit_bih
 
 
@@ -85,7 +85,7 @@ class TestMethods(unittest.TestCase):
         os.remove('YiboGao_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_YaoQihang(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -116,7 +116,7 @@ class TestMethods(unittest.TestCase):
         os.remove('YaoQihang_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_ZhangJin(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((15360, 12))
@@ -144,7 +144,7 @@ class TestMethods(unittest.TestCase):
         os.remove('ZhangJin_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_HtetMyetLynn(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=750)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -180,7 +180,7 @@ class TestMethods(unittest.TestCase):
         os.remove('HtetMyetLynn_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_CaiWenjuann(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((2160, 12))  # The shape of the paper's data.
@@ -212,7 +212,7 @@ class TestMethods(unittest.TestCase):
         os.remove('CaiWenjuan_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_KimMinGu(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -242,7 +242,7 @@ class TestMethods(unittest.TestCase):
 
         return True
 
-    
+
     def test_YildirimOzal(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=260)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -314,7 +314,7 @@ class TestMethods(unittest.TestCase):
         os.remove('YildirimOzal_classifier_test.h5')
         return np.testing.assert_allclose(class_preds, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_KongZhengmin(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -338,7 +338,7 @@ class TestMethods(unittest.TestCase):
         os.remove('KongZhengmin_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_WeiXiaoyan(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -360,7 +360,7 @@ class TestMethods(unittest.TestCase):
         os.remove('WeiXiaoyan_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_GaoJunLi(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -382,7 +382,7 @@ class TestMethods(unittest.TestCase):
         os.remove('GaoJunLi_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_LihOhShu(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=2000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -425,7 +425,7 @@ class TestMethods(unittest.TestCase):
         os.remove('LihOhShu_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_HuangMeiLing(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -447,7 +447,7 @@ class TestMethods(unittest.TestCase):
         os.remove('HuangMeiLing_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_ShiHaotian(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -469,7 +469,7 @@ class TestMethods(unittest.TestCase):
         os.remove('ShiHaotian_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_FuJiangmeng(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -491,7 +491,7 @@ class TestMethods(unittest.TestCase):
         os.remove('FuJiangmeng_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_GenMinxing(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -513,7 +513,7 @@ class TestMethods(unittest.TestCase):
         os.remove('GenMinxing_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_ChenChen(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=3600)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -557,7 +557,7 @@ class TestMethods(unittest.TestCase):
         os.remove('ChenChen_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_KimTaeYoung(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -586,7 +586,7 @@ class TestMethods(unittest.TestCase):
         os.remove('KimTaeYoung_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_WangKejun(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -607,7 +607,7 @@ class TestMethods(unittest.TestCase):
         os.remove('WangKejun_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_HouBoroui(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -634,7 +634,7 @@ class TestMethods(unittest.TestCase):
         os.remove('HouBoroui_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_ZhengZhenyu(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=128)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -669,7 +669,7 @@ class TestMethods(unittest.TestCase):
         os.remove('ZhengZhenyu_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_KhanZuilfiqar(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData()
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
@@ -688,7 +688,7 @@ class TestMethods(unittest.TestCase):
         os.remove('KhanZulfiqar_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
-    
+
     def test_OhShuLi(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData()
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
