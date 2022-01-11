@@ -1584,3 +1584,70 @@ def YiboGao(include_top=True,
         return model, en_loss
     else:
         return model
+
+# Original CNN-LSTM model
+def HongTan(include_top=True,
+                weights=None,
+                input_tensor=None,
+                input_shape=None,
+                classes=5,
+                classifier_activation="softmax"):
+    """
+
+    CNN+LSTM network for arrythmia detection. Application of stacked convolutional and long short-term memory network
+    for accurate identification of CAD ECG signals.
+
+    Parameters
+    ----------
+        include_top: bool, default=True
+            Whether to include the fully-connected layer at the top of the network.
+
+        weights: str, default=None
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
+
+    Returns
+    -------
+        model: keras.Model
+            A `keras.Model` instance.
+
+    References
+    ----------
+        TAN, Jen Hong, et al. Application of stacked convolutional and long short-term memory network for accurate
+        identification of CAD ECG signals. Computers in biology and medicine, 2018, vol. 94, p. 19-26.
+    """
+    inp = check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    # Model Definition
+    x = inp
+    x = layers.Conv1D(filters=40, kernel_size=5, strides=1, padding='same', activation=keras.activations.elu)(x)
+    x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
+    x = layers.Conv1D(filters=32, kernel_size=3, strides=1, padding='same', activation=keras.activations.elu)(x)
+    x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
+
+    x = layers.LSTM(units=32, dropout=0.5, recurrent_dropout=0.25)(x)
+    x = layers.LSTM(units=16, recurrent_dropout=0.25)(x)
+    x = layers.LSTM(units=4)(x)
+
+    if include_top:
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="HongTan")
+
+    # Load weights
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model

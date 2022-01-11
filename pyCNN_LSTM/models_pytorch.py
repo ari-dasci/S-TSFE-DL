@@ -2362,3 +2362,110 @@ class HuangMeiLing(pyCNN_LSTM_BaseModule):
         if self.classifier is not None:
             x = self.classifier(x)
         return x
+
+class HongTan_Classifier(nn.Module):
+    """
+    Classifier of the HongTan model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
+
+    def __init__(self, in_features, n_classes):
+        super(HongTan_Classifier, self).__init__()
+        self.model = nn.Sequential(
+            nn.Linear(in_features=in_features, out_features=n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        return self.model(x)
+
+
+class HongTan(pyCNN_LSTM_BaseModule):
+    """
+    Application of stacked convolutional and long short-term memory network
+    for accurate identification of CAD ECG signals
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=HongTan_Classifier(4,5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        TAN, Jen Hong, et al. Application of stacked convolutional and long short-term memory network for accurate
+        identification of CAD ECG signals. Computers in biology and medicine, 2018, vol. 94, p. 19-26.
+    """
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = HongTan_Classifier(in_features=4, n_classes=5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(HongTan, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        conv_layers = []
+
+        conv_layers.append(nn.Conv1d(in_channels=in_features, out_channels=40, kernel_size=5, bias=False, stride=1))
+        conv_layers.append(nn.ReLU())
+        conv_layers.append(nn.MaxPool1d(kernel_size=2, stride=2))
+
+        # The remaining convolutional layers can be normal ones: we know the input size.
+        conv_layers.append(nn.Conv1d(in_channels=40, out_channels=32, kernel_size=3, bias=False, stride=1))
+        conv_layers.append(nn.ReLU())
+        conv_layers.append(nn.MaxPool1d(kernel_size=2, stride=2))
+
+        self.convolutions = nn.Sequential(*conv_layers)
+
+        self.lstm1 = nn.LSTM(input_size=32, hidden_size=32, batch_first=True)
+        self.lstm2 = nn.LSTM(input_size=32, hidden_size=16, batch_first=True)
+        self.lstm3 = nn.LSTM(input_size=16, hidden_size=4, batch_first=True)
+
+
+    def forward(self, x):
+        out = self.convolutions(x)
+        # Now, flip indices using a view for the LSTM as it requires a shape of (N, L, H_in = C)
+        out = out.view(out.size(0), out.size(2), out.size(1))
+        out, _ = self.lstm1(out)
+        out, _ = self.lstm2(out)
+        out, _ = self.lstm3(out)
+
+        if self.classifier is not None:
+            out = self.classifier(out[:, -1, :])  # We only want the last step of the LSTM output
+
+        return out
