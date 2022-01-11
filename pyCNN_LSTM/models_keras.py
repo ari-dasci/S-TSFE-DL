@@ -1637,8 +1637,8 @@ def HongTan(include_top=True,
     x = layers.Conv1D(filters=32, kernel_size=3, strides=1, padding='same', activation=keras.activations.elu)(x)
     x = layers.MaxPooling1D(pool_size=2, strides=2)(x)
 
-    x = layers.LSTM(units=32, dropout=0.5, recurrent_dropout=0.25)(x)
-    x = layers.LSTM(units=16, recurrent_dropout=0.25)(x)
+    x = layers.LSTM(units=32, dropout=0.5, recurrent_dropout=0.25, return_sequences=True)(x)
+    x = layers.LSTM(units=16, recurrent_dropout=0.25, return_sequences=True)(x)
     x = layers.LSTM(units=4)(x)
 
     if include_top:
