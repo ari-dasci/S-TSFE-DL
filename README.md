@@ -1,6 +1,6 @@
 <div align="center">    
 
-# pyCNN-RNN: A python package for Time series feature extraction and forecasting by means of convolutional and recurrent deep neural networks.
+# TSFE<sub>DL</sub>: A Python Library for Time Series Spatio-Temporal Feature Extraction and Prediction using Deep Learning.
 
 <!--
 [![Paper](http://img.shields.io/badge/paper-arxiv.1001.2234-B31B1B.svg)](https://www.nature.com/articles/nature14539)
@@ -24,10 +24,10 @@ In this repository we introduce a new Python module which compiles 20 backbones 
 First, install dependencies   
 ```bash
 # clone project   
-git clone https://github.com/ari-dasci/S-CNN-RNN.git
+git clone https://github.com/ari-dasci/S-TSFE-DL.git
 
 # install project   
-cd S-CNN-RNN
+cd S-TSFE-DL
 pip install -e .   
 pip install -r docker/requirements.txt
  ```   
@@ -43,10 +43,10 @@ python arrythmia_experiment.py
 This project is setup as a package which means you can now easily import any file into any other file like so:
 ```python
 import tensorflow as tf
-import pyCNN_RNN.models_keras as pyCNN_RNN
+import TSFEDL.models_keras as TSFEDL
 
 # get the OhShuLih model
-model = pyCNN_RNN.OhShuLih(input_tensor=input, include_top=True)
+model = TSFEDL.OhShuLih(input_tensor=input, include_top=True)
 
 # compile and fit as usual
 model.compile(optimizer='Adam')
