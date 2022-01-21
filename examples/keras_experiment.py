@@ -1,7 +1,7 @@
 import optuna
 import sys
-sys.path.append("../S-CNN-LSTM")
-import pyCNN_LSTM.models_keras as models_keras
+sys.path.append("../TSFEDL")
+import TSFEDL.models_keras as models_keras
 import utils
 import pandas as pd
 import numpy as np

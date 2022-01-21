@@ -1,7 +1,7 @@
 import obspy
 import numpy as np
 import tensorflow as tf
-import pyCNN_LSTM.models_keras as pyCNN_LSTM
+import TSFEDL.models_keras as TSFEDL
 import csv
 import argparse
 
@@ -36,16 +36,16 @@ def compile_and_fit(model, window, MAX_EPOCHS, patience=2):
 
 def generateNewModel(input_tensor):
     """
-    It generates a new model using a given model plus an additional building block in the pyCNN_LSTM library.
+    It generates a new model using a given model plus an additional building block in the TSFEDL library.
 
     Returns
     -------
     The new model
     """
-    model = pyCNN_LSTM.OhShuLih(input_tensor=input_tensor, include_top=False)
+    model = TSFEDL.OhShuLih(input_tensor=input_tensor, include_top=False)
     lstm_layer = model.layers[-1]  # get the LSTM
     x = model.layers[-2].output
-    x = pyCNN_LSTM.RTA_block(x, nb_filter=6, kernel_size=3)
+    x = TSFEDL.RTA_block(x, nb_filter=6, kernel_size=3)
     x = lstm_layer(x)
 
 
@@ -228,26 +228,26 @@ num_epochs = args.epochs
 
 # Train all models
 methods_dict = {
-    'OhShuLi' : pyCNN_LSTM.OhShuLih(input_tensor=input, include_top=False),
-    'ChenChen': pyCNN_LSTM.ChenChen(input_tensor=input2, include_top=False),
-    'YildirimOzal': pyCNN_LSTM.YildirimOzal(input_tensor=input, include_top=False),
-    'LihOhShu': pyCNN_LSTM.LihOhShu(input_tensor=input2, include_top=False),
-    'ShiHaotian': pyCNN_LSTM.ShiHaotian(input_tensor=input, include_top=False),
-    'KhanZulfiqar': pyCNN_LSTM.KhanZulfiqar(input_tensor=input, include_top=False),
-    'ZhengZhenyu' : pyCNN_LSTM.ZhengZhenyu(input_tensor=input, include_top=False),
-    'WangKejun': pyCNN_LSTM.WangKejun(input_tensor=input, include_top=False),
-    'KimTaeYoung': pyCNN_LSTM.KimTaeYoung(input_tensor=input, include_top=False),
-    'GenMinxing': pyCNN_LSTM.GenMinxing(input_tensor=input, include_top=False),
-    'FuJiangmeng': pyCNN_LSTM.FuJiangmeng(input_tensor=input, include_top=False),
-    'HuangMeiLing': pyCNN_LSTM.HuangMeiLing(input_tensor=input, include_top=False),
-    'GaoJunLi': pyCNN_LSTM.GaoJunLi(input_tensor=input, include_top=False),
-    'WeiXiaoyan': pyCNN_LSTM.WeiXiaoyan(input_tensor=input, include_top=False),
-    'KongZhengmin': pyCNN_LSTM.KongZhengmin(input_tensor=input, include_top=False),
-    'CaiWenjuan': pyCNN_LSTM.CaiWenjuan(input_tensor=input, include_top=False),
-    'HtetMyetLynn': pyCNN_LSTM.HtetMyetLynn(input_tensor=input, include_top=False),
-    'ZhangJin': pyCNN_LSTM.ZhangJin(input_tensor=input, include_top=False),
-    'YaoQihang': pyCNN_LSTM.YaoQihang(input_tensor=input, include_top=False),
-    'YiboGao': pyCNN_LSTM.YiboGao(input_tensor=input, include_top=False, return_loss=False),
+    'OhShuLi' : TSFEDL.OhShuLih(input_tensor=input, include_top=False),
+    'ChenChen': TSFEDL.ChenChen(input_tensor=input2, include_top=False),
+    'YildirimOzal': TSFEDL.YildirimOzal(input_tensor=input, include_top=False),
+    'LihOhShu': TSFEDL.LihOhShu(input_tensor=input2, include_top=False),
+    'ShiHaotian': TSFEDL.ShiHaotian(input_tensor=input, include_top=False),
+    'KhanZulfiqar': TSFEDL.KhanZulfiqar(input_tensor=input, include_top=False),
+    'ZhengZhenyu' : TSFEDL.ZhengZhenyu(input_tensor=input, include_top=False),
+    'WangKejun': TSFEDL.WangKejun(input_tensor=input, include_top=False),
+    'KimTaeYoung': TSFEDL.KimTaeYoung(input_tensor=input, include_top=False),
+    'GenMinxing': TSFEDL.GenMinxing(input_tensor=input, include_top=False),
+    'FuJiangmeng': TSFEDL.FuJiangmeng(input_tensor=input, include_top=False),
+    'HuangMeiLing': TSFEDL.HuangMeiLing(input_tensor=input, include_top=False),
+    'GaoJunLi': TSFEDL.GaoJunLi(input_tensor=input, include_top=False),
+    'WeiXiaoyan': TSFEDL.WeiXiaoyan(input_tensor=input, include_top=False),
+    'KongZhengmin': TSFEDL.KongZhengmin(input_tensor=input, include_top=False),
+    'CaiWenjuan': TSFEDL.CaiWenjuan(input_tensor=input, include_top=False),
+    'HtetMyetLynn': TSFEDL.HtetMyetLynn(input_tensor=input, include_top=False),
+    'ZhangJin': TSFEDL.ZhangJin(input_tensor=input, include_top=False),
+    'YaoQihang': TSFEDL.YaoQihang(input_tensor=input, include_top=False),
+    'YiboGao': TSFEDL.YiboGao(input_tensor=input, include_top=False, return_loss=False),
     'NewModel': generateNewModel(input_tensor=input)
 }
 
@@ -304,7 +304,7 @@ for name, model in methods_dict.items():
     results[name] = eval[1]
 
 # write results to file
-with open('results_pyCNN_LSTM_IGN.csv', 'w') as f:
+with open('results_TSFEDL_IGN.csv', 'w') as f:
     writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     for i in results.items():
         writer.writerow(i)
