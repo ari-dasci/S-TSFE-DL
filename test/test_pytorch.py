@@ -6,9 +6,9 @@ import torch
 import torch.nn as nn
 import torchmetrics
 import pytorch_lightning as pl
-from pyCNN_LSTM.data import MIT_BIH
+from TSFEDL.data import MIT_BIH
 from torch.utils.data.sampler import SubsetRandomSampler
-from pyCNN_LSTM.models_pytorch import *
+from TSFEDL.models_pytorch import *
 
 
 def acc_from_logits(y_hat, y):

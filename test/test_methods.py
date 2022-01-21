@@ -8,8 +8,8 @@ from sklearn.metrics import accuracy_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 
-import pyCNN_LSTM.models_keras as pyCNN_LSTM
-from pyCNN_LSTM.data import read_mit_bih
+import TSFEDL.models_keras as TSFEDL
+from TSFEDL.data import read_mit_bih
 
 
 class TestMethods(unittest.TestCase):
@@ -67,7 +67,7 @@ class TestMethods(unittest.TestCase):
     def test_YiboGao(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData()
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model, loss = pyCNN_LSTM.YiboGao(input_tensor=input, include_top=True, return_loss=True)
+        model, loss = TSFEDL.YiboGao(input_tensor=input, include_top=True, return_loss=True)
         model.summary()
 
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
@@ -80,7 +80,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('YiboGao_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.YiboGao(input_tensor=input, weights='YiboGao_test.h5')
+        new_model = TSFEDL.YiboGao(input_tensor=input, weights='YiboGao_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('YiboGao_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -91,7 +91,7 @@ class TestMethods(unittest.TestCase):
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
 
         # The number units, filters, kernel_sizes, etc. in this model are not specified in the original paper.
-        model = pyCNN_LSTM.YaoQihang(input_tensor=input, include_top=True)
+        model = TSFEDL.YaoQihang(input_tensor=input, include_top=True)
         model.summary()
 
         # Train the model
@@ -111,7 +111,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('YaoQihang_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.YaoQihang(input_tensor=input, weights='YaoQihang_test.h5')
+        new_model = TSFEDL.YaoQihang(input_tensor=input, weights='YaoQihang_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('YaoQihang_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -120,14 +120,14 @@ class TestMethods(unittest.TestCase):
     def test_ZhangJin(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((15360, 12))
-        model = pyCNN_LSTM.ZhangJin(input_tensor=input, include_top=True)
+        model = TSFEDL.ZhangJin(input_tensor=input, include_top=True)
 
         # The output shapes matches the description of the paper at Section 5.2
         model.summary()
 
         # Now, train the model with our data.
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.ZhangJin(input_tensor=input, include_top=True)
+        model = TSFEDL.ZhangJin(input_tensor=input, include_top=True)
 
         # Train the model
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
@@ -139,7 +139,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('ZhangJin_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.ZhangJin(input_tensor=input, weights='ZhangJin_test.h5')
+        new_model = TSFEDL.ZhangJin(input_tensor=input, weights='ZhangJin_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('ZhangJin_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -148,7 +148,7 @@ class TestMethods(unittest.TestCase):
     def test_HtetMyetLynn(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=750)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.HtetMyetLynn(input_tensor=input, include_top=True)
+        model = TSFEDL.HtetMyetLynn(input_tensor=input, include_top=True)
         model.summary()
 
         # assert that output shapes are the same that in Figure 5 of the paper.
@@ -175,7 +175,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('HtetMyetLynn_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.HtetMyetLynn(input_tensor=input, weights='HtetMyetLynn_test.h5')
+        new_model = TSFEDL.HtetMyetLynn(input_tensor=input, weights='HtetMyetLynn_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('HtetMyetLynn_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -186,7 +186,7 @@ class TestMethods(unittest.TestCase):
         input = keras.Input((2160, 12))  # The shape of the paper's data.
 
         # The number units, filters, kernel_sizes, etc. in this model are not specified in the original paper.
-        model = pyCNN_LSTM.CaiWenjuan(input_tensor=input, include_top=True, classes=2)
+        model = TSFEDL.CaiWenjuan(input_tensor=input, include_top=True, classes=2)
         model.summary()
         # In the paper, for 12-variables ECG data, only the number of paramwters of the final model are given.
         # The number of params in this case are 69087. Therefore, we assert that the number of params is almost the same
@@ -195,7 +195,7 @@ class TestMethods(unittest.TestCase):
         # Once checked that model's parameters are almost the same as in the original paper. We train the model with
         # our data.
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.CaiWenjuan(input_tensor=input, include_top=True)
+        model = TSFEDL.CaiWenjuan(input_tensor=input, include_top=True)
 
         # Train the model
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
@@ -207,7 +207,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('CaiWenjuan_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.CaiWenjuan(input_tensor=input, weights='CaiWenjuan_test.h5')
+        new_model = TSFEDL.CaiWenjuan(input_tensor=input, weights='CaiWenjuan_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('CaiWenjuan_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -218,7 +218,7 @@ class TestMethods(unittest.TestCase):
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
 
         # The number units, filters, kernel_sizes, etc. in this model are not specified in the original paper.
-        models = pyCNN_LSTM.KimMinGu(input_tensor=input, include_top=True)
+        models = TSFEDL.KimMinGu(input_tensor=input, include_top=True)
         preds = []
         for i, model in enumerate(models):
             model.summary()
@@ -234,7 +234,7 @@ class TestMethods(unittest.TestCase):
 
         # re-load model
         w = ["KimMinGu_test_" + str(i) + ".h5" for i in range(6)]
-        models = pyCNN_LSTM.KimMinGu(input_tensor=input, weights=w)
+        models = TSFEDL.KimMinGu(input_tensor=input, weights=w)
         for i, model in enumerate(models):
             new_predictions = np.argmax(model.predict(X_tst), axis=1)
             np.testing.assert_allclose(preds[i], new_predictions, rtol=1e-6, atol=1e-6)
@@ -246,7 +246,7 @@ class TestMethods(unittest.TestCase):
     def test_YildirimOzal(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=260)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        ae, enc, classifier = pyCNN_LSTM.YildirimOzal(input_tensor=input, include_top=True)
+        ae, enc, classifier = TSFEDL.YildirimOzal(input_tensor=input, include_top=True)
         ae.summary()
         enc.summary()
         classifier.summary()
@@ -303,7 +303,7 @@ class TestMethods(unittest.TestCase):
 
         # Assert testing prediction
         # re-load de models
-        ae, enc, classifier = pyCNN_LSTM.YildirimOzal(input_tensor=input,
+        ae, enc, classifier = TSFEDL.YildirimOzal(input_tensor=input,
                                                       autoencoder_weights='YildirimOzal_test.h5',
                                                       lstm_weights='YildirimOzal_classifier_test.h5')
         new_predictions = ae.predict(X_tst)
@@ -320,7 +320,7 @@ class TestMethods(unittest.TestCase):
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
 
         # The number units, filters, kernel_sizes, etc. in this model are not specified in the original paper.
-        model = pyCNN_LSTM.KongZhengmin(input_tensor=input, include_top=True)
+        model = TSFEDL.KongZhengmin(input_tensor=input, include_top=True)
         model.summary()
 
         # Train the model
@@ -333,7 +333,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('KongZhengmin_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.KongZhengmin(input_tensor=input, weights='KongZhengmin_test.h5')
+        new_model = TSFEDL.KongZhengmin(input_tensor=input, weights='KongZhengmin_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('KongZhengmin_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -342,7 +342,7 @@ class TestMethods(unittest.TestCase):
     def test_WeiXiaoyan(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.WeiXiaoyan(input_tensor=input, include_top=True)
+        model = TSFEDL.WeiXiaoyan(input_tensor=input, include_top=True)
         model.summary()  # Description of layers available at table 2 of the paper. No output shapes nor nº of params available
 
         # Train the model
@@ -355,7 +355,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('WeiXiaoyan_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.WeiXiaoyan(input_tensor=input, weights='WeiXiaoyan_test.h5')
+        new_model = TSFEDL.WeiXiaoyan(input_tensor=input, weights='WeiXiaoyan_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('WeiXiaoyan_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -364,7 +364,7 @@ class TestMethods(unittest.TestCase):
     def test_GaoJunLi(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.GaoJunLi(input_tensor=input, include_top=True)
+        model = TSFEDL.GaoJunLi(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
         # Train the model
@@ -377,7 +377,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('GaoJunLi_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.GaoJunLi(input_tensor=input, weights='GaoJunLi_test.h5')
+        new_model = TSFEDL.GaoJunLi(input_tensor=input, weights='GaoJunLi_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('GaoJunLi_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -386,7 +386,7 @@ class TestMethods(unittest.TestCase):
     def test_LihOhShu(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=2000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.LihOhShu(input_tensor=input, include_top=True)
+        model = TSFEDL.LihOhShu(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
         # assert that output shapes are the same that in Table 3 of the paper.
@@ -420,7 +420,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('LihOhShu_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.LihOhShu(input_tensor=input, weights='LihOhShu_test.h5')
+        new_model = TSFEDL.LihOhShu(input_tensor=input, weights='LihOhShu_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('LihOhShu_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -429,7 +429,7 @@ class TestMethods(unittest.TestCase):
     def test_HuangMeiLing(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.HuangMeiLing(input_tensor=input, include_top=True)
+        model = TSFEDL.HuangMeiLing(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
         # Train the model
@@ -442,7 +442,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('HuangMeiLing_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.HuangMeiLing(input_tensor=input, weights='HuangMeiLing_test.h5')
+        new_model = TSFEDL.HuangMeiLing(input_tensor=input, weights='HuangMeiLing_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('HuangMeiLing_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -451,7 +451,7 @@ class TestMethods(unittest.TestCase):
     def test_ShiHaotian(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.ShiHaotian(input_tensor=input, include_top=True)
+        model = TSFEDL.ShiHaotian(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
         # Train the model
@@ -464,7 +464,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('ShiHaotian_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.ShiHaotian(input_tensor=input, weights='ShiHaotian_test.h5')
+        new_model = TSFEDL.ShiHaotian(input_tensor=input, weights='ShiHaotian_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('ShiHaotian_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -473,7 +473,7 @@ class TestMethods(unittest.TestCase):
     def test_FuJiangmeng(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.FuJiangmeng(input_tensor=input, include_top=True)
+        model = TSFEDL.FuJiangmeng(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
         # Train the model
@@ -486,7 +486,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('FuJiangmeng_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.FuJiangmeng(input_tensor=input, weights='FuJiangmeng_test.h5')
+        new_model = TSFEDL.FuJiangmeng(input_tensor=input, weights='FuJiangmeng_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('FuJiangmeng_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -495,7 +495,7 @@ class TestMethods(unittest.TestCase):
     def test_GenMinxing(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.GenMinxing(input_tensor=input, include_top=True)
+        model = TSFEDL.GenMinxing(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
         # Train the model
@@ -508,7 +508,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('GenMinxing_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.GenMinxing(input_tensor=input, weights='GenMinxing_test.h5')
+        new_model = TSFEDL.GenMinxing(input_tensor=input, weights='GenMinxing_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('GenMinxing_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -517,7 +517,7 @@ class TestMethods(unittest.TestCase):
     def test_ChenChen(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=3600)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.ChenChen(input_tensor=input, include_top=True)
+        model = TSFEDL.ChenChen(input_tensor=input, include_top=True)
         model.summary()
 
         # assert that output shapes are the same that in Table 2 of the paper.
@@ -552,7 +552,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('ChenChen_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.ChenChen(input_tensor=input, weights='ChenChen_test.h5')
+        new_model = TSFEDL.ChenChen(input_tensor=input, weights='ChenChen_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('ChenChen_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -561,7 +561,7 @@ class TestMethods(unittest.TestCase):
     def test_KimTaeYoung(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.KimTaeYoung(input_tensor=input, include_top=True)
+        model = TSFEDL.KimTaeYoung(input_tensor=input, include_top=True)
         model.summary()
 
         # Check if params matches the description in the paper at table 2
@@ -581,7 +581,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('KimTaeYoung_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.KimTaeYoung(input_tensor=input, weights='KimTaeYoung_test.h5')
+        new_model = TSFEDL.KimTaeYoung(input_tensor=input, weights='KimTaeYoung_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('KimTaeYoung_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -590,7 +590,7 @@ class TestMethods(unittest.TestCase):
     def test_WangKejun(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.WangKejun(input_tensor=input, include_top=True)
+        model = TSFEDL.WangKejun(input_tensor=input, include_top=True)
         model.summary()
 
         # Train the model
@@ -602,7 +602,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('WangKejun_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.WangKejun(input_tensor=input, weights='WangKejun_test.h5')
+        new_model = TSFEDL.WangKejun(input_tensor=input, weights='WangKejun_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('WangKejun_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -611,7 +611,7 @@ class TestMethods(unittest.TestCase):
     def test_HouBoroui(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model, encoder = pyCNN_LSTM.HouBoroui(input_tensor=input)
+        model, encoder = TSFEDL.HouBoroui(input_tensor=input)
         model.summary()  # Layer shapes not available in the paper.
 
         # Train the model
@@ -629,7 +629,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('HouBoroui_test.h5')
 
         # re-load de model
-        new_model, encoder = pyCNN_LSTM.HouBoroui(input_tensor=input, weights='HouBoroui_test.h5')
+        new_model, encoder = TSFEDL.HouBoroui(input_tensor=input, weights='HouBoroui_test.h5')
         new_predictions = new_model.predict(X_tst)
         os.remove('HouBoroui_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -638,7 +638,7 @@ class TestMethods(unittest.TestCase):
     def test_ZhengZhenyu(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=128)
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.ZhengZhenyu(input_tensor=input, include_top=True)
+        model = TSFEDL.ZhengZhenyu(input_tensor=input, include_top=True)
         model.summary()
 
         # assert that output shapes are the same that in Table 2 of the paper.
@@ -664,7 +664,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('ZhengZhenyu_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.ZhengZhenyu(input_tensor=input, weights='ZhengZhenyu_test.h5')
+        new_model = TSFEDL.ZhengZhenyu(input_tensor=input, weights='ZhengZhenyu_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('ZhengZhenyu_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -673,7 +673,7 @@ class TestMethods(unittest.TestCase):
     def test_KhanZuilfiqar(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData()
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.KhanZulfiqar(input_tensor=input, include_top=True)
+        model = TSFEDL.KhanZulfiqar(input_tensor=input, include_top=True)
 
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra,
                                            X_tst, y_tst, y_hc_tst, batch_size=256, epochs=30)
@@ -683,7 +683,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('KhanZulfiqar_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.KhanZulfiqar(input_tensor=input, weights='KhanZulfiqar_test.h5')
+        new_model = TSFEDL.KhanZulfiqar(input_tensor=input, weights='KhanZulfiqar_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('KhanZulfiqar_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
@@ -692,7 +692,7 @@ class TestMethods(unittest.TestCase):
     def test_OhShuLi(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData()
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
-        model = pyCNN_LSTM.OhShuLih(input_tensor=input, include_top=True)
+        model = TSFEDL.OhShuLih(input_tensor=input, include_top=True)
 
         # assert that output shapes are the same that in Table 2 of the paper.
         model_output_shapes = [l.output_shape for l in model.layers
@@ -721,7 +721,7 @@ class TestMethods(unittest.TestCase):
         model.save_weights('OhShuLi_test.h5')
 
         # re-load de model
-        new_model = pyCNN_LSTM.OhShuLih(input_tensor=input, weights='OhShuLi_test.h5')
+        new_model = TSFEDL.OhShuLih(input_tensor=input, weights='OhShuLi_test.h5')
         new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
         os.remove('OhShuLi_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
