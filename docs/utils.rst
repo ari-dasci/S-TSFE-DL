@@ -9,14 +9,14 @@ Here can be found the implementation of the auxiliary functions for the implemen
     :maxdepth: 1
 
 .. autosummary::
-    pyCNN_LSTM.utils.TimeDistributed
-    pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm
-    pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm_reshape
-    pyCNN_LSTM.utils.check_inputs
-    pyCNN_LSTM.utils.full_convolution
+    TSFEDL.utils.TimeDistributed
+    TSFEDL.utils.flip_indices_for_conv_to_lstm
+    TSFEDL.utils.flip_indices_for_conv_to_lstm_reshape
+    TSFEDL.utils.check_inputs
+    TSFEDL.utils.full_convolution
 
-.. autofunction:: pyCNN_LSTM.utils.TimeDistributed
-.. autofunction:: pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm
-.. autofunction:: pyCNN_LSTM.utils.flip_indices_for_conv_to_lstm_reshape
-.. autofunction:: pyCNN_LSTM.utils.check_inputs
-.. autofunction:: pyCNN_LSTM.utils.full_convolution
+.. autofunction:: TSFEDL.utils.TimeDistributed
+.. autofunction:: TSFEDL.utils.flip_indices_for_conv_to_lstm
+.. autofunction:: TSFEDL.utils.flip_indices_for_conv_to_lstm_reshape
+.. autofunction:: TSFEDL.utils.check_inputs
+.. autofunction:: TSFEDL.utils.full_convolution

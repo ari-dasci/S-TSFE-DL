@@ -9,48 +9,48 @@ Here the different deep learning models included in the library are summarised. 
     :maxdepth: 1
 
 .. autosummary::
-    pyCNN_LSTM.models.OhShuLih
-    pyCNN_LSTM.models.KhanZulfiqar
-    pyCNN_LSTM.models.ZhengZhenyu
-    pyCNN_LSTM.models.HouBoroui
-    pyCNN_LSTM.models.WangKejun
-    pyCNN_LSTM.models.ChenChen
-    pyCNN_LSTM.models.KimTaeYoung
-    pyCNN_LSTM.models.GenMinxing
-    pyCNN_LSTM.models.FuJiangmeng
-    pyCNN_LSTM.models.ShiHaotian
-    pyCNN_LSTM.models.HuangMeiLing
-    pyCNN_LSTM.models.LihOhShu
-    pyCNN_LSTM.models.GaoJunLi
-    pyCNN_LSTM.models.WeiXiaoyan
-    pyCNN_LSTM.models.KongZhengmin
-    pyCNN_LSTM.models.YildirimOzal
-    pyCNN_LSTM.models.CaiWenjuan
-    pyCNN_LSTM.models.KimMinGu
-    pyCNN_LSTM.models.HtetMyetLynn
-    pyCNN_LSTM.models.ZhangJin
-    pyCNN_LSTM.models.YaoQihang
-    pyCNN_LSTM.models.YiboGao
+    TSFEDL.models.OhShuLih
+    TSFEDL.models.KhanZulfiqar
+    TSFEDL.models.ZhengZhenyu
+    TSFEDL.models.HouBoroui
+    TSFEDL.models.WangKejun
+    TSFEDL.models.ChenChen
+    TSFEDL.models.KimTaeYoung
+    TSFEDL.models.GenMinxing
+    TSFEDL.models.FuJiangmeng
+    TSFEDL.models.ShiHaotian
+    TSFEDL.models.HuangMeiLing
+    TSFEDL.models.LihOhShu
+    TSFEDL.models.GaoJunLi
+    TSFEDL.models.WeiXiaoyan
+    TSFEDL.models.KongZhengmin
+    TSFEDL.models.YildirimOzal
+    TSFEDL.models.CaiWenjuan
+    TSFEDL.models.KimMinGu
+    TSFEDL.models.HtetMyetLynn
+    TSFEDL.models.ZhangJin
+    TSFEDL.models.YaoQihang
+    TSFEDL.models.YiboGao
 
-.. autofunction:: pyCNN_LSTM.models.OhShuLih
-.. autofunction:: pyCNN_LSTM.models.KhanZulfiqar
-.. autofunction:: pyCNN_LSTM.models.ZhengZhenyu
-.. autofunction:: pyCNN_LSTM.models.HouBoroui
-.. autofunction:: pyCNN_LSTM.models.WangKejun
-.. autofunction:: pyCNN_LSTM.models.ChenChen
-.. autofunction:: pyCNN_LSTM.models.KimTaeYoung
-.. autofunction:: pyCNN_LSTM.models.GenMinxing
-.. autofunction:: pyCNN_LSTM.models.FuJiangmeng
-.. autofunction:: pyCNN_LSTM.models.ShiHaotian
-.. autofunction:: pyCNN_LSTM.models.HuangMeiLing
-.. autofunction:: pyCNN_LSTM.models.LihOhShu
-.. autofunction:: pyCNN_LSTM.models.GaoJunLi
-.. autofunction:: pyCNN_LSTM.models.WeiXiaoyan
-.. autofunction:: pyCNN_LSTM.models.KongZhengmin
-.. autofunction:: pyCNN_LSTM.models.YildirimOzal
-.. autofunction:: pyCNN_LSTM.models.CaiWenjuan
-.. autofunction:: pyCNN_LSTM.models.KimMinGu
-.. autofunction:: pyCNN_LSTM.models.HtetMyetLynn
-.. autofunction:: pyCNN_LSTM.models.ZhangJin
-.. autofunction:: pyCNN_LSTM.models.YaoQihang
-.. autofunction:: pyCNN_LSTM.models.YiboGao
+.. autofunction:: TSFEDL.models.OhShuLih
+.. autofunction:: TSFEDL.models.KhanZulfiqar
+.. autofunction:: TSFEDL.models.ZhengZhenyu
+.. autofunction:: TSFEDL.models.HouBoroui
+.. autofunction:: TSFEDL.models.WangKejun
+.. autofunction:: TSFEDL.models.ChenChen
+.. autofunction:: TSFEDL.models.KimTaeYoung
+.. autofunction:: TSFEDL.models.GenMinxing
+.. autofunction:: TSFEDL.models.FuJiangmeng
+.. autofunction:: TSFEDL.models.ShiHaotian
+.. autofunction:: TSFEDL.models.HuangMeiLing
+.. autofunction:: TSFEDL.models.LihOhShu
+.. autofunction:: TSFEDL.models.GaoJunLi
+.. autofunction:: TSFEDL.models.WeiXiaoyan
+.. autofunction:: TSFEDL.models.KongZhengmin
+.. autofunction:: TSFEDL.models.YildirimOzal
+.. autofunction:: TSFEDL.models.CaiWenjuan
+.. autofunction:: TSFEDL.models.KimMinGu
+.. autofunction:: TSFEDL.models.HtetMyetLynn
+.. autofunction:: TSFEDL.models.ZhangJin
+.. autofunction:: TSFEDL.models.YaoQihang
+.. autofunction:: TSFEDL.models.YiboGao

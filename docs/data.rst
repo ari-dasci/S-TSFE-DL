@@ -9,10 +9,10 @@ Here can be found the implementation of the functions to read the data for the a
     :maxdepth: 1
 
 .. autosummary::
-    pyCNN_LSTM.data.get_mit_bih_segments
-    pyCNN_LSTM.data.read_mit_bih
-    pyCNN_LSTM.data.MIT_BIH
+    TSFEDL.data.get_mit_bih_segments
+    TSFEDL.data.read_mit_bih
+    TSFEDL.data.MIT_BIH
 
-.. autofunction:: pyCNN_LSTM.data.get_mit_bih_segments
-.. autofunction:: pyCNN_LSTM.data.read_mit_bih
-.. autofunction:: pyCNN_LSTM.data.MIT_BIH
+.. autofunction:: TSFEDL.data.get_mit_bih_segments
+.. autofunction:: TSFEDL.data.read_mit_bih
+.. autofunction:: TSFEDL.data.MIT_BIH

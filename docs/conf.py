@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'pyCNN-LSTM'
+project = 'TSFEDL'
 copyright = '2021, DaSCI, Ignacio Aguilera Martos, Ángel Miguel García Vico, Julian Luengo, Francisco Herrera'
 author = 'Ignacio Aguilera Martos, Ángel Miguel García Vico, Julian Luengo, Francisco Herrera'
 

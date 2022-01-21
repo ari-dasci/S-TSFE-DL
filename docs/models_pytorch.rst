@@ -9,46 +9,46 @@ Here the different deep learning models included in the library are summarised. 
     :maxdepth: 1
 
 .. autosummary::
-    pyCNN_LSTM.models_pytorch.OhShuLih
-    pyCNN_LSTM.models_pytorch.KhanZulfiqar
-    pyCNN_LSTM.models_pytorch.ZhengZhenyu
-    pyCNN_LSTM.models_pytorch.WangKejun
-    pyCNN_LSTM.models_pytorch.ChenChen
-    pyCNN_LSTM.models_pytorch.KimTaeYoung
-    pyCNN_LSTM.models_pytorch.GenMinxing
-    pyCNN_LSTM.models_pytorch.FuJiangmeng
-    pyCNN_LSTM.models_pytorch.ShiHaotian
-    pyCNN_LSTM.models_pytorch.HuangMeiLing
-    pyCNN_LSTM.models_pytorch.LihOhShu
-    pyCNN_LSTM.models_pytorch.GaoJunLi
-    pyCNN_LSTM.models_pytorch.WeiXiaoyan
-    pyCNN_LSTM.models_pytorch.KongZhengmin
-    pyCNN_LSTM.models_pytorch.YildirimOzal
-    pyCNN_LSTM.models_pytorch.CaiWenjuan
-    pyCNN_LSTM.models_pytorch.KimMinGu
-    pyCNN_LSTM.models_pytorch.HtetMyetLynn
-    pyCNN_LSTM.models_pytorch.ZhangJin
-    pyCNN_LSTM.models_pytorch.YaoQihang
-    pyCNN_LSTM.models_pytorch.YiboGao
+    TSFEDL.models_pytorch.OhShuLih
+    TSFEDL.models_pytorch.KhanZulfiqar
+    TSFEDL.models_pytorch.ZhengZhenyu
+    TSFEDL.models_pytorch.WangKejun
+    TSFEDL.models_pytorch.ChenChen
+    TSFEDL.models_pytorch.KimTaeYoung
+    TSFEDL.models_pytorch.GenMinxing
+    TSFEDL.models_pytorch.FuJiangmeng
+    TSFEDL.models_pytorch.ShiHaotian
+    TSFEDL.models_pytorch.HuangMeiLing
+    TSFEDL.models_pytorch.LihOhShu
+    TSFEDL.models_pytorch.GaoJunLi
+    TSFEDL.models_pytorch.WeiXiaoyan
+    TSFEDL.models_pytorch.KongZhengmin
+    TSFEDL.models_pytorch.YildirimOzal
+    TSFEDL.models_pytorch.CaiWenjuan
+    TSFEDL.models_pytorch.KimMinGu
+    TSFEDL.models_pytorch.HtetMyetLynn
+    TSFEDL.models_pytorch.ZhangJin
+    TSFEDL.models_pytorch.YaoQihang
+    TSFEDL.models_pytorch.YiboGao
 
-.. autofunction:: pyCNN_LSTM.models_pytorch.OhShuLih
-.. autofunction:: pyCNN_LSTM.models_pytorch.KhanZulfiqar
-.. autofunction:: pyCNN_LSTM.models_pytorch.ZhengZhenyu
-.. autofunction:: pyCNN_LSTM.models_pytorch.WangKejun
-.. autofunction:: pyCNN_LSTM.models_pytorch.ChenChen
-.. autofunction:: pyCNN_LSTM.models_pytorch.KimTaeYoung
-.. autofunction:: pyCNN_LSTM.models_pytorch.GenMinxing
-.. autofunction:: pyCNN_LSTM.models_pytorch.FuJiangmeng
-.. autofunction:: pyCNN_LSTM.models_pytorch.ShiHaotian
-.. autofunction:: pyCNN_LSTM.models_pytorch.HuangMeiLing
-.. autofunction:: pyCNN_LSTM.models_pytorch.LihOhShu
-.. autofunction:: pyCNN_LSTM.models_pytorch.GaoJunLi
-.. autofunction:: pyCNN_LSTM.models_pytorch.WeiXiaoyan
-.. autofunction:: pyCNN_LSTM.models_pytorch.KongZhengmin
-.. autofunction:: pyCNN_LSTM.models_pytorch.YildirimOzal
-.. autofunction:: pyCNN_LSTM.models_pytorch.CaiWenjuan
-.. autofunction:: pyCNN_LSTM.models_pytorch.KimMinGu
-.. autofunction:: pyCNN_LSTM.models_pytorch.HtetMyetLynn
-.. autofunction:: pyCNN_LSTM.models_pytorch.ZhangJin
-.. autofunction:: pyCNN_LSTM.models_pytorch.YaoQihang
-.. autofunction:: pyCNN_LSTM.models_pytorch.YiboGao
+.. autofunction:: TSFEDL.models_pytorch.OhShuLih
+.. autofunction:: TSFEDL.models_pytorch.KhanZulfiqar
+.. autofunction:: TSFEDL.models_pytorch.ZhengZhenyu
+.. autofunction:: TSFEDL.models_pytorch.WangKejun
+.. autofunction:: TSFEDL.models_pytorch.ChenChen
+.. autofunction:: TSFEDL.models_pytorch.KimTaeYoung
+.. autofunction:: TSFEDL.models_pytorch.GenMinxing
+.. autofunction:: TSFEDL.models_pytorch.FuJiangmeng
+.. autofunction:: TSFEDL.models_pytorch.ShiHaotian
+.. autofunction:: TSFEDL.models_pytorch.HuangMeiLing
+.. autofunction:: TSFEDL.models_pytorch.LihOhShu
+.. autofunction:: TSFEDL.models_pytorch.GaoJunLi
+.. autofunction:: TSFEDL.models_pytorch.WeiXiaoyan
+.. autofunction:: TSFEDL.models_pytorch.KongZhengmin
+.. autofunction:: TSFEDL.models_pytorch.YildirimOzal
+.. autofunction:: TSFEDL.models_pytorch.CaiWenjuan
+.. autofunction:: TSFEDL.models_pytorch.KimMinGu
+.. autofunction:: TSFEDL.models_pytorch.HtetMyetLynn
+.. autofunction:: TSFEDL.models_pytorch.ZhangJin
+.. autofunction:: TSFEDL.models_pytorch.YaoQihang
+.. autofunction:: TSFEDL.models_pytorch.YiboGao

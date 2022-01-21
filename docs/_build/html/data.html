@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Data Functions &#8212; pyCNN-LSTM  documentation</title>
+    <title>Data Functions &#8212; TSFEDL  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utils Functions" href="utils.html" />
     <link rel="prev" title="Keras Blocks" href="blocks.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -49,20 +50,20 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.data.get_mit_bih_segments" title="pyCNN_LSTM.data.get_mit_bih_segments"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.data.get_mit_bih_segments</span></code></a>(data,&nbsp;…)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#TSFEDL.data.get_mit_bih_segments" title="TSFEDL.data.get_mit_bih_segments"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.data.get_mit_bih_segments</span></code></a>(data,&nbsp;…)</td>
 <td>It generates the segments of uninterrupted sequences of arrythmia beats into the corresponding arrythmia groups in labels.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#pyCNN_LSTM.data.read_mit_bih" title="pyCNN_LSTM.data.read_mit_bih"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.data.read_mit_bih</span></code></a>(path,&nbsp;labels,&nbsp;,&nbsp;…)</td>
+<tr class="row-even"><td><a class="reference internal" href="#TSFEDL.data.read_mit_bih" title="TSFEDL.data.read_mit_bih"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.data.read_mit_bih</span></code></a>(path,&nbsp;labels,&nbsp;,&nbsp;,&nbsp;,&nbsp;])</td>
 <td>It reads the MIT-BIH Arrythmia X with the specified default configuration of the work presented at: Oh, Shu Lih, et al.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyCNN_LSTM.data.MIT_BIH" title="pyCNN_LSTM.data.MIT_BIH"><code class="xref py py-obj docutils literal"><span class="pre">pyCNN_LSTM.data.MIT_BIH</span></code></a>(path[,&nbsp;labels,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#TSFEDL.data.MIT_BIH" title="TSFEDL.data.MIT_BIH"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.data.MIT_BIH</span></code></a>(path[,&nbsp;labels,&nbsp;dtype,&nbsp;…])</td>
 <td>Reads the MIT-BIH datasets and return a data loader with Shape (N, C, L) where N is the batch size, C is the number of channels (1 in this dataset) and L is the <cite>length</cite> of the time series (1000 by default).</td>
 </tr>
 </tbody>
 </table>
 <dl class="function">
-<dt id="pyCNN_LSTM.data.get_mit_bih_segments">
-<code class="descclassname">pyCNN_LSTM.data.</code><code class="descname">get_mit_bih_segments</code><span class="sig-paren">(</span><em>data: wfdb.io.record.Record</em>, <em>annotations: wfdb.io.annotation.Annotation</em>, <em>labels: numpy.ndarray</em>, <em>left_offset: int = 99</em>, <em>right_offset: int = 160</em>, <em>fixed_length: typing.Union[int</em>, <em>NoneType] = None</em><span class="sig-paren">)</span> &#x2192; typing.Tuple[numpy.ndarray, numpy.ndarray]<a class="reference internal" href="_modules/pyCNN_LSTM/data.html#get_mit_bih_segments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.data.get_mit_bih_segments" title="Permalink to this definition">¶</a></dt>
+<dt id="TSFEDL.data.get_mit_bih_segments">
+<code class="descclassname">TSFEDL.data.</code><code class="descname">get_mit_bih_segments</code><span class="sig-paren">(</span><em>data: wfdb.io.record.Record</em>, <em>annotations: wfdb.io.annotation.Annotation</em>, <em>labels: numpy.ndarray</em>, <em>left_offset: int = 99</em>, <em>right_offset: int = 160</em>, <em>fixed_length: typing.Union[int</em>, <em>NoneType] = None</em><span class="sig-paren">)</span> &#x2192; typing.Tuple[numpy.ndarray, numpy.ndarray]<a class="reference internal" href="_modules/TSFEDL/data.html#get_mit_bih_segments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.data.get_mit_bih_segments" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the segments of uninterrupted sequences of arrythmia beats into the corresponding arrythmia groups
 in labels.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -92,8 +93,8 @@ value passed in the :parameter labels param.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pyCNN_LSTM.data.read_mit_bih">
-<code class="descclassname">pyCNN_LSTM.data.</code><code class="descname">read_mit_bih</code><span class="sig-paren">(</span><em>path: str, labels: numpy.ndarray = array(['N', 'L', 'R', 'A', 'V'], dtype='&lt;U1'), left_offset: int = 99, right_offset: int = 160, fixed_length: typing.Union[int, NoneType] = 1000</em><span class="sig-paren">)</span> &#x2192; typing.Tuple[numpy.ndarray, numpy.ndarray]<a class="reference internal" href="_modules/pyCNN_LSTM/data.html#read_mit_bih"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.data.read_mit_bih" title="Permalink to this definition">¶</a></dt>
+<dt id="TSFEDL.data.read_mit_bih">
+<code class="descclassname">TSFEDL.data.</code><code class="descname">read_mit_bih</code><span class="sig-paren">(</span><em>path: str, labels: numpy.ndarray = array(['N', 'L', 'R', 'A', 'V'], dtype='&lt;U1'), left_offset: int = 99, right_offset: int = 160, fixed_length: typing.Union[int, NoneType] = 1000</em><span class="sig-paren">)</span> &#x2192; typing.Tuple[numpy.ndarray, numpy.ndarray]<a class="reference internal" href="_modules/TSFEDL/data.html#read_mit_bih"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.data.read_mit_bih" title="Permalink to this definition">¶</a></dt>
 <dd><p>It reads the MIT-BIH Arrythmia X with the specified default configuration of the work presented at:
 Oh, Shu Lih, et al. “Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
 variable length heart beats.” Computers in biology and medicine 102 (2018): 278-287.</p>
@@ -123,8 +124,8 @@ value passed in the :parameter labels param.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pyCNN_LSTM.data.MIT_BIH">
-<code class="descclassname">pyCNN_LSTM.data.</code><code class="descname">MIT_BIH</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyCNN_LSTM/data.html#MIT_BIH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyCNN_LSTM.data.MIT_BIH" title="Permalink to this definition">¶</a></dt>
+<dt id="TSFEDL.data.MIT_BIH">
+<code class="descclassname">TSFEDL.data.</code><code class="descname">MIT_BIH</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/data.html#MIT_BIH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.data.MIT_BIH" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the MIT-BIH datasets and return a data loader with Shape (N, C, L) where N is the batch size, C is the
 number of channels (1 in this dataset) and L is the <cite>length</cite> of the time series (1000 by default).</p>
 </dd></dl>
@@ -141,6 +142,7 @@ number of channels (1 in this dataset) and L is the <cite>length</cite> of the t
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="blocks.html" title="previous chapter">Keras Blocks</a></li>
+      <li>Next: <a href="utils.html" title="next chapter">Utils Functions</a></li>
   </ul></li>
 </ul>
 </div>

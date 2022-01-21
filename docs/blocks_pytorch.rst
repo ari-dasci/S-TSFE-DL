@@ -9,22 +9,22 @@ Here can be found all blocks implemented in PyTorch for the architecture's imple
     :maxdepth: 1
 
 .. autosummary::
-    pyCNN_LSTM.blocks_pytorch.ConvBlockYiboGao
-    pyCNN_LSTM.blocks_pytorch.AttentionBranchYiboGao
-    pyCNN_LSTM.blocks_pytorch.RTABlock
-    pyCNN_LSTM.blocks_pytorch.SqueezeAndExcitationModule
-    pyCNN_LSTM.blocks_pytorch.DenseNetTransitionBlock
-    pyCNN_LSTM.blocks_pytorch.DenseNetConvBlock
-    pyCNN_LSTM.blocks_pytorch.DenseNetDenseBlock
-    pyCNN_LSTM.blocks_pytorch.SpatialAttentionBlockZhangJin
-    pyCNN_LSTM.blocks_pytorch.TemporalAttentionBlockZhangJin
+    TSFEDL.blocks_pytorch.ConvBlockYiboGao
+    TSFEDL.blocks_pytorch.AttentionBranchYiboGao
+    TSFEDL.blocks_pytorch.RTABlock
+    TSFEDL.blocks_pytorch.SqueezeAndExcitationModule
+    TSFEDL.blocks_pytorch.DenseNetTransitionBlock
+    TSFEDL.blocks_pytorch.DenseNetConvBlock
+    TSFEDL.blocks_pytorch.DenseNetDenseBlock
+    TSFEDL.blocks_pytorch.SpatialAttentionBlockZhangJin
+    TSFEDL.blocks_pytorch.TemporalAttentionBlockZhangJin
 
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.ConvBlockYiboGao
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.AttentionBranchYiboGao
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.RTABlock
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.SqueezeAndExcitationModule
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.DenseNetTransitionBlock
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.DenseNetConvBlock
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.DenseNetDenseBlock
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.SpatialAttentionBlockZhangJin
-.. autofunction:: pyCNN_LSTM.blocks_pytorch.TemporalAttentionBlockZhangJin
+.. autofunction:: TSFEDL.blocks_pytorch.ConvBlockYiboGao
+.. autofunction:: TSFEDL.blocks_pytorch.AttentionBranchYiboGao
+.. autofunction:: TSFEDL.blocks_pytorch.RTABlock
+.. autofunction:: TSFEDL.blocks_pytorch.SqueezeAndExcitationModule
+.. autofunction:: TSFEDL.blocks_pytorch.DenseNetTransitionBlock
+.. autofunction:: TSFEDL.blocks_pytorch.DenseNetConvBlock
+.. autofunction:: TSFEDL.blocks_pytorch.DenseNetDenseBlock
+.. autofunction:: TSFEDL.blocks_pytorch.SpatialAttentionBlockZhangJin
+.. autofunction:: TSFEDL.blocks_pytorch.TemporalAttentionBlockZhangJin
