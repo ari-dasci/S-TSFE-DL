@@ -6,10 +6,10 @@ from torch import nn
 from torch.nn import functional as F
 import pytorch_lightning as pl
 from typing import Callable, Optional, Dict, Tuple
-from pyCNN_LSTM.blocks_pytorch import RTABlock, SqueezeAndExcitationModule, DenseNetDenseBlock, DenseNetTransitionBlock, \
+from TSFEDL.blocks_pytorch import RTABlock, SqueezeAndExcitationModule, DenseNetDenseBlock, DenseNetTransitionBlock, \
     SpatialAttentionBlockZhangJin, TemporalAttentionBlockZhangJin
-from pyCNN_LSTM.utils import flip_indices_for_conv_to_lstm, flip_indices_for_conv_to_lstm_reshape
-from pyCNN_LSTM.utils import TimeDistributed
+from TSFEDL.utils import flip_indices_for_conv_to_lstm, flip_indices_for_conv_to_lstm_reshape
+from TSFEDL.utils import TimeDistributed
 
 
 

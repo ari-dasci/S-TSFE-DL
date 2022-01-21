@@ -5,9 +5,9 @@ from tensorflow.keras.activations import relu, sigmoid
 from tensorflow.keras.initializers import orthogonal, he_uniform
 from tensorflow.python.keras.engine.keras_tensor import KerasTensor
 
-from pyCNN_LSTM.blocks_keras import densenet_transition_block, densenet_dense_block, squeeze_excitation_module, \
+from TSFEDL.blocks_keras import densenet_transition_block, densenet_dense_block, squeeze_excitation_module, \
     RTA_block, spatial_attention_block_ZhangJin, temporal_attention_block_ZhangJin
-from pyCNN_LSTM.utils import check_inputs, full_convolution
+from TSFEDL.utils import check_inputs, full_convolution
 
 
 def OhShuLih(include_top=True,
