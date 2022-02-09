@@ -1,6 +1,6 @@
 import optuna
 import sys
-sys.path.append("../TSFEDL")
+sys.path.append("..")
 import TSFEDL.models_keras as models_keras
 import utils
 import pandas as pd

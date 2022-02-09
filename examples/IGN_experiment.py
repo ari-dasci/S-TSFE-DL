@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 import obspy
 import numpy as np
 import tensorflow as tf
