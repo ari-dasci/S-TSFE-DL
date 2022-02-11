@@ -53,16 +53,6 @@ setup(
 
     # Requeriments
     install_requires=['pytorch-lightning', 'scikit-learn', 'tensorflow-gpu', 'torchmetrics', 'wfdb', 'obspy'],
-    extras_require={},
-
-    # Additional data
-    package_data={},
-
-    # Project urls
-    project_urls={
-        'Bug Reports': 'https://github.com/ari-dasci/S-TSFE-DL/issues',
-        'Source': 'https://github.com/ari-dasci/S-TSFE-DL',
-        'https://github.com/ari-dasci/S-TSFE-DL/tree/main/docs/_build/html'},
 
     long_description_content_type='text/markdown'
 
