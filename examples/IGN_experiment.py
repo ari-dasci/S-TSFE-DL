@@ -18,6 +18,22 @@ def compile_and_fit(model, window, MAX_EPOCHS, patience=2):
     """
     It performs the training of the given model
 
+    Parameters
+    ----------
+    model : Keras model
+        Model to compile and fit.
+    window : WindowGenerator instance
+        Instance of the class WindowGenerator to create windows for training.
+    MAX_EPOCHS : int
+        Number of epochs for the training phase.
+    patience : int
+        Maximum number of epochs for the early stopping callback.
+
+    Returns
+    -------
+    history : dict
+        Dictionary with the history data of the model when fitted.
+
     """
     # We use early stopping and model checkpoint to store the vest model found so far.
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
@@ -40,9 +56,15 @@ def generateNewModel(input_tensor):
     """
     It generates a new model using a given model plus an additional building block in the TSFEDL library.
 
+    Parameters
+    ----------
+    input_tensor : Tensorflow tensor
+        This is the input tensor of the model.
+
     Returns
     -------
-    The new model
+    new_model : Keras model
+        OhShuLih model.
     """
     model = TSFEDL.OhShuLih(input_tensor=input_tensor, include_top=False)
     lstm_layer = model.layers[-1]  # get the LSTM
@@ -168,11 +190,16 @@ class WindowGenerator():
 def moving_average(x, w):
     """
     It performs the moving average over the time series
-    Args:
-        x: the time series
-        w: the size of the window
 
-    Returns:
+    Parameters
+    ----------
+        x : array-like
+            The time series.
+        w : int
+            The size of the window.
+
+    Returns
+    -------
         The preprocessed time series
     """
     return np.convolve(x, np.ones(w), 'valid') / w

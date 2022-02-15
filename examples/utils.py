@@ -5,9 +5,21 @@ def readDataset(route, route_names):
     """
     This function reads the KDD Cup 99 dataset.
 
-    Return
-    ---------
-        This function returns the datasets and the different types of attacks
+    Parameters
+    ----------
+    route : str
+        Route of the dataset.
+    route_names : str
+        Route of the names of the variables.
+
+    Returns
+    -------
+    data : array-like
+        Array with the read data.
+    attack_types : array-like
+        Array with the possible attacks.
+    attack_class : array-like
+        Labels of the data.
     """
     data = pd.read_csv(route, sep=",")
     names_file = open(route_names, "r")
@@ -73,6 +85,21 @@ def readDataset(route, route_names):
     return np.array(data), attack_types, attack_class
 
 def oneHotEncode(data, columns):
+    """
+    This function performs one hot encoding over a set of columns.
+
+    Parameters
+    ----------
+    data : array-like
+        Data for performing one-hot encoding.
+    columns : str list
+        Names of the columns to perform one-hot encoding.
+
+    Returns
+    -------
+    data : array-like
+        Dataset modified with one-hot encoding.
+    """
     for col in columns:
         one_hot = pd.get_dummies(data[col], prefix=col)
         data = data.drop(col, axis=1)
@@ -80,6 +107,26 @@ def oneHotEncode(data, columns):
     return data
 
 def sliceDataset(data, batch_size, npred):
+    """
+    This function slices the dataset in batches of batch_size size to
+    predict npred instances next.
+
+    Parameters
+    ----------
+    data : array-like
+        Data for to perform the slicing.
+    batch_size : int
+        Batch size of the slice to obtain.
+    npred : int
+        Number of instances to predict next to the batch.
+
+    Returns
+    -------
+    Xs : array-like
+        Data sliced.
+    Ys : array-like
+        Instances to predict from the data slice.
+    """
     Xs = []
     Ys = []
     cont = 0
@@ -90,4 +137,19 @@ def sliceDataset(data, batch_size, npred):
     return np.array(Xs), np.array(Ys)
 
 def computeScore(y_true, y_pred):
+    """
+    This function computes the mean error obtained in a prediction.
+
+    Parameters
+    ----------
+    y_true : array-like
+        Real values.
+    y_pred : array-like
+        Predicted values.
+
+    Returns
+    -------
+    score : array-like
+        Error obtained from the prediction using the real values.
+    """
     return np.sum(np.absolute(y_true-y_pred), axis=1)/y_true.shape[1]

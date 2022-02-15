@@ -15,6 +15,21 @@ def getData(size=1000, test_size=0.2):
         Returns a partition of the data as follow:
         (X_tra, y_tra, y_hotcoded_tra) -> the instances and labels of the training set
         (X_tst, y_tst, y_hotcoded_tst) -> the instances and labels of the test set.
+
+        Parameters
+        ----------
+        size : int, default=1000
+            Size of the time series.
+        test_size : float, default=0.2
+            Percentage of the dataset to be used for testing. This number
+            should be between 0 and 1.
+
+        Returns
+        -------
+        (X_tra, y_tra, y_HC_tra) :
+            Train triplet.
+        (X_tst, y_tst, y_HC_tst) :
+            Test triplet.
     """
     print("Load data...")
     dir = "physionet.org/files/mitdb/1.0.0/"
@@ -37,6 +52,38 @@ def trainModel(model, X_tra, y_tra, y_hot_encoded_tra,
     """
     It trains the given model using the given data and label
 
+    Parameters
+    ----------
+    model : Keras model,
+        Model to be trained.
+    X_tra : array-like
+        Training data.
+    y_tra : array-like
+        Training labels.
+    y_hot_encoded_tra : array-like
+        Training labels hot encoded for the softmax layer.
+    X_tst : array-like
+        Test data.
+    y_tst : array-like
+        Test labels.
+    y_hot_encoded_tst : array-like
+        Test labels hot encoded for the softmax layer.
+    loss : Keras loss
+        Loss for training the model.
+    metrics : list of str
+        This string list represents the metrics passed to the fit function of Keras.
+    batch_size : int, default=256
+        Batch size passed to the neural network for training.
+    epochs : int, default=6
+        Number of epochs of the training phase.
+
+
+    Returns
+    -------
+    acc : float
+        Accuracy obtained with the model over the test data.
+    pred : array-like
+        Labels predicted for the test data.
     """
     # use early stopping and model checkpoint to save the best model found so far
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3, restore_best_weights=True)
@@ -57,9 +104,15 @@ def generateNewModel(input_tensor):
     """
     It generates a new model using a the OhShuLih model plus an additional building block in the TSFEDL library.
 
+    Parameters
+    ----------
+    input_tensor : Tensorflow tensor
+        Input tensor of the model.
+
     Returns
     -------
-    The new model
+    new_model : Keras model
+        OhShuLih model to predict 5 classes.
     """
     model = TSFEDL.OhShuLih(input_tensor=input_tensor, include_top=False)
     lstm_layer = model.layers[-1]  # get the LSTM
