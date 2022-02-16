@@ -17,19 +17,30 @@ def get_mit_bih_segments(data: wfdb.Record,
     It generates the segments of uninterrupted sequences of arrythmia beats into the corresponding arrythmia groups
     in labels.
 
-    :param data:            The arrythmia signal as a wfdb Record class
-    :param annotations:     The set of annotations as a wfdb Annotation class
-    :param labels:          The set of valid labels for the different segments. Segments with different labels are discarded
-    :param left_offset:     The number of instance at the left of the first R peak of the segment. Default to 99
-    :param right_offset:    The number of instances at the right of the last R peak of the segment. Default to 160
-    :param fixed_length:    Should the segments have a fixed length? If fixed_length is a number, then the segments will
-                            have the specified length. If the segment length is greater than fixed_length, it is truncated
-                            or padded with zeros otherwise. Default to None.
+    Parameters
+    ----------
 
-    :return:                A tuple that contains the data and the associated labels. Data has a shape of (N, T, V)
-                            where N is the number of segments (or instances), V is the number of variables (1 in this case)
-                            and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
-                            value passed in the :parameter labels param.
+    data : wfdb.Record
+        The arrythmia signal as a wfdb Record class
+    annotations : wfdb.Annotation
+        The set of annotations as a wfdb Annotation class
+    labels : array-like
+        The set of valid labels for the different segments. Segments with different labels are discarded
+    left_offset : int
+        The number of instance at the left of the first R peak of the segment. Default to 99
+    right_offset : int
+        The number of instances at the right of the last R peak of the segment. Default to 160
+    fixed_length : int, optional
+        Should the segments have a fixed length? If fixed_length is a number, then the segments will
+        have the specified length. If the segment length is greater than fixed_length, it is truncated
+        or padded with zeros otherwise. Default to None.
+
+    Returns
+    -------
+        A tuple that contains the data and the associated labels. Data has a shape of (N, T, V)
+        where N is the number of segments (or instances), V is the number of variables (1 in this case)
+        and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
+        value passed in the :parameter labels param.
     """
     i = 0
     annot_segments = []
@@ -95,18 +106,27 @@ def read_mit_bih(path: str,
     Oh, Shu Lih, et al. "Automated diagnosis of arrhythmia using combination of CNN and LSTM techniques with
     variable length heart beats." Computers in biology and medicine 102 (2018): 278-287.
 
-    :param labels:              The labels of the different types of arrythmia to be employed
-    :param path:                The path of the directory where the X files are stored. Note: The X and annotations
-                                files must have the same name, but different extension (annotations must have .atr extension)
-    :param left_offset:         The number of instances at the left of the first R peak of the segment. Defaults to 99
-    :param right_offset:        The number of instances at the right of the last R peak of the segment. Defaults to 160
-    :param fixed_length:        If different to None, the segment will have the specified number of instances. Note that
-                                if the segment length > fixed_length it will be truncate or padded with zeros otherwise.
+    Parameters
+    ----------
+    labels : array-like
+        The labels of the different types of arrythmia to be employed
+    path : str
+        The path of the directory where the X files are stored. Note: The X and annotations
+        files must have the same name, but different extension (annotations must have .atr extension)
+    left_offset : int
+        The number of instances at the left of the first R peak of the segment. Defaults to 99
+    right_offset : int
+        The number of instances at the right of the last R peak of the segment. Defaults to 160
+    fixed_length : int, optional
+        If different to None, the segment will have the specified number of instances. Note that
+        if the segment length > fixed_length it will be truncate or padded with zeros otherwise.
 
-    :return:                     A tuple that contains the data and the associated labels as an ndarray. Data has a shape of (N, T, V)
-                                where N is the number of segments (or instances), V is the number of variables (1 in this case)
-                                and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
-                                value passed in the :parameter labels param.
+    Returns
+    -------
+        A tuple that contains the data and the associated labels as an ndarray. Data has a shape of (N, T, V)
+        where N is the number of segments (or instances), V is the number of variables (1 in this case)
+        and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
+        value passed in the :parameter labels param.
     """
     print("reading data...")
     segments = []
@@ -138,6 +158,27 @@ class MIT_BIH(Dataset):
     """
         Reads the MIT-BIH datasets and return a data loader with Shape (N, C, L) where N is the batch size, C is the
         number of channels (1 in this dataset) and L is the `length` of the time series (1000 by default).
+
+        Parameters
+        ----------
+        labels :array-like
+            The labels of the different types of arrythmia to be employed
+        path : str
+            The path of the directory where the X files are stored. Note: The X and annotations
+            files must have the same name, but different extension (annotations must have .atr extension)
+        left_offset : int
+            The number of instances at the left of the first R peak of the segment. Defaults to 99
+        right_offset : int
+            The number of instances at the right of the last R peak of the segment. Defaults to 160
+        return_hot_coded : bool
+            Wether to return the raw labels or hot-encoded ones.
+
+        Returns
+        -------
+            A tuple that contains the data and the associated labels as an ndarray. Data has a shape of (N, T, V)
+            where N is the number of segments (or instances), V is the number of variables (1 in this case)
+            and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
+            value passed in the :parameter labels param.
     """
     def __init__(self, path,
                  labels=np.array(['N', 'L', 'R', 'A', 'V']),

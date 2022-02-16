@@ -6,13 +6,17 @@ from tensorflow.python.keras.activations import relu, sigmoid
 def densenet_transition_block(x, reduction, name):
     """A transition block of densenet for 1D data.
 
-    Arguments:
+    Parameters
+    ----------
       x: input tensor.
-      reduction: float, compression rate at transition layers.
-      name: string, block label.
+      reduction: float
+        Compression rate at transition layers.
+      name: str
+        Block label.
 
-    Returns:
-      output tensor for the block.
+    Returns
+    -------
+    x : output tensor for the block.
     """
     bn_axis = 2
     x = layers.BatchNormalization(axis=2, epsilon=1.001e-5, name=name + '_bn')(x)
@@ -25,13 +29,17 @@ def densenet_transition_block(x, reduction, name):
 def densenet_conv_block(x, growth_rate, name):
     """A building block for a dense block from densenet for 1D data.
 
-    Arguments:
+    Parameters
+    ----------
       x: input tensor.
-      growth_rate: float, growth rate at dense layers.
-      name: string, block label.
+      growth_rate: float
+        Growth rate at dense layers.
+      name: str
+        Block label.
 
-    Returns:
-      Output tensor for the block.
+    Returns
+    -------
+    x : Output tensor for the block.
     """
     bn_axis = 2  # 3 if backend.image_data_format() == 'channels_last' else 1
     x1 = layers.BatchNormalization(axis=bn_axis, epsilon=1.001e-5, name=name + '_0_bn')(x)
@@ -47,13 +55,17 @@ def densenet_conv_block(x, growth_rate, name):
 def densenet_dense_block(x, blocks, growth_rate, name):
     """A dense block of densenet for 1D data.
 
-    Arguments:
+    Parameters
+    ----------
       x: input tensor.
-      blocks: integer, the number of building blocks.
-      name: string, block label.
+      blocks: int
+        The number of building blocks.
+      name: str
+        Block label.
 
-    Returns:
-      Output tensor for the block.
+    Returns
+    -------
+    x : Output tensor for the block.
     """
     for i in range(blocks):
         x = densenet_conv_block(x, growth_rate, name=name + '_block' + str(i + 1))
@@ -73,7 +85,7 @@ def squeeze_excitation_module(x, dense_units):
       x: keras.Tensor
         The input tensor.
 
-      dense_units: integer
+      dense_units: int
         The number units on each dense layer.
 
     Returns
@@ -94,7 +106,21 @@ def squeeze_excitation_module(x, dense_units):
 
 def conv_block_YiboGao(in_x, nb_filter, kernel_size):
     """
-    Convolutional block of YiboGao's model
+    Convolutional block of YiboGao's model.
+
+    Parameters
+    ----------
+    in_x : keras.Tensor
+        Input tensor of the convolution bock.
+    nb_filter : int
+        Number of filerts for the convolution.
+    kernel_size : int
+        Kernel size of the convolution.
+
+    Returns
+    -------
+    x : keras.Tensor
+        Output tensor of the block.
     """
     x = layers.Conv1D(filters=nb_filter, kernel_size=kernel_size, padding='same')(in_x)
     x = layers.BatchNormalization()(x)
@@ -104,7 +130,21 @@ def conv_block_YiboGao(in_x, nb_filter, kernel_size):
 
 def attention_branch_YiboGao(in_x, nb_filter, kernel_size):
     """
-    Attention bronch of YiboGao's model
+    Attention bronch of YiboGao's model.
+
+    Parameters
+    ----------
+    in_x : keras.Tensor
+        Input tensor.
+    nb_filter : int
+        Number of filerts for the convolutional YiboGao block.
+    kernel_size : int
+        Kernel size for the convolutional block.
+
+    Returns
+    -------
+    x : keras.Tensor
+        Output tensor of the block.
     """
     x1 = conv_block_YiboGao(in_x, nb_filter, kernel_size)
 
@@ -138,6 +178,20 @@ def RTA_block(in_x, nb_filter, kernel_size):
         Gao, Y., Wang, H., & Liu, Z. (2021). An end-to-end atrial fibrillation detection by a novel residual-based
         temporal attention convolutional neural network with exponential nonlinearity loss.
         Knowledge-Based Systems, 212, 106589.
+
+    Parameters
+    ----------
+    in_x : keras.Tensor
+        Input tensor.
+    nb_filter : int
+        Number of filerts for the convolutional YiboGao block.
+    kernel_size : int
+        Kernel size for the convolutional block.
+
+    Returns
+    -------
+    out : keras.Tensor
+        Output tensor of the block.
     """
     x1 = conv_block_YiboGao(in_x, nb_filter, kernel_size)
     x2 = conv_block_YiboGao(x1, nb_filter, kernel_size)
@@ -155,6 +209,18 @@ def RTA_block(in_x, nb_filter, kernel_size):
 def spatial_attention_block_ZhangJin(decrease_ratio, x):
     """
     Spatial attention module of ZhangJin's model
+
+    Parameters
+    ----------
+    x : keras.Tensor
+        Input tensor.
+    decrease_ratio : int
+        Decrease ratio of the number of units in the neural network.
+
+    Returns
+    -------
+    x : keras.Tensor
+        Output tensor of the block.
     """
     shared_dense1 = layers.Dense(units=x.shape[2] // decrease_ratio, activation=relu)
     shared_dense2 = layers.Dense(units=x.shape[2], activation=relu)
@@ -176,6 +242,16 @@ def spatial_attention_block_ZhangJin(decrease_ratio, x):
 def temporal_attention_block_ZhangJin(x):
     """
     Temporal attention module of ZhangJin's Model.
+
+    Parameters
+    ----------
+    x : keras.Tensor
+        Input tensor.
+
+    Returns
+    -------
+    x : keras.Tensor
+        Output tensor of the block.
     """
     # Temporal attention module
     x1 = layers.GlobalMaxPool1D(data_format='channels_first')(x)

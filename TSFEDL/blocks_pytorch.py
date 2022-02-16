@@ -6,6 +6,15 @@ import torch.nn.functional as F
 class ConvBlockYiboGao(nn.Module):
     """
     Convolutional block of YiboGao's model
+
+    Parameters
+    ----------
+    in_features : int
+        Number of input features.
+    nb_filter : int
+        Number of filters for the convolution.
+    kernel_size : int
+        Size of the convolution kernel.
     """
     def __init__(self, in_features, nb_filter, kernel_size):
         super(ConvBlockYiboGao, self).__init__()
@@ -20,13 +29,36 @@ class ConvBlockYiboGao(nn.Module):
             nn.ReLU()
         )
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    x : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):
         return self.module(x)
 
 
 class AttentionBranchYiboGao(nn.Module):
     """
-    Attention bronch of YiboGao's model
+    Attention branch of YiboGao's model
+
+    Parameters
+    ----------
+    in_features : int
+        Number of input features.
+    nb_filter : int
+        Number of filters for the convolution.
+    kernel_size : int
+        Size of the convolution kernel.
     """
 
     def __init__(self, in_features, nb_filter, kernel_size):
@@ -50,6 +82,20 @@ class AttentionBranchYiboGao(nn.Module):
             nn.Sigmoid()
         )
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    x : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):
         x1 = self.convBlock1(x)
         x = self.convBlock2(x1)
@@ -73,6 +119,15 @@ class RTABlock(nn.Module):
         Gao, Y., Wang, H., & Liu, Z. (2021). An end-to-end atrial fibrillation detection by a novel residual-based
         temporal attention convolutional neural network with exponential nonlinearity loss.
         Knowledge-Based Systems, 212, 106589.
+
+    Parameters
+    ----------
+    in_features : int
+        Number of input features.
+    nb_filter : int
+        Number of filters for the convolution.
+    kernel_size : int
+        Size of the convolution kernel.
     """
     def __init__(self, in_features, nb_filter, kernel_size):
         super(RTABlock, self).__init__()
@@ -85,6 +140,20 @@ class RTABlock(nn.Module):
         self.attention = AttentionBranchYiboGao(nb_filter, nb_filter, kernel_size)
         self.conv3 = ConvBlockYiboGao(nb_filter, nb_filter, kernel_size)
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    x : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):
         x1 = self.conv1(x)
         x2 = self.conv2(x1)
@@ -104,12 +173,12 @@ class SqueezeAndExcitationModule(nn.Module):
     ----------
      Squeeze-and-Excitation Networks, Jie Hu, Li Shen, Samuel Albanie, Gang Sun, Enhua Wu (arXiv:1709.01507v4)
 
-    Arguments
+    Parameters
     ---------
       in_features: int
         The number of input features (channels)
 
-      dense_units: integer
+      dense_units: int
         The number units on each dense layer.
 
     Returns
@@ -129,6 +198,20 @@ class SqueezeAndExcitationModule(nn.Module):
             nn.Sigmoid()
         )
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    se : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):  # x shape is (N, C, L) N -> num_batch, C -> channels, L -> length of sequence
         # Global average pooling is just getting the average value of each channel
         se = torch.mean(x, dim=2)
@@ -145,7 +228,16 @@ class SqueezeAndExcitationModule(nn.Module):
 
 class DenseNetTransitionBlock(nn.Module):
     """
-    Densenet Transition Block for CaiWenjuan model
+    Densenet Transition Block for CaiWenjuan model.
+
+    Parameters
+    ---------
+      in_features: int
+        The number of input features (channels)
+
+      reduction: float
+        Number between 0 and 1 representing the percentage reduction on the number
+        of units.
     """
     def __init__(self, in_features, reduction):
         super(DenseNetTransitionBlock, self).__init__()
@@ -157,13 +249,35 @@ class DenseNetTransitionBlock(nn.Module):
             nn.AvgPool1d(kernel_size=2, stride=2)
         )
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    se : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):
         return self.module(x)
 
 
 class DenseNetConvBlock(nn.Module):
     """
-    Densenet convolution block
+    Densenet convolution block.
+
+    Parameters
+    ---------
+      in_features: int
+        The number of input features (channels)
+
+      growth_rate: int
+        Growth rate of the number of units in the layers.
     """
     def __init__(self, in_features, growth_rate):
         super(DenseNetConvBlock, self).__init__()
@@ -176,6 +290,20 @@ class DenseNetConvBlock(nn.Module):
             nn.Conv1d(in_channels=4 * growth_rate, out_channels=growth_rate, kernel_size=3, padding='same', bias=False)
         )
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    se : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):
         x1 = self.module(x)
         return torch.cat((x1, x), dim=1)
@@ -183,7 +311,18 @@ class DenseNetConvBlock(nn.Module):
 
 class DenseNetDenseBlock(nn.Module):
     """
-    Densenet dense block
+    Densenet dense block.
+
+    Parameters
+    ---------
+    in_features: int
+        The number of input features (channels)
+
+    layers : int
+        Number of layers of the block.
+
+    growth_rate: int
+        Growth rate of the number of units in the layers.
     """
     def __init__(self, in_features, layers, growth_rate):
         super(DenseNetDenseBlock, self).__init__()
@@ -193,6 +332,20 @@ class DenseNetDenseBlock(nn.Module):
              for i in range(layers)]
         )
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    se : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):
         xs = x
         for layer in self.module:
@@ -202,7 +355,15 @@ class DenseNetDenseBlock(nn.Module):
 
 class SpatialAttentionBlockZhangJin(nn.Module):
     """
-    Spatial Attention module of ZhangJin's model
+    Spatial Attention module of ZhangJin's model.
+
+    Parameters
+    ---------
+    in_features: int
+        The number of input features (channels).
+
+    decrease_ratio: int
+        Decrease rate of the number of units in the layers.
     """
     def __init__(self, in_features, decrease_ratio):
         super(SpatialAttentionBlockZhangJin, self).__init__()
@@ -213,6 +374,20 @@ class SpatialAttentionBlockZhangJin(nn.Module):
             nn.ReLU()
         )
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    se : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):
         # 1º Global average pooling for each feature
         x1 = torch.mean(x, dim=2)
@@ -230,12 +405,26 @@ class SpatialAttentionBlockZhangJin(nn.Module):
 
 class TemporalAttentionBlockZhangJin(nn.Module):
     """
-    Temporal attention module of ZhangJin's Model
+    Temporal attention module of ZhangJin's Model.
     """
     def __init__(self):
         super(TemporalAttentionBlockZhangJin, self).__init__()
         self.conv1 = nn.Conv1d(in_channels=2, out_channels=1, kernel_size=7, padding='same')
 
+    """
+    Forward function of the model. This function returns the operation of the
+    neural network over data.
+
+    Parameters
+    ----------
+    x : array-like
+        Data to operate with.
+
+    Returns
+    -------
+    se : torch.Tensor
+        Result of the operation with the neural network.
+    """
     def forward(self, x):
         # Global max pooling for each TIMESTEP
         x1 = torch.max(x, dim=1).values

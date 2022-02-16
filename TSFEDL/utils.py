@@ -28,19 +28,59 @@ class TimeDistributed(nn.Module):
 def flip_indices_for_conv_to_lstm(x: torch.Tensor) -> torch.Tensor:
     """
     Changes the (N, C, L) dimension to (N, L, C). This is due to features in PyTorch's LSTMs are expected on the last dim.
+
+    Parameters
+    ----------
+    x : torch.Tensor
+        Input tensor.
+
+    Returns
+    -------
+    x : torch.Tensor
+        Output tensor.
     """
     return x.view(x.size(0), x.size(2), x.size(1))
 
 def flip_indices_for_conv_to_lstm_reshape(x: torch.Tensor) -> torch.Tensor:
     """
     Changes the (N, C, L) dimension to (N, L, C). This is due to features in PyTorch's LSTMs are expected on the last dim.
+
+    Parameters
+    ----------
+    x : torch.Tensor
+        Input tensor.
+
+    Returns
+    -------
+    x : torch.Tensor
+        Output tensor.
     """
     return x.reshape(x.size(0), x.size(2), x.size(1))
 
 
 def check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation):
     """
-        Auxiliar function for checking the input parameters of the models.
+    Auxiliar function for checking the input parameters of the models.
+
+    Parameters
+    ----------
+    include_top : bool
+        Boolean value to control if the classification module should be placed in the model.
+    weights : str
+        Route to the saved weight of the model.
+    input_tensor : keras.Tensor
+        Input tensor of the model.
+    input_shape : tuple
+        Tuple with the input shape of the model.
+    classes : int
+        Number of classes to predict with the model.
+    classifier_activation : str
+        "softmax" or None
+
+    Returns
+    -------
+    inp : Keras.Tensor
+        Input tensor.
     """
     if include_top:
         if not isinstance(classes, int):
@@ -66,7 +106,23 @@ def check_inputs(include_top, weights, input_tensor, input_shape, classes, class
 
 def full_convolution(x, filters, kernel_size, **kwargs):
     """
-        It performs a Full convolution operation on the given keras Tensor.
+    It performs a Full convolution operation on the given keras Tensor.
+
+    Parameters
+    ----------
+    x : Keras.Tensor
+        Input tensor of the full convolution.
+    filters : int
+        Number of filters of the full convolution.
+    kernel_size : int
+        Kernel size of the convolution.
+    kwargs : dict
+        Rest of the arguments, optional.
+
+    Returns
+    -------
+    x : Keras.Tensor
+        Output tensor.
     """
     # Do a full convolution. Return a keras Tensor
     x = layers.ZeroPadding1D(padding=kernel_size - 1)(x)
