@@ -29,7 +29,6 @@ git clone https://github.com/ari-dasci/S-TSFE-DL.git
 # install project   
 cd S-TSFE-DL
 pip install -e .   
-pip install -r docker/requirements.txt
  ```   
 In order to run a example, navigate to any file and run it.   
  ```bash
@@ -57,7 +56,8 @@ model.fit(X, y, epochs=20)
 
 Please cite this work as:
 
-*not available yet*
+Time Series Feature Extraction using Deep Learning library (https://github.com/ari-dasci/S-TSFE-DL/)
+Paper citation is pending.
 
 <!--
 ```
