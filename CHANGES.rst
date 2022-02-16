@@ -19,5 +19,20 @@ Release history
    - Removed
    - Fixed
 
-0.1.0 (Date here)
+1.0.0 (1 Dec 2021)
 ======================
+**Description**
+
+First release of the library.
+
+1.0.1 (21 Jan 2022)
+======================
+**Description**
+
+Name of the library has changed and new models have been added.
+
+- Added: HongTan model
+- Changed: The library's name is now TSFEDL.
+- Deprecated:
+- Removed:
+- Fixed: Minor bugs.
