@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Keras Blocks" href="blocks.html" />
+    <link rel="next" title="Keras Blocks" href="blocks_keras.html" />
     <link rel="prev" title="Models Pytorch" href="models_pytorch.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -54,7 +54,7 @@
 <td>Convolutional block of YiboGao’s model</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#TSFEDL.blocks_pytorch.AttentionBranchYiboGao" title="TSFEDL.blocks_pytorch.AttentionBranchYiboGao"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.blocks_pytorch.AttentionBranchYiboGao</span></code></a>(…)</td>
-<td>Attention bronch of YiboGao’s model</td>
+<td>Attention branch of YiboGao’s model</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#TSFEDL.blocks_pytorch.RTABlock" title="TSFEDL.blocks_pytorch.RTABlock"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.blocks_pytorch.RTABlock</span></code></a>(in_features,&nbsp;…)</td>
 <td>Residual-based Temporal Attention (RTA) block.</td>
@@ -63,19 +63,19 @@
 <td>Squeeze-and-Excitation Module.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#TSFEDL.blocks_pytorch.DenseNetTransitionBlock" title="TSFEDL.blocks_pytorch.DenseNetTransitionBlock"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.blocks_pytorch.DenseNetTransitionBlock</span></code></a>(…)</td>
-<td>Densenet Transition Block for CaiWenjuan model</td>
+<td>Densenet Transition Block for CaiWenjuan model.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#TSFEDL.blocks_pytorch.DenseNetConvBlock" title="TSFEDL.blocks_pytorch.DenseNetConvBlock"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.blocks_pytorch.DenseNetConvBlock</span></code></a>(…)</td>
-<td>Densenet convolution block</td>
+<td>Densenet convolution block.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#TSFEDL.blocks_pytorch.DenseNetDenseBlock" title="TSFEDL.blocks_pytorch.DenseNetDenseBlock"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.blocks_pytorch.DenseNetDenseBlock</span></code></a>(…)</td>
-<td>Densenet dense block</td>
+<td>Densenet dense block.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#TSFEDL.blocks_pytorch.SpatialAttentionBlockZhangJin" title="TSFEDL.blocks_pytorch.SpatialAttentionBlockZhangJin"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.blocks_pytorch.SpatialAttentionBlockZhangJin</span></code></a>(…)</td>
-<td>Spatial Attention module of ZhangJin’s model</td>
+<td>Spatial Attention module of ZhangJin’s model.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#TSFEDL.blocks_pytorch.TemporalAttentionBlockZhangJin" title="TSFEDL.blocks_pytorch.TemporalAttentionBlockZhangJin"><code class="xref py py-obj docutils literal"><span class="pre">TSFEDL.blocks_pytorch.TemporalAttentionBlockZhangJin</span></code></a>()</td>
-<td>Temporal attention module of ZhangJin’s Model</td>
+<td>Temporal attention module of ZhangJin’s Model.</td>
 </tr>
 </tbody>
 </table>
@@ -83,12 +83,38 @@
 <dt id="TSFEDL.blocks_pytorch.ConvBlockYiboGao">
 <code class="descclassname">TSFEDL.blocks_pytorch.</code><code class="descname">ConvBlockYiboGao</code><span class="sig-paren">(</span><em>in_features</em>, <em>nb_filter</em>, <em>kernel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/blocks_pytorch.html#ConvBlockYiboGao"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.blocks_pytorch.ConvBlockYiboGao" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolutional block of YiboGao’s model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<em>int</em>) – Number of input features.</li>
+<li><strong>nb_filter</strong> (<em>int</em>) – Number of filters for the convolution.</li>
+<li><strong>kernel_size</strong> (<em>int</em>) – Size of the convolution kernel.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="TSFEDL.blocks_pytorch.AttentionBranchYiboGao">
 <code class="descclassname">TSFEDL.blocks_pytorch.</code><code class="descname">AttentionBranchYiboGao</code><span class="sig-paren">(</span><em>in_features</em>, <em>nb_filter</em>, <em>kernel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/blocks_pytorch.html#AttentionBranchYiboGao"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.blocks_pytorch.AttentionBranchYiboGao" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attention bronch of YiboGao’s model</p>
+<dd><p>Attention branch of YiboGao’s model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<em>int</em>) – Number of input features.</li>
+<li><strong>nb_filter</strong> (<em>int</em>) – Number of filters for the convolution.</li>
+<li><strong>kernel_size</strong> (<em>int</em>) – Size of the convolution kernel.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -99,6 +125,19 @@
 <p>Gao, Y., Wang, H., &amp; Liu, Z. (2021). An end-to-end atrial fibrillation detection by a novel residual-based
 temporal attention convolutional neural network with exponential nonlinearity loss.
 Knowledge-Based Systems, 212, 106589.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<em>int</em>) – Number of input features.</li>
+<li><strong>nb_filter</strong> (<em>int</em>) – Number of filters for the convolution.</li>
+<li><strong>kernel_size</strong> (<em>int</em>) – Size of the convolution kernel.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -113,7 +152,7 @@ Knowledge-Based Systems, 212, 106589.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>in_features</strong> (<em>int</em>) – The number of input features (channels)</li>
-<li><strong>dense_units</strong> (<em>integer</em>) – The number units on each dense layer.</li>
+<li><strong>dense_units</strong> (<em>int</em>) – The number units on each dense layer.</li>
 </ul>
 </td>
 </tr>
@@ -130,31 +169,81 @@ Knowledge-Based Systems, 212, 106589.</p>
 <dl class="function">
 <dt id="TSFEDL.blocks_pytorch.DenseNetTransitionBlock">
 <code class="descclassname">TSFEDL.blocks_pytorch.</code><code class="descname">DenseNetTransitionBlock</code><span class="sig-paren">(</span><em>in_features</em>, <em>reduction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/blocks_pytorch.html#DenseNetTransitionBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.blocks_pytorch.DenseNetTransitionBlock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Densenet Transition Block for CaiWenjuan model</p>
+<dd><p>Densenet Transition Block for CaiWenjuan model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<em>int</em>) – The number of input features (channels)</li>
+<li><strong>reduction</strong> (<em>float</em>) – Number between 0 and 1 representing the percentage reduction on the number
+of units.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="TSFEDL.blocks_pytorch.DenseNetConvBlock">
 <code class="descclassname">TSFEDL.blocks_pytorch.</code><code class="descname">DenseNetConvBlock</code><span class="sig-paren">(</span><em>in_features</em>, <em>growth_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/blocks_pytorch.html#DenseNetConvBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.blocks_pytorch.DenseNetConvBlock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Densenet convolution block</p>
+<dd><p>Densenet convolution block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<em>int</em>) – The number of input features (channels)</li>
+<li><strong>growth_rate</strong> (<em>int</em>) – Growth rate of the number of units in the layers.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="TSFEDL.blocks_pytorch.DenseNetDenseBlock">
 <code class="descclassname">TSFEDL.blocks_pytorch.</code><code class="descname">DenseNetDenseBlock</code><span class="sig-paren">(</span><em>in_features</em>, <em>layers</em>, <em>growth_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/blocks_pytorch.html#DenseNetDenseBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.blocks_pytorch.DenseNetDenseBlock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Densenet dense block</p>
+<dd><p>Densenet dense block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<em>int</em>) – The number of input features (channels)</li>
+<li><strong>layers</strong> (<em>int</em>) – Number of layers of the block.</li>
+<li><strong>growth_rate</strong> (<em>int</em>) – Growth rate of the number of units in the layers.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="TSFEDL.blocks_pytorch.SpatialAttentionBlockZhangJin">
 <code class="descclassname">TSFEDL.blocks_pytorch.</code><code class="descname">SpatialAttentionBlockZhangJin</code><span class="sig-paren">(</span><em>in_features</em>, <em>decrease_ratio</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/blocks_pytorch.html#SpatialAttentionBlockZhangJin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.blocks_pytorch.SpatialAttentionBlockZhangJin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spatial Attention module of ZhangJin’s model</p>
+<dd><p>Spatial Attention module of ZhangJin’s model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<em>int</em>) – The number of input features (channels).</li>
+<li><strong>decrease_ratio</strong> (<em>int</em>) – Decrease rate of the number of units in the layers.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="TSFEDL.blocks_pytorch.TemporalAttentionBlockZhangJin">
 <code class="descclassname">TSFEDL.blocks_pytorch.</code><code class="descname">TemporalAttentionBlockZhangJin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/blocks_pytorch.html#TemporalAttentionBlockZhangJin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.blocks_pytorch.TemporalAttentionBlockZhangJin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Temporal attention module of ZhangJin’s Model</p>
+<dd><p>Temporal attention module of ZhangJin’s Model.</p>
 </dd></dl>
 
 </div>
@@ -169,7 +258,7 @@ Knowledge-Based Systems, 212, 106589.</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="models_pytorch.html" title="previous chapter">Models Pytorch</a></li>
-      <li>Next: <a href="blocks.html" title="next chapter">Keras Blocks</a></li>
+      <li>Next: <a href="blocks_keras.html" title="next chapter">Keras Blocks</a></li>
   </ul></li>
 </ul>
 </div>

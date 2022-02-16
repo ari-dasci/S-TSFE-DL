@@ -1,6 +1,6 @@
-******
+*****************
 Models Keras
-******
+*****************
 
 Here the different deep learning models included in the library are summarised. All of them are developed in Keras.
 
@@ -9,48 +9,48 @@ Here the different deep learning models included in the library are summarised. 
     :maxdepth: 1
 
 .. autosummary::
-    TSFEDL.models.OhShuLih
-    TSFEDL.models.KhanZulfiqar
-    TSFEDL.models.ZhengZhenyu
-    TSFEDL.models.HouBoroui
-    TSFEDL.models.WangKejun
-    TSFEDL.models.ChenChen
-    TSFEDL.models.KimTaeYoung
-    TSFEDL.models.GenMinxing
-    TSFEDL.models.FuJiangmeng
-    TSFEDL.models.ShiHaotian
-    TSFEDL.models.HuangMeiLing
-    TSFEDL.models.LihOhShu
-    TSFEDL.models.GaoJunLi
-    TSFEDL.models.WeiXiaoyan
-    TSFEDL.models.KongZhengmin
-    TSFEDL.models.YildirimOzal
-    TSFEDL.models.CaiWenjuan
-    TSFEDL.models.KimMinGu
-    TSFEDL.models.HtetMyetLynn
-    TSFEDL.models.ZhangJin
-    TSFEDL.models.YaoQihang
-    TSFEDL.models.YiboGao
+    TSFEDL.models_keras.OhShuLih
+    TSFEDL.models_keras.KhanZulfiqar
+    TSFEDL.models_keras.ZhengZhenyu
+    TSFEDL.models_keras.HouBoroui
+    TSFEDL.models_keras.WangKejun
+    TSFEDL.models_keras.ChenChen
+    TSFEDL.models_keras.KimTaeYoung
+    TSFEDL.models_keras.GenMinxing
+    TSFEDL.models_keras.FuJiangmeng
+    TSFEDL.models_keras.ShiHaotian
+    TSFEDL.models_keras.HuangMeiLing
+    TSFEDL.models_keras.LihOhShu
+    TSFEDL.models_keras.GaoJunLi
+    TSFEDL.models_keras.WeiXiaoyan
+    TSFEDL.models_keras.KongZhengmin
+    TSFEDL.models_keras.YildirimOzal
+    TSFEDL.models_keras.CaiWenjuan
+    TSFEDL.models_keras.KimMinGu
+    TSFEDL.models_keras.HtetMyetLynn
+    TSFEDL.models_keras.ZhangJin
+    TSFEDL.models_keras.YaoQihang
+    TSFEDL.models_keras.YiboGao
 
-.. autofunction:: TSFEDL.models.OhShuLih
-.. autofunction:: TSFEDL.models.KhanZulfiqar
-.. autofunction:: TSFEDL.models.ZhengZhenyu
-.. autofunction:: TSFEDL.models.HouBoroui
-.. autofunction:: TSFEDL.models.WangKejun
-.. autofunction:: TSFEDL.models.ChenChen
-.. autofunction:: TSFEDL.models.KimTaeYoung
-.. autofunction:: TSFEDL.models.GenMinxing
-.. autofunction:: TSFEDL.models.FuJiangmeng
-.. autofunction:: TSFEDL.models.ShiHaotian
-.. autofunction:: TSFEDL.models.HuangMeiLing
-.. autofunction:: TSFEDL.models.LihOhShu
-.. autofunction:: TSFEDL.models.GaoJunLi
-.. autofunction:: TSFEDL.models.WeiXiaoyan
-.. autofunction:: TSFEDL.models.KongZhengmin
-.. autofunction:: TSFEDL.models.YildirimOzal
-.. autofunction:: TSFEDL.models.CaiWenjuan
-.. autofunction:: TSFEDL.models.KimMinGu
-.. autofunction:: TSFEDL.models.HtetMyetLynn
-.. autofunction:: TSFEDL.models.ZhangJin
-.. autofunction:: TSFEDL.models.YaoQihang
-.. autofunction:: TSFEDL.models.YiboGao
+.. autofunction:: TSFEDL.models_keras.OhShuLih
+.. autofunction:: TSFEDL.models_keras.KhanZulfiqar
+.. autofunction:: TSFEDL.models_keras.ZhengZhenyu
+.. autofunction:: TSFEDL.models_keras.HouBoroui
+.. autofunction:: TSFEDL.models_keras.WangKejun
+.. autofunction:: TSFEDL.models_keras.ChenChen
+.. autofunction:: TSFEDL.models_keras.KimTaeYoung
+.. autofunction:: TSFEDL.models_keras.GenMinxing
+.. autofunction:: TSFEDL.models_keras.FuJiangmeng
+.. autofunction:: TSFEDL.models_keras.ShiHaotian
+.. autofunction:: TSFEDL.models_keras.HuangMeiLing
+.. autofunction:: TSFEDL.models_keras.LihOhShu
+.. autofunction:: TSFEDL.models_keras.GaoJunLi
+.. autofunction:: TSFEDL.models_keras.WeiXiaoyan
+.. autofunction:: TSFEDL.models_keras.KongZhengmin
+.. autofunction:: TSFEDL.models_keras.YildirimOzal
+.. autofunction:: TSFEDL.models_keras.CaiWenjuan
+.. autofunction:: TSFEDL.models_keras.KimMinGu
+.. autofunction:: TSFEDL.models_keras.HtetMyetLynn
+.. autofunction:: TSFEDL.models_keras.ZhangJin
+.. autofunction:: TSFEDL.models_keras.YaoQihang
+.. autofunction:: TSFEDL.models_keras.YiboGao

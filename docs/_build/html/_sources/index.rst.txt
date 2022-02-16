@@ -16,7 +16,7 @@ To install TSFEDL, we recommend using ``pip``.
 
 .. code-block:: bash
 
-    pip install TSFEDL
+    pip install -e .
 
 .. toctree::
    :maxdepth: 2
@@ -27,7 +27,7 @@ To install TSFEDL, we recommend using ``pip``.
 
    blocks_pytorch
 
-   blocks
+   blocks_keras
 
    data
 

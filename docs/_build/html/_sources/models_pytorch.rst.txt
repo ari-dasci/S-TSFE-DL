@@ -1,6 +1,6 @@
-******
+******************
 Models Pytorch
-******
+******************
 
 Here the different deep learning models included in the library are summarised. All of them are developed in PyTorch.
 
@@ -25,7 +25,6 @@ Here the different deep learning models included in the library are summarised. 
     TSFEDL.models_pytorch.KongZhengmin
     TSFEDL.models_pytorch.YildirimOzal
     TSFEDL.models_pytorch.CaiWenjuan
-    TSFEDL.models_pytorch.KimMinGu
     TSFEDL.models_pytorch.HtetMyetLynn
     TSFEDL.models_pytorch.ZhangJin
     TSFEDL.models_pytorch.YaoQihang
@@ -47,7 +46,6 @@ Here the different deep learning models included in the library are summarised. 
 .. autofunction:: TSFEDL.models_pytorch.KongZhengmin
 .. autofunction:: TSFEDL.models_pytorch.YildirimOzal
 .. autofunction:: TSFEDL.models_pytorch.CaiWenjuan
-.. autofunction:: TSFEDL.models_pytorch.KimMinGu
 .. autofunction:: TSFEDL.models_pytorch.HtetMyetLynn
 .. autofunction:: TSFEDL.models_pytorch.ZhangJin
 .. autofunction:: TSFEDL.models_pytorch.YaoQihang

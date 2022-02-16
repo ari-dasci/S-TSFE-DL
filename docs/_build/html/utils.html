@@ -76,24 +76,90 @@
 <dt id="TSFEDL.utils.flip_indices_for_conv_to_lstm">
 <code class="descclassname">TSFEDL.utils.</code><code class="descname">flip_indices_for_conv_to_lstm</code><span class="sig-paren">(</span><em>x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/TSFEDL/utils.html#flip_indices_for_conv_to_lstm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.utils.flip_indices_for_conv_to_lstm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Changes the (N, C, L) dimension to (N, L, C). This is due to features in PyTorch’s LSTMs are expected on the last dim.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>torch.Tensor</em>) – Input tensor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>x</strong> – Output tensor.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">torch.Tensor</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="TSFEDL.utils.flip_indices_for_conv_to_lstm_reshape">
 <code class="descclassname">TSFEDL.utils.</code><code class="descname">flip_indices_for_conv_to_lstm_reshape</code><span class="sig-paren">(</span><em>x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/TSFEDL/utils.html#flip_indices_for_conv_to_lstm_reshape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.utils.flip_indices_for_conv_to_lstm_reshape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Changes the (N, C, L) dimension to (N, L, C). This is due to features in PyTorch’s LSTMs are expected on the last dim.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>torch.Tensor</em>) – Input tensor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>x</strong> – Output tensor.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">torch.Tensor</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="TSFEDL.utils.check_inputs">
 <code class="descclassname">TSFEDL.utils.</code><code class="descname">check_inputs</code><span class="sig-paren">(</span><em>include_top</em>, <em>weights</em>, <em>input_tensor</em>, <em>input_shape</em>, <em>classes</em>, <em>classifier_activation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/utils.html#check_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.utils.check_inputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Auxiliar function for checking the input parameters of the models.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>include_top</strong> (<em>bool</em>) – Boolean value to control if the classification module should be placed in the model.</li>
+<li><strong>weights</strong> (<em>str</em>) – Route to the saved weight of the model.</li>
+<li><strong>input_tensor</strong> (<em>keras.Tensor</em>) – Input tensor of the model.</li>
+<li><strong>input_shape</strong> (<em>tuple</em>) – Tuple with the input shape of the model.</li>
+<li><strong>classes</strong> (<em>int</em>) – Number of classes to predict with the model.</li>
+<li><strong>classifier_activation</strong> (<em>str</em>) – “softmax” or None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>inp</strong> – Input tensor.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Keras.Tensor</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="TSFEDL.utils.full_convolution">
 <code class="descclassname">TSFEDL.utils.</code><code class="descname">full_convolution</code><span class="sig-paren">(</span><em>x</em>, <em>filters</em>, <em>kernel_size</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/utils.html#full_convolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.utils.full_convolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>It performs a Full convolution operation on the given keras Tensor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Keras.Tensor</em>) – Input tensor of the full convolution.</li>
+<li><strong>filters</strong> (<em>int</em>) – Number of filters of the full convolution.</li>
+<li><strong>kernel_size</strong> (<em>int</em>) – Kernel size of the convolution.</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – Rest of the arguments, optional.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>x</strong> – Output tensor.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Keras.Tensor</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

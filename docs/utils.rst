@@ -1,6 +1,6 @@
-******
+****************
 Utils Functions
-******
+****************
 
 Here can be found the implementation of the auxiliary functions for the implementation of the architectures.
 

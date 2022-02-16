@@ -1,6 +1,6 @@
-******
+****************
 PyTorch Blocks
-******
+****************
 
 Here can be found all blocks implemented in PyTorch for the architecture's implementation in that framework.
 

@@ -24,7 +24,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Utils Functions" href="utils.html" />
-    <link rel="prev" title="Keras Blocks" href="blocks.html" />
+    <link rel="prev" title="Keras Blocks" href="blocks_keras.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -71,21 +71,24 @@ in labels.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – The arrythmia signal as a wfdb Record class</li>
-<li><strong>annotations</strong> – The set of annotations as a wfdb Annotation class</li>
-<li><strong>labels</strong> – The set of valid labels for the different segments. Segments with different labels are discarded</li>
-<li><strong>left_offset</strong> – The number of instance at the left of the first R peak of the segment. Default to 99</li>
-<li><strong>right_offset</strong> – The number of instances at the right of the last R peak of the segment. Default to 160</li>
-<li><strong>fixed_length</strong> – Should the segments have a fixed length? If fixed_length is a number, then the segments will
+<li><strong>data</strong> (<em>wfdb.Record</em>) – The arrythmia signal as a wfdb Record class</li>
+<li><strong>annotations</strong> (<em>wfdb.Annotation</em>) – The set of annotations as a wfdb Annotation class</li>
+<li><strong>labels</strong> (<em>array-like</em>) – The set of valid labels for the different segments. Segments with different labels are discarded</li>
+<li><strong>left_offset</strong> (<em>int</em>) – The number of instance at the left of the first R peak of the segment. Default to 99</li>
+<li><strong>right_offset</strong> (<em>int</em>) – The number of instances at the right of the last R peak of the segment. Default to 160</li>
+<li><strong>fixed_length</strong> (<em>int</em><em>, </em><em>optional</em>) – Should the segments have a fixed length? If fixed_length is a number, then the segments will
 have the specified length. If the segment length is greater than fixed_length, it is truncated
 or padded with zeros otherwise. Default to None.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple that contains the data and the associated labels. Data has a shape of (N, T, V)
-where N is the number of segments (or instances), V is the number of variables (1 in this case)
-and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
-value passed in the :parameter labels param.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>A tuple that contains the data and the associated labels. Data has a shape of (N, T, V)</em></li>
+<li><em>where N is the number of segments (or instances), V is the number of variables (1 in this case)</em></li>
+<li><em>and T is the number of timesteps of each segment.  Labels are numerically encoded according to the</em></li>
+<li><strong>value passed in the</strong> (<em>parameter labels param.</em>)</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>
@@ -103,20 +106,23 @@ variable length heart beats.” Computers in biology and medicine 102 (2018): 27
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>labels</strong> – The labels of the different types of arrythmia to be employed</li>
-<li><strong>path</strong> – The path of the directory where the X files are stored. Note: The X and annotations
+<li><strong>labels</strong> (<em>array-like</em>) – The labels of the different types of arrythmia to be employed</li>
+<li><strong>path</strong> (<em>str</em>) – The path of the directory where the X files are stored. Note: The X and annotations
 files must have the same name, but different extension (annotations must have .atr extension)</li>
-<li><strong>left_offset</strong> – The number of instances at the left of the first R peak of the segment. Defaults to 99</li>
-<li><strong>right_offset</strong> – The number of instances at the right of the last R peak of the segment. Defaults to 160</li>
-<li><strong>fixed_length</strong> – If different to None, the segment will have the specified number of instances. Note that
+<li><strong>left_offset</strong> (<em>int</em>) – The number of instances at the left of the first R peak of the segment. Defaults to 99</li>
+<li><strong>right_offset</strong> (<em>int</em>) – The number of instances at the right of the last R peak of the segment. Defaults to 160</li>
+<li><strong>fixed_length</strong> (<em>int</em><em>, </em><em>optional</em>) – If different to None, the segment will have the specified number of instances. Note that
 if the segment length &gt; fixed_length it will be truncate or padded with zeros otherwise.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple that contains the data and the associated labels as an ndarray. Data has a shape of (N, T, V)
-where N is the number of segments (or instances), V is the number of variables (1 in this case)
-and T is the number of timesteps of each segment.  Labels are numerically encoded according to the
-value passed in the :parameter labels param.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>A tuple that contains the data and the associated labels as an ndarray. Data has a shape of (N, T, V)</em></li>
+<li><em>where N is the number of segments (or instances), V is the number of variables (1 in this case)</em></li>
+<li><em>and T is the number of timesteps of each segment.  Labels are numerically encoded according to the</em></li>
+<li><strong>value passed in the</strong> (<em>parameter labels param.</em>)</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>
@@ -128,6 +134,31 @@ value passed in the :parameter labels param.</p>
 <code class="descclassname">TSFEDL.data.</code><code class="descname">MIT_BIH</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TSFEDL/data.html#MIT_BIH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TSFEDL.data.MIT_BIH" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the MIT-BIH datasets and return a data loader with Shape (N, C, L) where N is the batch size, C is the
 number of channels (1 in this dataset) and L is the <cite>length</cite> of the time series (1000 by default).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>labels</strong> (<em>array-like</em>) – The labels of the different types of arrythmia to be employed</li>
+<li><strong>path</strong> (<em>str</em>) – The path of the directory where the X files are stored. Note: The X and annotations
+files must have the same name, but different extension (annotations must have .atr extension)</li>
+<li><strong>left_offset</strong> (<em>int</em>) – The number of instances at the left of the first R peak of the segment. Defaults to 99</li>
+<li><strong>right_offset</strong> (<em>int</em>) – The number of instances at the right of the last R peak of the segment. Defaults to 160</li>
+<li><strong>return_hot_coded</strong> (<em>bool</em>) – Wether to return the raw labels or hot-encoded ones.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>A tuple that contains the data and the associated labels as an ndarray. Data has a shape of (N, T, V)</em></li>
+<li><em>where N is the number of segments (or instances), V is the number of variables (1 in this case)</em></li>
+<li><em>and T is the number of timesteps of each segment.  Labels are numerically encoded according to the</em></li>
+<li><strong>value passed in the</strong> (<em>parameter labels param.</em>)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -141,7 +172,7 @@ number of channels (1 in this dataset) and L is the <cite>length</cite> of the t
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="blocks.html" title="previous chapter">Keras Blocks</a></li>
+      <li>Previous: <a href="blocks_keras.html" title="previous chapter">Keras Blocks</a></li>
       <li>Next: <a href="utils.html" title="next chapter">Utils Functions</a></li>
   </ul></li>
 </ul>

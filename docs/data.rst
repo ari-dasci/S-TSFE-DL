@@ -1,6 +1,6 @@
-******
+****************
 Data Functions
-******
+****************
 
 Here can be found the implementation of the functions to read the data for the arrythmia classification.
 
