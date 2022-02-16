@@ -57,6 +57,7 @@ model.fit(X, y, epochs=20)
 Please cite this work as:
 
 Time Series Feature Extraction using Deep Learning library (https://github.com/ari-dasci/S-TSFE-DL/)
+
 Paper citation is pending.
 
 <!--
