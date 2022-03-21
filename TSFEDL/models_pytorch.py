@@ -13,7 +13,7 @@ from TSFEDL.utils import TimeDistributed
 
 
 
-class pyCNN_LSTM_BaseModule(pl.LightningModule):
+class TSFEDL_BaseModule(pl.LightningModule):
     """
     Base module for any pyTorch Lightning based algorithm in this library
 
@@ -48,7 +48,7 @@ class pyCNN_LSTM_BaseModule(pl.LightningModule):
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
                  **kwargs
                  ):
-        super(pyCNN_LSTM_BaseModule, self).__init__()
+        super(TSFEDL_BaseModule, self).__init__()
         self.kwargs = kwargs
         self.in_features = in_features
         self.loss = loss
@@ -120,7 +120,7 @@ class OhShuLih_Classifier(nn.Module):
         return self.model(x)
 
 
-class OhShuLih(pyCNN_LSTM_BaseModule):
+class OhShuLih(TSFEDL_BaseModule):
     """
     CNN+LSTM model for Arrythmia classification.
 
@@ -259,7 +259,7 @@ class YiboGaoClassifier(nn.Module):
         return self.module(x)
 
 
-class YiboGao(pyCNN_LSTM_BaseModule):
+class YiboGao(TSFEDL_BaseModule):
     """
     CNN using RTA blocks for end-to-end attrial fibrilation detection.
 
@@ -373,7 +373,7 @@ class YaoQihangClassifier(nn.Module):
         return mean
 
 
-class YaoQihang(pyCNN_LSTM_BaseModule):
+class YaoQihang(TSFEDL_BaseModule):
     """
     Attention-based time-incremental convolutional neural network (ATI-CNN)
 
@@ -463,7 +463,7 @@ class YaoQihang(pyCNN_LSTM_BaseModule):
         return x
 
 
-class HtetMyetLynn(pyCNN_LSTM_BaseModule):
+class HtetMyetLynn(TSFEDL_BaseModule):
     """
     Hybrid CNN+Bidirectional RNN
 
@@ -545,7 +545,7 @@ class HtetMyetLynn(pyCNN_LSTM_BaseModule):
         return x
 
 
-class YildirimOzal(pyCNN_LSTM_BaseModule):
+class YildirimOzal(TSFEDL_BaseModule):
     """CAE-LSTM
 
     Parameters
@@ -661,7 +661,7 @@ class YildirimOzal(pyCNN_LSTM_BaseModule):
             return loss
 
 
-class CaiWenjuan(pyCNN_LSTM_BaseModule):  # TODO: Squeeze and Activation units depends on input size.
+class CaiWenjuan(TSFEDL_BaseModule):  # TODO: Squeeze and Activation units depends on input size.
     """
     DDNN network presented in:
 
@@ -778,7 +778,7 @@ class ZhangJin_Classifier(nn.Module):
         return self.linear(x[:, -1, :])
 
 
-class ZhangJin(pyCNN_LSTM_BaseModule):
+class ZhangJin(TSFEDL_BaseModule):
     """
     A CNN+Bi-Directional GRU with a spatio-temporal attention mechanism.
 
@@ -936,7 +936,7 @@ class KongZhengmin_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class KongZhengmin(pyCNN_LSTM_BaseModule):
+class KongZhengmin(TSFEDL_BaseModule):
     """
     CNN+LSTM
 
@@ -1030,7 +1030,7 @@ class WeiXiaoyan_Classifier(nn.Module):
         return self.module(x)
 
 
-class WeiXiaoyan(pyCNN_LSTM_BaseModule):
+class WeiXiaoyan(TSFEDL_BaseModule):
     """
     CNN+LSTM model employed for 2-D images of ECG data. This model is adapted for 1-D time series.
 
@@ -1153,7 +1153,7 @@ class GaoJunLi_Classifier(nn.Module):
             return self.module(x[:,-1,:])
 
 
-class GaoJunLi(pyCNN_LSTM_BaseModule):
+class GaoJunLi(TSFEDL_BaseModule):
     """
     LSTM network
 
@@ -1245,7 +1245,7 @@ class LiOhShu_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class LihOhShu(pyCNN_LSTM_BaseModule):
+class LihOhShu(TSFEDL_BaseModule):
     """
     CNN+LSTM model
 
@@ -1362,7 +1362,7 @@ class KhanZulfiqar_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class KhanZulfiqar(pyCNN_LSTM_BaseModule):
+class KhanZulfiqar(TSFEDL_BaseModule):
     """
     CNN+GRU model for electricity forecasting
 
@@ -1476,7 +1476,7 @@ class ZhengZhenyu_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class ZhengZhenyu(pyCNN_LSTM_BaseModule):
+class ZhengZhenyu(TSFEDL_BaseModule):
     """
     CNN+LSTM network for arrythmia detection. This model initialy was designed to deal with 2D images. It was adapted
     to 1D time series.
@@ -1556,7 +1556,7 @@ class ZhengZhenyu(pyCNN_LSTM_BaseModule):
         return x
 
 #
-# class HouBoroui(pyCNN_LSTM_BaseModule):
+# class HouBoroui(TSFEDL_BaseModule):
 #     def __init__(self,
 #                  in_features: int,
 #                  encoder_units: int = 100,
@@ -1629,7 +1629,7 @@ class WangKejun_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class WangKejun(pyCNN_LSTM_BaseModule):
+class WangKejun(TSFEDL_BaseModule):
     """
     CNN 1D-LSTM
 
@@ -1743,7 +1743,7 @@ class ChenChen_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class ChenChen(pyCNN_LSTM_BaseModule):
+class ChenChen(TSFEDL_BaseModule):
     """
     CNN+LSTM model for arrythmia classification.
 
@@ -1861,7 +1861,7 @@ class KimTaeYoung_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class KimTaeYoung(pyCNN_LSTM_BaseModule):
+class KimTaeYoung(TSFEDL_BaseModule):
     """
     CNN+LSTM model for arrythmia classification.
 
@@ -1970,7 +1970,7 @@ class GenMinxing_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class GenMinxing(pyCNN_LSTM_BaseModule):
+class GenMinxing(TSFEDL_BaseModule):
     """
     CNN+LSTM model for arrythmia classification.
 
@@ -2064,7 +2064,7 @@ class FuJiangmeng_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class FuJiangmeng(pyCNN_LSTM_BaseModule):
+class FuJiangmeng(TSFEDL_BaseModule):
     """
     CNN+LSTM model for arrythmia classification.
 
@@ -2177,7 +2177,7 @@ class ShiHaotian_Classifier(nn.Module):
             return self.module2(x_conc)
 
 
-class ShiHaotian(pyCNN_LSTM_BaseModule):
+class ShiHaotian(TSFEDL_BaseModule):
     """
     CNN+LSTM model for arrythmia classification.
 
@@ -2299,7 +2299,7 @@ class HuangMeiLing_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
-class HuangMeiLing(pyCNN_LSTM_BaseModule):
+class HuangMeiLing(TSFEDL_BaseModule):
     """
      CNN model, employed for 2-D images of ECG data. This model is adapted for 1-D time series
 
@@ -2392,7 +2392,7 @@ class HongTan_Classifier(nn.Module):
         return self.model(x)
 
 
-class HongTan(pyCNN_LSTM_BaseModule):
+class HongTan(TSFEDL_BaseModule):
     """
     Application of stacked convolutional and long short-term memory network
     for accurate identification of CAD ECG signals
