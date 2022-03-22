@@ -1,5 +1,7 @@
 /lightning_logs/
 /physionet.org/
+twine_upload.sh
+twine_check.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
