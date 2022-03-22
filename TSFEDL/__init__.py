@@ -42,7 +42,7 @@ from .models_keras import ZhangJin
 from .models_keras import YaoQihang
 from .models_keras import YiboGao
 from .models_keras import HongTan
-from .models_pytorch import pyCNN_LSTM_BaseModule
+from .models_pytorch import TSFEDL_BaseModule
 from .models_pytorch import OhShuLih
 from .models_pytorch import OhShuLih_Classifier
 from .models_pytorch import KhanZulfiqar
@@ -132,7 +132,7 @@ __all__ = ['densenet_transition_block',
             'YaoQihang',
             'YiboGao',
             'HongTan',
-            'pyCNN_LSTM_BaseModule',
+            'TSFEDL_BaseModule',
             'OhShuLih',
             'OhShuLih_Classifier',
             'KhanZulfiqar',
