@@ -8,4 +8,4 @@ install:
   - python3 setup.py install
 
 script:
-  - pytest test
+  - travis_wait 300 pytest test

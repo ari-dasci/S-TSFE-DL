@@ -1,5 +1,7 @@
 /lightning_logs/
 /physionet.org/
+/test/lightning_logs/
+/test/physionet.org/
 twine_upload.sh
 twine_check.sh
 
