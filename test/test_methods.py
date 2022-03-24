@@ -32,7 +32,8 @@ class TestMethods(unittest.TestCase):
         # in the TensorFlow backend have a well-defined initial state.
         # For further details, see: https://www.tensorflow.org/api_docs/python/tf/set_random_seed
         tf.random.set_seed(1234)
-        os.system("wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/")
+        if not os.path.isdir("physionet.org/files/mitdb/1.0.0/"):
+            os.system("wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/")
 
     def getData(self, size=1000, test_size=0.2):
         """Gets the segments with the specified size from the MIT-BIH arrythmia dataset.
@@ -692,7 +693,7 @@ class TestMethods(unittest.TestCase):
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
     #@unittest.skip
-    def test_OhShuLi(self):
+    def test_OhShuLih(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData()
         input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.OhShuLih(input_tensor=input, include_top=True)

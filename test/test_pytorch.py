@@ -23,7 +23,8 @@ class MyTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         pl.seed_everything(42)
-        os.system("wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/")
+        if not os.path.isdir("physionet.org/files/mitdb/1.0.0/"):
+            os.system("wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/")
 
     def trainModel(self, model, data_length, epochs, hot_coded=False, evaluate_test=True):
         mit_bih = MIT_BIH(path="physionet.org/files/mitdb/1.0.0/", return_hot_coded=hot_coded)
@@ -52,7 +53,7 @@ class MyTestCase(unittest.TestCase):
                          optimizer=torch.optim.Adam,
                          lr=0.001)
 
-        acc = self.trainModel(model, 2000, 10)
+        acc = self.trainModel(model, 2000, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -109,14 +110,14 @@ class MyTestCase(unittest.TestCase):
             lr=0.001
         )
         # First, train the autoencoder
-        self.trainModel(model, 1000, 10, False, False)
+        self.trainModel(model, 1000, 1, False, False)
 
         # Next, train the LSTM and the classifier with the encoded features.
         model.train_autoencoder = False
         model.encoder.requires_grad_(False)
         model.decoder.requires_grad_(False)
         model.loss = nn.CrossEntropyLoss()
-        acc = self.trainModel(model, 1000, 10, False, True)
+        acc = self.trainModel(model, 1000, 1, False, True)
 
         assert 1.0 >= acc > 0
 
