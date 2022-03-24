@@ -1,0 +1,6 @@
+pytorch-lightning
+scikit-learn
+tensorflow-gpu
+torchmetrics
+wfdb
+obspy
