@@ -1,5 +1,6 @@
 import sys
 sys.path.append("..")
+import os
 
 import unittest
 import torch
@@ -22,6 +23,7 @@ class MyTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         pl.seed_everything(42)
+        os.system("wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/")
 
     def trainModel(self, model, data_length, epochs, hot_coded=False, evaluate_test=True):
         mit_bih = MIT_BIH(path="../physionet.org/files/mitdb/1.0.0/", return_hot_coded=hot_coded)

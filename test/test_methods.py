@@ -32,6 +32,7 @@ class TestMethods(unittest.TestCase):
         # in the TensorFlow backend have a well-defined initial state.
         # For further details, see: https://www.tensorflow.org/api_docs/python/tf/set_random_seed
         tf.random.set_seed(1234)
+        os.system("wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/")
 
     def getData(self, size=1000, test_size=0.2):
         """Gets the segments with the specified size from the MIT-BIH arrythmia dataset.
