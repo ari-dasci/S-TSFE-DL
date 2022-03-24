@@ -622,11 +622,11 @@ def ShiHaotian(include_top=True,
     inp = check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
 
     # Model Definition
-    if isinstance(inp, KerasTensor) or len(inp) == 1:
+    if isinstance(inp, KerasTensor) or inp.shape[-1] == 1:
         x1 = layers.Conv1D(filters=32, kernel_size=13, strides=2)(inp)
         x2 = layers.Conv1D(filters=32, kernel_size=13, strides=1)(inp)
         x3 = layers.Conv1D(filters=32, kernel_size=13, strides=2)(inp)
-    elif len(inp) == 3 or len(inp) == 4:
+    elif inp.shape[-1] == 3 or inp.shape[-1] == 4:
         x1 = layers.Conv1D(filters=32, kernel_size=13, strides=2)(inp[0])
         x2 = layers.Conv1D(filters=32, kernel_size=13, strides=1)(inp[1])
         x3 = layers.Conv1D(filters=32, kernel_size=13, strides=2)(inp[2])
@@ -649,7 +649,7 @@ def ShiHaotian(include_top=True,
         x = layers.Flatten()(x)
         x = layers.Dense(units=518, activation=relu)(x)
         x = layers.Dense(units=88, activation=relu)(x)
-        if not isinstance(inp, KerasTensor) and len(inp) == 4:
+        if not isinstance(inp, KerasTensor) and inp.shape[-1] == 4:
             x = layers.Concatenate([inp[3], x])
         x = layers.Dense(units=classes, activation=classifier_activation)(x)
 

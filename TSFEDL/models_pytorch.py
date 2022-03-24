@@ -268,7 +268,7 @@ class YiboGao(TSFEDL_BaseModule):
         in_features: int
             Number of features of the input tensors
 
-        top_module: nn.Module, defaults=YiboGaoClassifier(128, 5)
+        top_module: nn.Module, defaults=YiboGaoClassifier(384, 5)
             The optional  nn.Module to be used as additional top layers.
 
         loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
@@ -303,7 +303,7 @@ class YiboGao(TSFEDL_BaseModule):
     """
     def __init__(self,
                  in_features: int,
-                 top_module: Optional[nn.Module] = YiboGaoClassifier(128, 5),
+                 top_module: Optional[nn.Module] = YiboGaoClassifier(384, 5),
                  loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = en_loss,
                  metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
                  optimizer: torch.optim.Optimizer = torch.optim.Adam,
