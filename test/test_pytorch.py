@@ -85,7 +85,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 250, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -96,7 +96,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 750, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -110,7 +110,7 @@ class MyTestCase(unittest.TestCase):
             lr=0.001
         )
         # First, train the autoencoder
-        self.trainModel(model, 1000, 1, False, False)
+        self.trainModel(model, 260, 1, False, False)
 
         # Next, train the LSTM and the classifier with the encoded features.
         model.train_autoencoder = False
@@ -142,7 +142,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 128, 1)
         assert 1.0 >= acc > 0
 
     # # No funciona
@@ -176,7 +176,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 100, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -187,7 +187,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 3600, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -198,7 +198,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 100, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -209,7 +209,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 100, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -220,7 +220,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 100, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -231,7 +231,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 100, 1)
         assert 1.0 >= acc > 0
 
     #@unittest.skip
@@ -242,7 +242,7 @@ class MyTestCase(unittest.TestCase):
                           optimizer=torch.optim.Adam,
                           lr=0.001
                           )
-        acc = self.trainModel(model, 1000, 1)
+        acc = self.trainModel(model, 100, 1)
         assert 1.0 >= acc > 0
 
 
