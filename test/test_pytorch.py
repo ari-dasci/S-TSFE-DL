@@ -26,7 +26,7 @@ class MyTestCase(unittest.TestCase):
         os.system("wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/")
 
     def trainModel(self, model, data_length, epochs, hot_coded=False, evaluate_test=True):
-        mit_bih = MIT_BIH(path="../physionet.org/files/mitdb/1.0.0/", return_hot_coded=hot_coded)
+        mit_bih = MIT_BIH(path="physionet.org/files/mitdb/1.0.0/", return_hot_coded=hot_coded)
         tra_size = int(len(mit_bih) * 0.8)
         tst_size = len(mit_bih) - tra_size
         train, test = torch.utils.data.random_split(mit_bih, [tra_size, tst_size])

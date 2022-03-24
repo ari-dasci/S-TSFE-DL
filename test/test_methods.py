@@ -41,7 +41,7 @@ class TestMethods(unittest.TestCase):
             (X_tst, y_tst, y_hotcoded_tst) -> the instances and labels of the test set.
         """
         print("Load data...")
-        dir = "../physionet.org/files/mitdb/1.0.0/"
+        dir = "physionet.org/files/mitdb/1.0.0/"
         X, y = read_mit_bih(dir, fixed_length=size)
         y_hot_encoded = np.zeros((y.size, y.max() + 1))
         y_hot_encoded[np.arange(y.size), y] = 1
