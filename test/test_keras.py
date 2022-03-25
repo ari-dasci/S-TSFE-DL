@@ -1,5 +1,6 @@
 import sys
 sys.path.append("..")
+sys.path.append(".")
 import os
 import random as rn
 import unittest
