@@ -48,3 +48,15 @@ Minor bugs are fixed.
 - Deprecated:
 - Removed:
 - Fixed: Minor bugs.
+
+1.0.3 (25 Mar 2022)
+======================
+**Description**
+
+Minor bugs are fixed, including a valid testing of all the networks.
+
+- Added: Documentation and continuous integration with Travis.
+- Changed:
+- Deprecated:
+- Removed:
+- Fixed: Testing scripts.
