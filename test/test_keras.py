@@ -50,7 +50,7 @@ class TestMethods(unittest.TestCase):
                                                                           test_size=test_size,
                                                                           random_state=1234,
                                                                           stratify=y)
-        return (X_tra, y_tra, y_HC_tra), (X_tst, y_tst, y_HC_tst)
+        return (X_tra[:1], y_tra[:1], y_HC_tra[:1]), (X_tst[:1], y_tst[:1], y_HC_tst[:1])
 
     def trainModel(self, model, X_tra, y_tra, y_hot_encoded_tra,
                    X_tst, y_tst, y_hot_encoded_tst,
@@ -78,7 +78,7 @@ class TestMethods(unittest.TestCase):
                                            loss=loss,
                                            epochs=1)
 
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('YiboGao_test.h5')
@@ -109,7 +109,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('YaoQihang_test.h5')
@@ -137,7 +137,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('ZhangJin_test.h5')
@@ -173,7 +173,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('HtetMyetLynn_test.h5')
@@ -205,7 +205,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('CaiWenjuan_test.h5')
@@ -230,7 +230,7 @@ class TestMethods(unittest.TestCase):
             # Train the model
             acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                                batch_size=256, epochs=1)
-            assert 1.0 >= acc > 0
+            assert 1.0 >= acc >= 0
             preds.append(predictions)
 
             # save weights
@@ -299,7 +299,7 @@ class TestMethods(unittest.TestCase):
         # print("Accuracy: ", acc)
 
         # Assert test accuracy above 90%
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         ae.save_weights('YildirimOzal_test.h5')
@@ -331,7 +331,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('KongZhengmin_test.h5')
@@ -353,7 +353,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('WeiXiaoyan_test.h5')
@@ -375,7 +375,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('GaoJunLi_test.h5')
@@ -418,7 +418,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('LihOhShu_test.h5')
@@ -440,7 +440,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('HuangMeiLing_test.h5')
@@ -462,7 +462,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('ShiHaotian_test.h5')
@@ -484,7 +484,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('FuJiangmeng_test.h5')
@@ -506,7 +506,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('GenMinxing_test.h5')
@@ -550,7 +550,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
         print(acc)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('ChenChen_test.h5')
@@ -579,7 +579,7 @@ class TestMethods(unittest.TestCase):
         # Train the model
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst,
                                            batch_size=256, epochs=1)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('KimTaeYoung_test.h5')
@@ -600,7 +600,7 @@ class TestMethods(unittest.TestCase):
         # Train the model
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra,
                                            X_tst, y_tst, y_hc_tst, batch_size=256, epochs=1)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('WangKejun_test.h5')
@@ -662,7 +662,7 @@ class TestMethods(unittest.TestCase):
         # Train the model
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra,
                                            X_tst, y_tst, y_hc_tst, batch_size=256, epochs=1)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('ZhengZhenyu_test.h5')
@@ -682,7 +682,7 @@ class TestMethods(unittest.TestCase):
 
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra,
                                            X_tst, y_tst, y_hc_tst, batch_size=256, epochs=1)
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('KhanZulfiqar_test.h5')
@@ -720,7 +720,7 @@ class TestMethods(unittest.TestCase):
         acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra,
                                            X_tst, y_tst, y_hc_tst, batch_size=256, epochs=1)
 
-        assert 1.0 >= acc > 0
+        assert 1.0 >= acc >= 0
 
         # save weights
         model.save_weights('OhShuLi_test.h5')
