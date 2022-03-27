@@ -8,6 +8,19 @@ In this repository we introduce a new Python module which compiles 20 backbones 
 
 ## How to run
 
+### PyPi
+
+The module is uploaded to PyPi for an easy installation:
+```bash
+pip install tsfedl
+```
+or
+```bash
+pip3 install tsfedl
+```
+
+### Using the repository
+
 First, install dependencies
 
 ```bash
@@ -18,6 +31,8 @@ git clone https://github.com/ari-dasci/S-TSFE-DL.git
 cd S-TSFE-DL
 pip install -e .
 ```   
+
+### Examples
 
 In order to run a example, navigate to any file and run it.
 
