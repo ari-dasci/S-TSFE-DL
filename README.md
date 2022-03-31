@@ -8,6 +8,34 @@ In this repository we introduce a new Python module which compiles 20 backbones 
 
 ## How to run
 
+### Conda environment for GPU clusters
+
+To easily use the library inside a conda environment the following commands are recommended to install the module. First of all install pip inside anaconda, which will install python inside the environment as well to encapsulate the whole installation.
+
+```bash
+conda install -c anaconda pip
+```
+
+After this, if a GPU is going to be used, we should install cuDNN 8.2.1 for the current tensorflow-gpu version (2.6.0). The NVIDIA CUDA toolkit will be also installed as a cuDNN dependency.
+
+```bash
+conda install -c anaconda cudnn==8.2.1
+```
+
+Finally we can install the TSFEDL library using pip3 (which will be inside the conda environment, you can check this by running "which pip3"). This will install as dependencies pytorch-lightning, pytorch, tensorflow-gpu and all the needeed packages. Use the --use-feature=2020-resolver flag if the installation runs into an error.
+
+```bash
+pip3 install --use-feature=2020-resolver tsfedl
+```
+
+Otherwise use
+
+```bash
+pip3 install tsfedl
+```
+
+After this everything is set up.
+
 ### PyPi
 
 The module is uploaded to PyPi for an easy installation:
