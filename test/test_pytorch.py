@@ -41,8 +41,11 @@ class MyTestCase(unittest.TestCase):
 
 
         # Train
-        #trainer = pl.Trainer(gpus=1, max_epochs=epochs)
-        trainer = pl.Trainer(max_epochs=epochs)
+        trainer = None
+        if torch.cuda.is_available():
+            trainer = pl.Trainer(gpus=1, max_epochs=epochs)
+        else:
+            trainer = pl.Trainer(max_epochs=epochs)
         trainer.fit(model=model, train_dataloader=train_loader)
         if evaluate_test:
             test_results = trainer.test(test_dataloaders=test_loader)
