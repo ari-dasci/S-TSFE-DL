@@ -46,9 +46,9 @@ class MyTestCase(unittest.TestCase):
             trainer = pl.Trainer(gpus=1, max_epochs=epochs)
         else:
             trainer = pl.Trainer(max_epochs=epochs)
-        trainer.fit(model=model, train_dataloader=train_loader)
+        trainer.fit(model, train_loader)
         if evaluate_test:
-            test_results = trainer.test(test_dataloaders=test_loader)
+            test_results = trainer.test(test_loader)
             return test_results[0]['test_acc_epoch']
 
     #@unittest.skip
