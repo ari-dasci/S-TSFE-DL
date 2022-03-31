@@ -52,7 +52,7 @@ setup(
     test_suite='test',
 
     # Requeriments
-    install_requires=['pytorch-lightning', 'scikit-learn', 'tensorflow-gpu==2.6.0', 'torchmetrics', 'wfdb', 'obspy'],
+    install_requires=['pytorch-lightning', 'scikit-learn', 'tensorflow-gpu==2.6.0', 'torchmetrics', 'wfdb', 'obspy', 'keras==2.6.0'],
 
     long_description_content_type='text/markdown'
 

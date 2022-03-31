@@ -4,3 +4,4 @@ tensorflow-gpu==2.6.0
 torchmetrics
 wfdb
 obspy
+keras==2.6.0
