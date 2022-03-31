@@ -60,3 +60,15 @@ Minor bugs are fixed, including a valid testing of all the networks.
 - Deprecated:
 - Removed:
 - Fixed: Testing scripts.
+
+1.0.4 (31 Mar 2022)
+======================
+**Description**
+
+Minor bugs are fixed, installation fixed for gpu servers.
+
+- Added: Documentation and gpu testing.
+- Changed:
+- Deprecated:
+- Removed:
+- Fixed: Testing scripts and installation.
