@@ -29,6 +29,8 @@ class MyTestCase(unittest.TestCase):
             os.system("wget -r -N -c -np https://physionet.org/files/mitdb/1.0.0/")
 
     def trainModel(self, model, data_length, epochs, hot_coded=False, evaluate_test=True):
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()    
         mit_bih = MIT_BIH(path="physionet.org/files/mitdb/1.0.0/", return_hot_coded=hot_coded)
         mit_bih.x = mit_bih.x[:10]
         mit_bih.y = mit_bih.y[:10]
