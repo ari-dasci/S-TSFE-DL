@@ -61,7 +61,7 @@ Minor bugs are fixed, including a valid testing of all the networks.
 - Removed:
 - Fixed: Testing scripts.
 
-1.0.4 (31 Mar 2022)
+1.0.5 (31 Mar 2022)
 ======================
 **Description**
 
