@@ -11,6 +11,7 @@ import pytorch_lightning as pl
 from TSFEDL.data import MIT_BIH
 from torch.utils.data.sampler import SubsetRandomSampler
 from TSFEDL.models_pytorch import *
+import inspect
 
 
 def acc_from_logits(y_hat, y):
@@ -48,7 +49,11 @@ class MyTestCase(unittest.TestCase):
             trainer = pl.Trainer(max_epochs=epochs)
         trainer.fit(model, train_loader)
         if evaluate_test:
-            test_results = trainer.test(test_loader)
+            test_results = None
+            if "model" in inspect.getfullargspec(trainer.test).args:
+                test_results = trainer.test(model, test_loader)
+            else:
+                test_results = trainer.test(test_loader)
             return test_results[0]['test_acc_epoch']
 
     #@unittest.skip
