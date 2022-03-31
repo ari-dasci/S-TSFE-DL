@@ -55,7 +55,7 @@ class TestMethods(unittest.TestCase):
 
     def trainModel(self, model, X_tra, y_tra, y_hot_encoded_tra,
                    X_tst, y_tst, y_hot_encoded_tst,
-                   loss=keras.losses.categorical_crossentropy,
+                   loss=tf.keras.losses.categorical_crossentropy,
                    metrics=['accuracy'],
                    batch_size=256,
                    epochs=6):
@@ -71,7 +71,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_YiboGao(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=500)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model, loss = TSFEDL.YiboGao(input_tensor=input, include_top=True, return_loss=True)
         model.summary()
 
@@ -93,7 +93,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_YaoQihang(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=250)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
 
         # The number units, filters, kernel_sizes, etc. in this model are not specified in the original paper.
         model = TSFEDL.YaoQihang(input_tensor=input, include_top=True)
@@ -101,7 +101,7 @@ class TestMethods(unittest.TestCase):
 
         # Train the model
         # If the predictions are ok, the sum of predictions should be 1: test it
-        model.compile(optimizer='Adam', loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
+        model.compile(optimizer='Adam', loss=tf.keras.losses.categorical_crossentropy, metrics=['accuracy'])
         model.fit(X_tra, y_hc_tra, batch_size=256, epochs=1, verbose=0)
         p = model.predict(X_tst)
         np.testing.assert_almost_equal(np.sum(p, axis=1), np.ones((X_tst.shape[0],)), decimal=6)
@@ -124,14 +124,14 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_ZhangJin(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=250)
-        input = keras.Input((15360, 12))
+        input = tf.keras.Input((15360, 12))
         model = TSFEDL.ZhangJin(input_tensor=input, include_top=True)
 
         # The output shapes matches the description of the paper at Section 5.2
         model.summary()
 
         # Now, train the model with our data.
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.ZhangJin(input_tensor=input, include_top=True)
 
         # Train the model
@@ -152,14 +152,14 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_HtetMyetLynn(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=750)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.HtetMyetLynn(input_tensor=input, include_top=True)
         model.summary()
 
         # assert that output shapes are the same that in Figure 5 of the paper.
         model_output_shapes = [l.output_shape for l in model.layers
-                               if not isinstance(l, keras.layers.Dropout)
-                               if not isinstance(l, keras.layers.Conv1D)]
+                               if not isinstance(l, tf.keras.layers.Dropout)
+                               if not isinstance(l, tf.keras.layers.Conv1D)]
         desired_output_shape = [[(None, 750, 1)],
                                 (None, 375, 30),
                                 (None, 187, 30),
@@ -188,7 +188,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_CaiWenjuann(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((2160, 12))  # The shape of the paper's data.
+        input = tf.keras.Input((2160, 12))  # The shape of the paper's data.
 
         # The number units, filters, kernel_sizes, etc. in this model are not specified in the original paper.
         model = TSFEDL.CaiWenjuan(input_tensor=input, include_top=True, classes=2)
@@ -199,7 +199,7 @@ class TestMethods(unittest.TestCase):
 
         # Once checked that model's parameters are almost the same as in the original paper. We train the model with
         # our data.
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.CaiWenjuan(input_tensor=input, include_top=True)
 
         # Train the model
@@ -220,7 +220,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_KimMinGu(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
 
         # The number units, filters, kernel_sizes, etc. in this model are not specified in the original paper.
         models = TSFEDL.KimMinGu(input_tensor=input, include_top=True)
@@ -250,7 +250,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_YildirimOzal(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=260)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         ae, enc, classifier = TSFEDL.YildirimOzal(input_tensor=input, include_top=True)
         ae.summary()
         enc.summary()
@@ -258,7 +258,7 @@ class TestMethods(unittest.TestCase):
 
         # assert that output shapes are the same that in Table 3 of the paper.
         model_output_shapes = [l.output_shape for l in ae.layers
-                               if not isinstance(l, keras.layers.Dropout)]
+                               if not isinstance(l, tf.keras.layers.Dropout)]
         desired_output_shape = [[(None, 260, 1)],
                                 (None, 260, 16),
                                 (None, 130, 16),
@@ -280,7 +280,7 @@ class TestMethods(unittest.TestCase):
                         msg="Output shapes do not match. Model shapes: " + str(model_output_shapes))
 
         # Train the autoencoder
-        ae.compile(optimizer='Adam', loss=keras.losses.MSE, metrics=['mse'])
+        ae.compile(optimizer='Adam', loss=tf.keras.losses.MSE, metrics=['mse'])
         ae.fit(X_tra, X_tra, batch_size=256, epochs=1, verbose=0)
         preds = ae.predict(X_tst)
         # Compute average MSE
@@ -293,7 +293,7 @@ class TestMethods(unittest.TestCase):
         enc.trainable = False
         ae.trainable = False
         acc, class_preds = self.trainModel(classifier, X_tra, y_tra, y_hc_tra, X_tst, y_tst, y_hc_tst, epochs=1)
-        # classifier.compile(optimizer='Adam', loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
+        # classifier.compile(optimizer='Adam', loss=tf.keras.losses.categorical_crossentropy, metrics=['accuracy'])
         # classifier.fit(X_tra, y_hc_tra, batch_size=256, epochs=30, verbose=0)
         # class_preds = np.argmax(classifier.predict(X_tst), axis=1)
         # acc = accuracy_score(y_tst, class_preds)
@@ -322,7 +322,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_KongZhengmin(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
 
         # The number units, filters, kernel_sizes, etc. in this model are not specified in the original paper.
         model = TSFEDL.KongZhengmin(input_tensor=input, include_top=True)
@@ -346,7 +346,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_WeiXiaoyan(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.WeiXiaoyan(input_tensor=input, include_top=True)
         model.summary()  # Description of layers available at table 2 of the paper. No output shapes nor nº of params available
 
@@ -368,7 +368,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_GaoJunLi(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.GaoJunLi(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
@@ -390,13 +390,13 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_LihOhShu(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=2000)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.LihOhShu(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
         # assert that output shapes are the same that in Table 3 of the paper.
         model_output_shapes = [l.output_shape for l in model.layers
-                               if not isinstance(l, keras.layers.Dropout)]
+                               if not isinstance(l, tf.keras.layers.Dropout)]
         desired_output_shape = [[(None, 2000, 1)],
                                 (None, 1981, 3),
                                 (None, 990, 3),
@@ -433,7 +433,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_HuangMeiLing(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.HuangMeiLing(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
@@ -455,7 +455,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_ShiHaotian(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.ShiHaotian(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
@@ -477,7 +477,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_FuJiangmeng(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.FuJiangmeng(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
@@ -499,7 +499,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_GenMinxing(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.GenMinxing(input_tensor=input, include_top=True)
         model.summary()  # No parameters, layer descriptions or output shapes in the paper...
 
@@ -521,13 +521,13 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_ChenChen(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=3600)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.ChenChen(input_tensor=input, include_top=True)
         model.summary()
 
         # assert that output shapes are the same that in Table 2 of the paper.
         model_output_shapes = [l.output_shape for l in model.layers
-                               if not isinstance(l, keras.layers.Flatten)]
+                               if not isinstance(l, tf.keras.layers.Flatten)]
         desired_output_shape = [[(None, 3600, 1)],
                                 (None, 3350, 5),
                                 (None, 1675, 5),
@@ -565,7 +565,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_KimTaeYoung(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.KimTaeYoung(input_tensor=input, include_top=True)
         model.summary()
 
@@ -594,7 +594,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_WangKejun(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.WangKejun(input_tensor=input, include_top=True)
         model.summary()
 
@@ -615,7 +615,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_HouBoroui(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model, encoder = TSFEDL.HouBoroui(input_tensor=input)
         model.summary()  # Layer shapes not available in the paper.
 
@@ -642,14 +642,14 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_ZhengZhenyu(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=128)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.ZhengZhenyu(input_tensor=input, include_top=True)
         model.summary()
 
         # assert that output shapes are the same that in Table 2 of the paper.
         model_output_shapes = [l.output_shape for l in model.layers
-                               if not isinstance(l, keras.layers.BatchNormalization)
-                               if not isinstance(l, keras.layers.Dropout)]
+                               if not isinstance(l, tf.keras.layers.BatchNormalization)
+                               if not isinstance(l, tf.keras.layers.Dropout)]
         desired_output_shape = [[(None, 128, 1)],
                                 (None, 128, 64),  (None, 128, 64), (None, 64, 64),
                                 (None, 64, 128), (None, 64, 128), (None, 32, 128),
@@ -677,7 +677,7 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_KhanZulfiqar(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=100)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.KhanZulfiqar(input_tensor=input, include_top=True)
         model.summary()
 
@@ -697,12 +697,12 @@ class TestMethods(unittest.TestCase):
     #@unittest.skip
     def test_OhShuLih(self):
         (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
-        input = keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
         model = TSFEDL.OhShuLih(input_tensor=input, include_top=True)
 
         # assert that output shapes are the same that in Table 2 of the paper.
         model_output_shapes = [l.output_shape for l in model.layers
-                               if not isinstance(l, keras.layers.ZeroPadding1D)]
+                               if not isinstance(l, tf.keras.layers.ZeroPadding1D)]
         desired_output_shape = [[(None, 1000, 1)],
                                 (None, 1019, 3),
                                 (None, 509, 3),
