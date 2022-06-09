@@ -92,15 +92,22 @@ Please cite this work as:
 
 Time Series Feature Extraction using Deep Learning library (https://github.com/ari-dasci/S-TSFE-DL/)
 
-Paper citation is pending.
+ArXiV reference: https://arxiv.org/abs/2206.03179
 
-<!--
-```
-@article{YourName,
-  title={Your Title},
-  author={Your team},
-  journal={Location},
-  year={Year}
+@article{https://doi.org/10.48550/arxiv.2206.03179,
+  doi = {10.48550/ARXIV.2206.03179},
+
+  url = {https://arxiv.org/abs/2206.03179},
+
+  author = {Aguilera-Martos, Ignacio and García-Vico, Ángel M. and Luengo, Julián and Damas, Sergio and Melero, Francisco J. and Valle-Alonso, José Javier and Herrera, Francisco},
+
+  keywords = {Neural and Evolutionary Computing (cs.NE), Artificial Intelligence (cs.AI), FOS: Computer and information sciences, FOS: Computer and information sciences},
+
+  title = {TSFEDL: A Python Library for Time Series Spatio-Temporal Feature Extraction and Prediction using Deep Learning (with Appendices on Detailed Network Architectures and Experimental Cases of Study)},
+
+  publisher = {arXiv},
+
+  year = {2022},
+
+  copyright = {arXiv.org perpetual, non-exclusive license}
 }
-```
--->
