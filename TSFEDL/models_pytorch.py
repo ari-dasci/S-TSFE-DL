@@ -2140,9 +2140,6 @@ class ShiHaotian_Classifier(nn.Module):
         n_classes: int
             Number of classes to predict at the end of the network
 
-        in_features_original: int
-            Number of features of the original tensors in the main architecture
-
         return_sequence: bool, defaults=True
             Parameter that controls wether the module returns the sequence or the prediction.
 
@@ -2151,7 +2148,7 @@ class ShiHaotian_Classifier(nn.Module):
     `LightningModule`
         A pyTorch Lightning Module instance.
     """
-    def __init__(self, in_features, n_classes, in_features_original, return_sequence = False):
+    def __init__(self, in_features, n_classes, return_sequence = False):
         super(ShiHaotian_Classifier, self).__init__()
         self.return_sequence = return_sequence
         self.module1 = nn.Sequential(
