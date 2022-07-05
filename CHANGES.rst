@@ -72,3 +72,15 @@ Minor bugs are fixed, installation fixed for gpu servers.
 - Deprecated:
 - Removed:
 - Fixed: Testing scripts and installation.
+
+1.0.6 (5 Jul 2022)
+======================
+**Description**
+
+Minor bugs are fixed. Unused parameters removed.
+
+- Added:
+- Changed: Documentation
+- Deprecated:
+- Removed: Unused parameters
+- Fixed: Testing scripts and installation.
