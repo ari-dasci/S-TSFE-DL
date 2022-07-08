@@ -2,9 +2,9 @@
 
 ## Description
 
-Time series feature extraction is a classical problem in time series analysis. Classical addition and multiplication models have been used for this purpose until the appearance of Artificial Neural Networks and Deep Learning. This problem has gained attention since multiple real life problems imply the usage of time series.
+Time series feature extraction is a classical problem in time series analysis. Classical addition and multiplication models have been used for this purpose until the appearance of Artificial Neural Networks and Deep Learning. This problem has gained attention since multiple real-life problems imply the usage of time series.
 
-In this repository we introduce a new Python module which compiles 20 backbones for time series feature extraction using Deep Learning. This module has been created to cover the necessity of a versatile and expandable piece of software for practitioners to use in their problems.
+In this repository, we introduce a new Python module which compiles 20 backbones for time series feature extraction using Deep Learning. This module has been created to cover the necessity of a versatile and expandable piece of software for practitioners to use in their problems.
 
 ## How to run
 
@@ -22,7 +22,7 @@ After this, if a GPU is going to be used, we should install cuDNN 8.2.1 for the 
 conda install -c anaconda cudnn==8.2.1
 ```
 
-Finally we can install the TSFEDL library using pip3 (which will be inside the conda environment, you can check this by running "which pip3"). This will install as dependencies pytorch-lightning, pytorch, tensorflow-gpu and all the needeed packages. Use the --use-feature=2020-resolver flag if the installation runs into an error.
+Finally, we can install the TSFEDL library using pip3 (which will be inside the conda environment, you can check this by running "which pip3"). This will install as dependencies pytorch-lightning, pytorch, tensorflow-gpu and all the needed packages. Use the --use-feature=2020-resolver flag if the installation runs into an error.
 
 ```bash
 pip3 install --use-feature=2020-resolver tsfedl
@@ -62,7 +62,7 @@ pip install -e .
 
 ### Examples
 
-In order to run a example, navigate to any file and run it.
+To run an example, navigate to any file and run it.
 
 ```bash
 cd project/examples
@@ -72,7 +72,7 @@ python arrythmia_experiment.py
 ```
 
 ## Imports
-This project is setup as a package which means you can now easily import any file into any other file like so:
+This project is set up as a package which means you can now easily import any file into any other file like so:
 
 ```python
 import tensorflow as tf
