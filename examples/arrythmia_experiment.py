@@ -167,6 +167,8 @@ methods_dict = {
     'ZhangJin': TSFEDL.ZhangJin(input_tensor=input, include_top=True),
     'YaoQihang': TSFEDL.YaoQihang(input_tensor=input, include_top=True),
     'YiboGao': TSFEDL.YiboGao(input_tensor=input, include_top=True, return_loss=False),
+    'SharPar': TSFEDL.SharPar(input_tensor=input, include_top=True),
+    'DaiXiLi': TSFEDL.DaiXiLi(input_tensor=input, include_top=True),
     'NewModel': generateNewModel(input)
 }
 

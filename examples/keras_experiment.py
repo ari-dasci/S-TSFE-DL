@@ -532,6 +532,50 @@ elif sys.argv[1]=="YiboGao":
         tf.keras.callbacks.CSVLogger('log_YiboGao.csv', append=True, separator=';')
     ]
 
+elif sys.argv[1]=="SharPar":
+    model_ = models_keras.SharPar(include_top=False, input_shape=(INSTANCE_BATCH, 126))
+
+    x = keras.layers.Flatten()(model_.layers[-1].output)
+    x = keras.layers.Dense(units=32, activation=tf.keras.activations.linear, name="out_dense_1")(x)
+    x = keras.layers.Dense(units=64, activation=tf.keras.activations.linear, name="out_dense_2")(x)
+    x = keras.layers.Dense(units=126, activation=tf.keras.activations.linear, name="out_dense_3")(x)
+    x = keras.layers.Dense(units=126*4, activation=tf.keras.activations.linear, name="output")(x)
+    x = keras.layers.Reshape((4,126))(x)
+    model = keras.Model(inputs=model_.layers[0].output, outputs=x)
+
+    print(model.summary())
+
+    model.compile(optimizer=keras.optimizers.Adam(), loss=keras.losses.mse)
+
+    my_callbacks = [
+        tf.keras.callbacks.EarlyStopping(patience=3, monitor="loss"),
+        tf.keras.callbacks.ModelCheckpoint(filepath='checkpoints/SharPar/model.{epoch:02d}-{loss:.2f}.h5', monitor="loss", save_best_only=True),
+        tf.keras.callbacks.TensorBoard(log_dir='./logs_SharPar'),
+        tf.keras.callbacks.CSVLogger('log_SharPar.csv', append=True, separator=';')
+    ]
+
+elif sys.argv[1]=="DaiXiLi":
+    model_ = models_keras.DaiXiLi(include_top=False, input_shape=(INSTANCE_BATCH, 126))
+
+    x = keras.layers.Flatten()(model_.layers[-1].output)
+    x = keras.layers.Dense(units=32, activation=tf.keras.activations.linear, name="out_dense_1")(x)
+    x = keras.layers.Dense(units=64, activation=tf.keras.activations.linear, name="out_dense_2")(x)
+    x = keras.layers.Dense(units=126, activation=tf.keras.activations.linear, name="out_dense_3")(x)
+    x = keras.layers.Dense(units=126*4, activation=tf.keras.activations.linear, name="output")(x)
+    x = keras.layers.Reshape((4,126))(x)
+    model = keras.Model(inputs=model_.layers[0].output, outputs=x)
+
+    print(model.summary())
+
+    model.compile(optimizer=keras.optimizers.Adam(), loss=keras.losses.mse)
+
+    my_callbacks = [
+        tf.keras.callbacks.EarlyStopping(patience=3, monitor="loss"),
+        tf.keras.callbacks.ModelCheckpoint(filepath='checkpoints/DaiXiLi/model.{epoch:02d}-{loss:.2f}.h5', monitor="loss", save_best_only=True),
+        tf.keras.callbacks.TensorBoard(log_dir='./logs_DaiXiLi'),
+        tf.keras.callbacks.CSVLogger('log_DaiXiLi.csv', append=True, separator=';')
+    ]
+
 history = model.fit(train_generator,
                     batch_size=BATCH_SIZE,
                     epochs=150,
