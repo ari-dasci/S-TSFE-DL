@@ -206,7 +206,7 @@ def moving_average(x, w):
 
 
 # Read the data
-data = obspy.read("ES.EADA..HHE.D.2021.002")
+data = obspy.read("./datasets/IGN/ES.EADA..HHE.D.2021.002")
 trace = data[0]
 data = trace.data
 

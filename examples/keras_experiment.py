@@ -16,7 +16,7 @@ NTHREADS = 64
 QUEUE_SIZE = 16
 
 print("Reading dataset...")
-data, attack_types, classes = utils.readDataset("./dataset/kddcup/kddcup.data", "./dataset/kddcup/kddcup.names")
+data, attack_types, classes = utils.readDataset("./datasets/kddcup/kddcup.data", "./datasets/kddcup/kddcup.names")
 data = sklearn.preprocessing.StandardScaler().fit_transform(data)
 
 attack_types_dict = {}

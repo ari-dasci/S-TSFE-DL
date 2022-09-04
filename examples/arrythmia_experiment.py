@@ -32,7 +32,7 @@ def getData(size=1000, test_size=0.2):
             Test triplet.
     """
     print("Load data...")
-    dir = "physionet.org/files/mitdb/1.0.0/"
+    dir = "./datasets/physionet.org/files/mitdb/1.0.0/"
     X, y = read_mit_bih(dir, fixed_length=size)
     y_hot_encoded = np.zeros((y.size, y.max() + 1))
     y_hot_encoded[np.arange(y.size), y] = 1
