@@ -42,6 +42,8 @@ from .models_keras import ZhangJin
 from .models_keras import YaoQihang
 from .models_keras import YiboGao
 from .models_keras import HongTan
+from .models_keras import SharPar
+from .models_keras import DaiXiLi
 from .models_pytorch import TSFEDL_BaseModule
 from .models_pytorch import OhShuLih
 from .models_pytorch import OhShuLih_Classifier
@@ -82,6 +84,10 @@ from .models_pytorch import YiboGao
 from .models_pytorch import YiboGaoClassifier
 from .models_pytorch import HongTan
 from .models_pytorch import HongTan_Classifier
+from .models_pytorch import SharPar
+from .models_pytorch import SharPar_Classifier
+from .models_pytorch import DaiXiLi
+from .models_pytorch import DaiXiLi_Classifier
 from .utils import TimeDistributed
 from .utils import flip_indices_for_conv_to_lstm
 from .utils import flip_indices_for_conv_to_lstm_reshape
@@ -132,6 +138,8 @@ __all__ = ['densenet_transition_block',
             'YaoQihang',
             'YiboGao',
             'HongTan',
+            'SharPar',
+            'DaiXiLi',
             'TSFEDL_BaseModule',
             'OhShuLih',
             'OhShuLih_Classifier',
@@ -172,6 +180,10 @@ __all__ = ['densenet_transition_block',
             'YiboGaoClassifier',
             'HongTan',
             'HongTan_Classifier',
+            'SharPar',
+            'SharPar_Classifier',
+            'DaiXiLi',
+            'DaiXiLi_Classifier',
             'TimeDistributed',
             'flip_indices_for_conv_to_lstm',
             'flip_indices_for_conv_to_lstm_reshape',

@@ -2466,3 +2466,235 @@ class HongTan(TSFEDL_BaseModule):
             out = self.classifier(out[:, -1, :])  # We only want the last step of the LSTM output
 
         return out
+
+
+class SharPar_Classifier(nn.Module):
+    """
+    Classifier of the SharPar model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(SharPar_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(16, n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        if self.return_sequence:
+            return self.module(x)
+        else:
+            return self.module(x[:, -1, :])
+
+
+class SharPar(TSFEDL_BaseModule):
+    """
+    A 1-layer CNN + LSTM model. Originally proposed for depression detection.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=SharPar_Classifier(256, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Sharma, G., Parashar, A., & Joshi, A. M. (2021). DepHNN: a 
+        novel hybrid neural network for electroencephalogram 
+        (EEG)-based screening of depression. Biomedical signal 
+        processing and control, 66, 102393.
+   """
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = SharPar_Classifier(256, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(SharPar, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.convolutions = nn.Sequential(
+            nn.Conv1d(in_channels=in_features, out_channels=64, kernel_size=5, stride=1, bias=True, padding="same"),
+            nn.ReLU()
+        )
+
+        self.lstm1 = nn.LSTM(input_size=64, hidden_size=32, batch_first=True)
+        self.lstm2 = nn.LSTM(input_size=32, hidden_size=16, batch_first=True)
+
+        self.fcc_module = nn.Sequential(
+            nn.Linear(16, 16),
+            nn.ReLU(),
+            nn.Linear(16, 16),
+            nn.ReLU()
+        )
+
+    def forward(self, x):
+        x = self.convolutions(x)
+        x = flip_indices_for_conv_to_lstm_reshape(x)
+        x, _ = self.lstm1(x)
+        x, _ = self.lstm2(x)
+        x = self.fcc_module(x)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x
+
+class DaiXiLi_Classifier(nn.Module):
+    """
+    Classifier of the DaiXiLi model.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        n_classes: int
+            Number of classes to predict at the end of the network
+
+        return_sequence: bool, defaults=True
+            Parameter that controls wether the module returns the sequence or the prediction.
+
+    Returns
+    -------
+    `LightningModule`
+        A pyTorch Lightning Module instance.
+    """
+    def __init__(self, in_features, n_classes, return_sequence = False):
+        super(DaiXiLi_Classifier, self).__init__()
+        self.return_sequence = return_sequence
+        self.module = nn.Sequential(
+            nn.Linear(2048, n_classes),
+            nn.Softmax()
+        )
+
+    def forward(self, x):
+        return self.module(x)
+
+
+class DaiXiLi(TSFEDL_BaseModule):
+    """
+    A 1-layer CNN + LSTM model. Originally proposed for depression detection.
+
+    Parameters
+    ----------
+        in_features: int
+            Number of features of the input tensors
+
+        top_module: nn.Module, defaults=DaiXiLi_Classifier(256, 5)
+            The optional  nn.Module to be used as additional top layers.
+
+        loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+            The loss function to use. It should accept two Tensors as inputs (predictions, targets) and return
+            a Tensor with the loss.
+
+        metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]]
+            Dictionary with the name of the metric and a function to compute the metric from two tensors,
+            prediction and true labels.
+
+        optimizer:  torch.optim.Optimizer
+            The pyTorch Optimizer to use. Note that this must be only the class type and not an instance of the class!!
+
+        **kwargs: dict
+            A dictionary with the parameters of the optimizer.
+
+    Returns
+    -------
+        `LightningModule`
+            A pyTorch Lightning Module instance.
+
+    References
+    ----------
+        Sharma, G., Parashar, A., & Joshi, A. M. (2021). DepHNN: a 
+        novel hybrid neural network for electroencephalogram 
+        (EEG)-based screening of depression. Biomedical signal 
+        processing and control, 66, 102393.
+   """
+    def __init__(self,
+                 in_features: int,
+                 top_module: Optional[nn.Module] = DaiXiLi_Classifier(256, 5),
+                 loss: Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = nn.CrossEntropyLoss(),
+                 metrics: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = None,
+                 optimizer: torch.optim.Optimizer = torch.optim.Adam,
+                 **kwargs
+                 ):
+        super(DaiXiLi, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
+
+        self.v2c1 = nn.Conv1d(in_channels=64, out_channels=32, kernel_size=5, stride=1, bias=True, padding="same")
+        self.v2mp1 = nn.MaxPool1d(kernel_size=2, stride=2)
+        self.v2d1 = nn.Linear(125, 16)
+
+        self.v3c1 = nn.Conv1d(in_channels=in_features, out_channels=128, kernel_size=5, stride=1, bias=True, padding="same")
+        self.v3mp1 = nn.MaxPool1d(kernel_size=2, stride=2)
+        self.v3c2 = nn.Conv1d(in_channels=128, out_channels=64, kernel_size=5, stride=1, bias=True, padding="same")
+        self.v3mp2 = nn.MaxPool1d(kernel_size=2, stride=2)
+        self.v3c3 = nn.Conv1d(in_channels=64, out_channels=32, kernel_size=5, stride=1, bias=True, padding="same")
+        self.v3mp3 = nn.MaxPool1d(kernel_size=2, stride=2)
+        self.v3d1 = nn.Linear(125, 16)
+
+        self.v1c1 = nn.Conv1d(in_channels=128, out_channels=64, kernel_size=5, stride=1, bias=True, padding="same")
+        self.v1mp1 = nn.MaxPool1d(kernel_size=2, stride=2)
+        self.v1d1 = nn.Linear(250, 16)
+
+    def forward(self, x):
+        x3 = self.v3c1(x)
+        x3 = self.v3mp1(x3)
+
+        x1 = self.v1c1(x3)
+        x1 = self.v1mp1(x1)
+        x1 = self.v1d1(x1)
+        
+        x3 = self.v3c2(x3)
+        x3 = self.v3mp2(x3)
+
+        x2 = self.v2c1(x3)
+        x2 = self.v2mp1(x2)
+        x2 = self.v2d1(x2)
+
+        x3 = self.v3c3(x3)
+        x3 = self.v3mp3(x3)
+        x3 = self.v3d1(x3)
+
+        x = torch.cat((x1, x2, x3), 1)
+        x = x.view(x.size(0), -1)
+
+        if self.classifier is not None:
+            x = self.classifier(x)
+        return x

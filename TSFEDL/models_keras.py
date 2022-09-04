@@ -1651,3 +1651,152 @@ def HongTan(include_top=True,
         model.load_weights(weights)
 
     return model
+
+def SharPar(include_top=True,
+             weights=None,
+             input_tensor=None,
+             input_shape=None,
+             classes=5,
+             classifier_activation="softmax"):
+    """
+    A 1-layer CNN + LSTM model. Originally proposed for depression detection.
+
+    Parameters
+    ----------
+        include_top: bool, default=True
+            Whether to include the fully-connected layer at the top of the network.
+
+        weights: str, default=None
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
+
+    Returns
+    -------
+    model: `keras.Model`
+        A `keras.Model` instance.
+
+    References
+    ----------
+        Sharma, G., Parashar, A., & Joshi, A. M. (2021). DepHNN: a 
+        novel hybrid neural network for electroencephalogram 
+        (EEG)-based screening of depression. Biomedical signal 
+        processing and control, 66, 102393.
+
+    Notes
+    -----
+
+    """
+
+    # Check inputs
+    inp = check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    x = inp
+    x = layers.Conv1D(filters=64, kernel_size=5, strides=1, activation=keras.activations.relu)(x)
+    x = layers.LSTM(units=32, return_sequences=True)(x)
+    x = layers.LSTM(units=16, return_sequences=True)(x)
+    x = layers.Dense(units=16, activation=keras.activations.relu)(x)
+    x = layers.Dense(units=16, activation=keras.activations.relu)(x)
+
+    if include_top:
+        x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="SharPar")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
+
+def DaiXiLi(include_top=True,
+             weights=None,
+             input_tensor=None,
+             input_shape=None,
+             classes=5,
+             classifier_activation="softmax"):
+    """
+    Convolutional neural network model for emotion classification using a non-end-to-end 
+    training method that combines bottom-, middle-, and top-layer convolution features.
+
+    Parameters
+    ----------
+        include_top: bool, default=True
+            Whether to include the fully-connected layer at the top of the network.
+
+        weights: str, default=None
+            The path to the weights file to be loaded.
+
+        input_tensor: keras.Tensor, defaults=None
+            Optional Keras tensor (i.e. output of `layers.Input()`) to use as input for the model.
+
+        input_shape: Tuple, defaults=None
+            If `input_tensor=None`, a tuple that defines the input shape for the model.
+
+        classes: int, defaults=5
+            If `include_top=True`, the number of units in the top layer to classify data.
+
+        classifier_activation: str or callable, defaults='softmax'
+            The activation function to use on the "top" layer. Ignored unless `include_top=True`. Set
+            `classifier_activation=None` to return the logits of the "top" layer.
+
+    Returns
+    -------
+    model: `keras.Model`
+        A `keras.Model` instance.
+
+    References
+    ----------
+        Dai, J., Xi, X., Li, G., & Wang, T. (2022). EEG-Based Emotion 
+        Classification Using Improved Cross-Connected Convolutional 
+        Neural Network. Brain Sciences, 12(8), 977.
+
+    Notes
+    -----
+
+    """
+
+    # Check inputs
+    inp = check_inputs(include_top, weights, input_tensor, input_shape, classes, classifier_activation)
+
+    v3 = layers.Conv1D(filters=128, kernel_size=5, strides=1, activation=keras.activations.relu, padding="same")(inp)
+    v3 = layers.MaxPooling1D(pool_size=2, strides=2)(v3)
+
+    v1 = layers.Conv1D(filters=64, kernel_size=5, strides=1, activation=keras.activations.relu, padding="same")(v3)
+    v1 = layers.MaxPooling1D(pool_size=2, strides=2)(v1)
+    v1 = layers.Dense(units=16, activation=keras.activations.relu)(v1)
+
+    v3 = layers.Conv1D(filters=64, kernel_size=5, strides=1, activation=keras.activations.relu, padding="same")(v3)
+    v3 = layers.MaxPooling1D(pool_size=2, strides=2)(v3)
+
+    v2 = layers.Conv1D(filters=32, kernel_size=5, strides=1, activation=keras.activations.relu, padding="same")(v3)
+    v2 = layers.MaxPooling1D(pool_size=2, strides=2)(v2)
+    v2 = layers.Dense(units=16, activation=keras.activations.relu)(v2)
+
+    v3 = layers.Conv1D(filters=32, kernel_size=5, strides=1, activation=keras.activations.relu, padding="same")(v3)
+    v3 = layers.MaxPooling1D(pool_size=2, strides=2)(v3)
+    v3 = layers.Dense(units=16, activation=keras.activations.relu)(v3)
+
+    x = layers.concatenate([v1, v2, v3], axis=1)
+
+    if include_top:
+        x = layers.Flatten()(x)
+        x = layers.Dense(units=classes, activation=classifier_activation)(x)
+
+    model = keras.Model(inputs=inp, outputs=x, name="DaiXiLi")
+
+    if weights is not None:
+        model.load_weights(weights)
+
+    return model
