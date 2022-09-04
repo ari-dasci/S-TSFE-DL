@@ -84,3 +84,15 @@ Minor bugs are fixed. Unused parameters removed.
 - Deprecated:
 - Removed: Unused parameters
 - Fixed: Testing scripts and installation.
+
+1.0.7 (4 Sep 2022)
+======================
+**Description**
+
+New models added from 2021 and 2022
+
+- Added: SharPar and DaiXiLi models
+- Changed: Documentation
+- Deprecated:
+- Removed:
+- Fixed: Testing scripts and installation.
