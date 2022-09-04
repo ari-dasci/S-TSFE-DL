@@ -31,6 +31,8 @@ Here the different deep learning models included in the library are summarised. 
     TSFEDL.models_keras.ZhangJin
     TSFEDL.models_keras.YaoQihang
     TSFEDL.models_keras.YiboGao
+    TSFEDL.models_keras.SharPar
+    TSFEDL.models_keras.DaiXiLi
 
 .. autofunction:: TSFEDL.models_keras.OhShuLih
 .. autofunction:: TSFEDL.models_keras.KhanZulfiqar
@@ -54,3 +56,5 @@ Here the different deep learning models included in the library are summarised. 
 .. autofunction:: TSFEDL.models_keras.ZhangJin
 .. autofunction:: TSFEDL.models_keras.YaoQihang
 .. autofunction:: TSFEDL.models_keras.YiboGao
+.. autofunction:: TSFEDL.models_keras.SharPar
+.. autofunction:: TSFEDL.models_keras.DaiXiLi

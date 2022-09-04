@@ -30,6 +30,8 @@ Here the different deep learning models included in the library are summarised. 
     TSFEDL.models_pytorch.ZhangJin
     TSFEDL.models_pytorch.YaoQihang
     TSFEDL.models_pytorch.YiboGao
+    TSFEDL.models_pytorch.SharPar
+    TSFEDL.models_pytorch.DaiXiLi
 
 .. autofunction:: TSFEDL.models_pytorch.TSFEDL_BaseModule
 .. autofunction:: TSFEDL.models_pytorch.OhShuLih
@@ -52,3 +54,5 @@ Here the different deep learning models included in the library are summarised. 
 .. autofunction:: TSFEDL.models_pytorch.ZhangJin
 .. autofunction:: TSFEDL.models_pytorch.YaoQihang
 .. autofunction:: TSFEDL.models_pytorch.YiboGao
+.. autofunction:: TSFEDL.models_pytorch.SharPar
+.. autofunction:: TSFEDL.models_pytorch.DaiXiLi
