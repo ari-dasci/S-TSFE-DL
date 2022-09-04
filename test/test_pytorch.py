@@ -159,7 +159,7 @@ class MyTestCase(unittest.TestCase):
         assert 1.0 >= acc >= 0
 
     # # No funciona
-    # ##@unittest.skip
+     ###@unittest.skip
     # def test_HouBoroui(self):
     #     model = HouBoroui(
     #         in_features=1,
@@ -250,6 +250,28 @@ class MyTestCase(unittest.TestCase):
     #@unittest.skip
     def test_HuangMeiLing(self):
         model = HuangMeiLing(in_features=1,
+                          loss=nn.CrossEntropyLoss(),
+                          metrics={"acc": acc_from_logits},
+                          optimizer=torch.optim.Adam,
+                          lr=0.001
+                          )
+        acc = self.trainModel(model, 100, 1)
+        assert 1.0 >= acc >= 0
+
+    #@unittest.skip
+    def test_SharPar(self):
+        model = SharPar(in_features=1,
+                          loss=nn.CrossEntropyLoss(),
+                          metrics={"acc": acc_from_logits},
+                          optimizer=torch.optim.Adam,
+                          lr=0.001
+                          )
+        acc = self.trainModel(model, 100, 1)
+        assert 1.0 >= acc >= 0
+
+    #@unittest.skip
+    def test_DaiXiLi(self):
+        model = DaiXiLi(in_features=1,
                           loss=nn.CrossEntropyLoss(),
                           metrics={"acc": acc_from_logits},
                           optimizer=torch.optim.Adam,

@@ -732,6 +732,46 @@ class TestMethods(unittest.TestCase):
         os.remove('OhShuLi_test.h5')
         return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
 
+    #@unittest.skip
+    def test_SharPar(self):
+        (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        model = TSFEDL.SharPar(input_tensor=input, include_top=True)
+
+        acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra,
+                                           X_tst, y_tst, y_hc_tst, batch_size=256, epochs=1)
+
+        assert 1.0 >= acc >= 0
+
+        # save weights
+        model.save_weights('SharPar_test.h5')
+
+        # re-load de model
+        new_model = TSFEDL.SharPar(input_tensor=input, weights='SharPar_test.h5')
+        new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
+        os.remove('SharPar_test.h5')
+        return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
+
+    #@unittest.skip
+    def test_DaiXiLi(self):
+        (X_tra, y_tra, y_hc_tra), (X_tst, y_tst, y_hc_tst) = self.getData(size=1000)
+        input = tf.keras.Input((X_tra.shape[1], X_tra.shape[2]))
+        model = TSFEDL.DaiXiLi(input_tensor=input, include_top=True)
+
+        acc, predictions = self.trainModel(model, X_tra, y_tra, y_hc_tra,
+                                           X_tst, y_tst, y_hc_tst, batch_size=256, epochs=1)
+
+        assert 1.0 >= acc >= 0
+
+        # save weights
+        model.save_weights('DaiXiLi_test.h5')
+
+        # re-load de model
+        new_model = TSFEDL.DaiXiLi(input_tensor=input, weights='DaiXiLi_test.h5')
+        new_predictions = np.argmax(new_model.predict(X_tst), axis=1)
+        os.remove('DaiXiLi_test.h5')
+        return np.testing.assert_allclose(predictions, new_predictions, rtol=1e-6, atol=1e-6)
+
 
 if __name__ == "__main__":
     unittest.main()
