@@ -47,6 +47,10 @@ or
 pip3 install tsfedl
 ```
 
+### Documentation
+
+The documentation of the model can be found in https://s-tsfe-dl.readthedocs.io/en/latest/
+
 ### Using the repository
 
 First, install dependencies
