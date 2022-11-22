@@ -108,4 +108,4 @@ author = {Ignacio Aguilera-Martos and Ángel M. García-Vico and Julián Luengo 
 }
 ```
 
-ArXiV reference: https://arxiv.org/abs/2206.03179
+ArXiV reference with extended material: https://arxiv.org/abs/2206.03179
