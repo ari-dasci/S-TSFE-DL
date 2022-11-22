@@ -96,8 +96,6 @@ Please cite this work as:
 
 Time Series Feature Extraction using Deep Learning library (https://github.com/ari-dasci/S-TSFE-DL/)
 
-ArXiV reference: https://arxiv.org/abs/2206.03179
-
 ```
 @article{AGUILERAMARTOS2023223,
 title = {{TSFEDL}: A python library for time series spatio-temporal feature extraction and prediction using deep learning},
@@ -109,3 +107,5 @@ doi = {https://doi.org/10.1016/j.neucom.2022.10.062},
 author = {Ignacio Aguilera-Martos and Ángel M. García-Vico and Julián Luengo and Sergio Damas and Francisco J. Melero and José Javier Valle-Alonso and Francisco Herrera}
 }
 ```
+
+ArXiV reference: https://arxiv.org/abs/2206.03179
