@@ -99,14 +99,13 @@ Time Series Feature Extraction using Deep Learning library (https://github.com/a
 ArXiV reference: https://arxiv.org/abs/2206.03179
 
 ```
-@article{https://doi.org/10.48550/arxiv.2206.03179,
-  doi = {10.48550/ARXIV.2206.03179},
-  url = {https://arxiv.org/abs/2206.03179},
-  author = {Aguilera-Martos, Ignacio and García-Vico, Ángel M. and Luengo, Julián and Damas, Sergio and Melero, Francisco J. and Valle-Alonso, José Javier and Herrera, Francisco},
-  keywords = {Neural and Evolutionary Computing (cs.NE), Artificial Intelligence (cs.AI), FOS: Computer and information sciences, FOS: Computer and information sciences},
-  title = {TSFEDL: A Python Library for Time Series Spatio-Temporal Feature Extraction and Prediction using Deep Learning (with Appendices on Detailed Network Architectures and Experimental Cases of Study)},
-  publisher = {arXiv},
-  year = {2022},
-  copyright = {arXiv.org perpetual, non-exclusive license}
+@article{AGUILERAMARTOS2023223,
+title = {{TSFEDL}: A python library for time series spatio-temporal feature extraction and prediction using deep learning},
+journal = {Neurocomputing},
+volume = {517},
+pages = {223-228},
+year = {2023},
+doi = {https://doi.org/10.1016/j.neucom.2022.10.062},
+author = {Ignacio Aguilera-Martos and Ángel M. García-Vico and Julián Luengo and Sergio Damas and Francisco J. Melero and José Javier Valle-Alonso and Francisco Herrera}
 }
 ```
