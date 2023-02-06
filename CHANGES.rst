@@ -96,3 +96,15 @@ New models added from 2021 and 2022
 - Deprecated:
 - Removed:
 - Fixed: Testing scripts and installation.
+
+1.0.7.1 (6 Feb 2023)
+======================
+**Description**
+
+Installation updated for tensorflow.
+
+- Added:
+- Changed:
+- Deprecated:
+- Removed:
+- Fixed: Requirements and config to support only tensorflow as package name.
