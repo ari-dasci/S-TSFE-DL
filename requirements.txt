@@ -1,7 +1,7 @@
 pytorch-lightning
 scikit-learn
-tensorflow==2.6.0
+tensorflow
 torchmetrics
 wfdb
 obspy
-keras==2.6.0
+keras
