@@ -108,3 +108,15 @@ Installation updated for tensorflow.
 - Deprecated:
 - Removed:
 - Fixed: Requirements and config to support only tensorflow as package name.
+
+1.0.7.2 (5 Oct 2023)
+======================
+**Description**
+
+Installation updated for tensorflow, pytorch and newer versions of Python.
+
+- Added: future compatibility.
+- Changed:
+- Deprecated:
+- Removed:
+- Fixed:
