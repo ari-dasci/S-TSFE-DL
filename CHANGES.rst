@@ -120,3 +120,16 @@ Installation updated for tensorflow, pytorch and newer versions of Python.
 - Deprecated:
 - Removed:
 - Fixed:
+
+1.0.7.3 (31 Oct 2023)
+======================
+**Description**
+
+Added validation to base module and solved problem to get compatibility with pytorch and pytorch-lightning
+latest versions.
+
+- Added: future compatibility, validation step in base module.
+- Changed:
+- Deprecated:
+- Removed:
+- Fixed:

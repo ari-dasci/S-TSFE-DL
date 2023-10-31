@@ -21,7 +21,7 @@ setup(
     name='TSFEDL',
 
     # Version
-    version='1.0.7.2',
+    version='1.0.7.3',
 
     # Description
     description='Time Series Spatio-Temporal Feature Extraction using Deep Learning',
