@@ -52,7 +52,7 @@ class TSFEDL_BaseModule(pl.LightningModule):
         self.kwargs = kwargs
         self.in_features = in_features
         self.loss = loss
-        self.optimizer = optimizer
+        self.optimizer_ = optimizer
         self.classifier = top_module
         self.metrics = metrics
         pass
@@ -64,9 +64,17 @@ class TSFEDL_BaseModule(pl.LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = self.loss(y_hat, y)
-        self.log('train_loss', loss)
+        self.log('train_loss', loss, prog_bar=True)
         #self.log('train_acc', self.accuracy(y_hat, y))
         return loss
+    
+    def validation_step(self, batch, batch_idx):
+        # this is the validation loop
+        src,tgt,y = batch
+        y_hat = self(src,tgt)
+        val_loss = self.loss(y_hat, y)
+        self.log("val_loss", val_loss, prog_bar=True)
+        return val_loss
 
     def test_step(self, batch, batch_idx):
         x, y = batch
@@ -83,7 +91,7 @@ class TSFEDL_BaseModule(pl.LightningModule):
 
 
     def configure_optimizers(self):
-        opt = self.optimizer(self.parameters(), **self.kwargs)
+        opt = self.optimizer_(self.parameters(), **self.kwargs)
         return opt
 
 
