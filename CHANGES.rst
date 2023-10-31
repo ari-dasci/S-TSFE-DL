@@ -121,7 +121,7 @@ Installation updated for tensorflow, pytorch and newer versions of Python.
 - Removed:
 - Fixed:
 
-1.0.7.3 (31 Oct 2023)
+1.0.7.4 (31 Oct 2023)
 ======================
 **Description**
 

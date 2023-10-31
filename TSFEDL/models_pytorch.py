@@ -70,8 +70,8 @@ class TSFEDL_BaseModule(pl.LightningModule):
     
     def validation_step(self, batch, batch_idx):
         # this is the validation loop
-        src,tgt,y = batch
-        y_hat = self(src,tgt)
+        x,y = batch
+        y_hat = self(x)
         val_loss = self.loss(y_hat, y)
         self.log("val_loss", val_loss, prog_bar=True)
         return val_loss
