@@ -133,3 +133,15 @@ latest versions.
 - Deprecated:
 - Removed:
 - Fixed:
+
+1.0.7.5 (8 Nov 2023)
+======================
+**Description**
+
+Fixed error with ShiHaotian model in Pytorch and top module. Solved and reported in issue #3.
+
+- Added:
+- Changed:
+- Deprecated:
+- Removed:
+- Fixed: ShiHaotian model in Pytorch had a default top module behavior

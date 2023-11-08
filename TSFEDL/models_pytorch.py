@@ -2227,8 +2227,6 @@ class ShiHaotian(TSFEDL_BaseModule):
                  **kwargs
                  ):
         super(ShiHaotian, self).__init__(in_features, top_module, loss, metrics, optimizer, **kwargs)
-        if self.classifier is None:
-            self.classifier = ShiHaotian_Classifier(7904, 5, in_features)
 
         self.convolutions1 = nn.Sequential(
             nn.Conv1d(in_channels=in_features, out_channels=32, kernel_size=13, stride=2, bias=True, padding="valid"),
