@@ -2464,9 +2464,9 @@ class HongTan(TSFEDL_BaseModule):
         out = self.convolutions(x)
         # Now, flip indices using a view for the LSTM as it requires a shape of (N, L, H_in = C)
         out = out.view(out.size(0), out.size(2), out.size(1))
-        out, _ = self.lstm1(out, batch_first=True)
-        out, _ = self.lstm2(out, batch_first=True)
-        out, _ = self.lstm3(out, batch_first=True)
+        out, _ = self.lstm1(out)
+        out, _ = self.lstm2(out)
+        out, _ = self.lstm3(out)
 
         if self.classifier is not None:
             out = self.classifier(out[:, -1, :])  # We only want the last step of the LSTM output

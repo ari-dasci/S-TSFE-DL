@@ -145,3 +145,15 @@ Fixed error with ShiHaotian model in Pytorch and top module. Solved and reported
 - Deprecated:
 - Removed:
 - Fixed: ShiHaotian model in Pytorch had a default top module behavior
+
+1.0.7.6 (5 Mar 2024)
+======================
+**Description**
+
+Fixed error with HongTan model, invalid call to arguments.
+
+- Added:
+- Changed:
+- Deprecated:
+- Removed:
+- Fixed: HongTan model had an invalid call to arguments
