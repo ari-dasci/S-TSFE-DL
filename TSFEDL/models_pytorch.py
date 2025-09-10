@@ -1066,7 +1066,7 @@ class ZhangJin_Classifier(nn.Module):
         return self.linear(x[:, -1, :])
 
 class ZhangJin_Forecaster(nn.Module):
-    def __init__(self, in_features: int, out_features: int, n_pred: int = 5):
+    def __init__(self, in_features: int, out_features: int, n_pred: int = 24):
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -2093,7 +2093,7 @@ class ZhengZhenyu_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 class ZhengZhenyu_Forecaster(nn.Module):
-    def __init__(self, in_features: int, out_features: int, n_pred: int = 5):
+    def __init__(self, in_features: int, out_features: int, n_pred: int = 256):
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -3832,14 +3832,14 @@ class DaiXiLi_Forecaster(nn.Module):
     Args:
         out_features (int): Number of features per prediction step.
         n_pred (int): Number of prediction steps.
-        in_features (int, optional): Number of input features. Default: 256.
+        in_features (int, optional): Number of input features. Default: 2048.
 
     Shape:
         - Input:  (N, in_features)
         - Output: (N, n_pred, out_features)
     """
 
-    def __init__(self, out_features: int, n_pred: int, in_features: int = 256):
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 2048):
         super().__init__()
 
         if n_pred <= 0:
