@@ -47,47 +47,70 @@ from .models_keras import DaiXiLi
 from .models_pytorch import TSFEDL_BaseModule
 from .models_pytorch import OhShuLih
 from .models_pytorch import OhShuLih_Classifier
+from .models_pytorch import OhShuLih_Forecaster
 from .models_pytorch import KhanZulfiqar
 from .models_pytorch import KhanZulfiqar_Classifier
+from .models_pytorch import KhanZulfiqar_Forecaster
 from .models_pytorch import ZhengZhenyu
 from .models_pytorch import ZhengZhenyu_Classifier
+from .models_pytorch import ZhengZhenyu_Forecaster
 from .models_pytorch import WangKejun
 from .models_pytorch import WangKejun_Classifier
+from .models_pytorch import WangKejun_Forecaster
 from .models_pytorch import ChenChen
 from .models_pytorch import ChenChen_Classifier
+from .models_pytorch import ChenChen_Forecaster
 from .models_pytorch import KimTaeYoung
 from .models_pytorch import KimTaeYoung_Classifier
+from .models_pytorch import KimTaeYoung_Forecaster
 from .models_pytorch import GenMinxing
 from .models_pytorch import GenMinxing_Classifier
+from .models_pytorch import GenMinxing_Forecaster
 from .models_pytorch import FuJiangmeng
 from .models_pytorch import FuJiangmeng_Classifier
+from .models_pytorch import FuJiangmeng_Forecaster
 from .models_pytorch import ShiHaotian
 from .models_pytorch import ShiHaotian_Classifier
+from .models_pytorch import ShiHaotian_Forecaster
 from .models_pytorch import HuangMeiLing
 from .models_pytorch import HuangMeiLing_Classifier
+from .models_pytorch import HuangMeiLing_Forecaster
 from .models_pytorch import LihOhShu
 from .models_pytorch import LiOhShu_Classifier
+from .models_pytorch import LihOhShu_Forecaster
 from .models_pytorch import GaoJunLi
 from .models_pytorch import GaoJunLi_Classifier
+from .models_pytorch import GaoJunLi_Forecaster
 from .models_pytorch import WeiXiaoyan
 from .models_pytorch import WeiXiaoyan_Classifier
+from .models_pytorch import WeiXiaoyan_Forecaster
 from .models_pytorch import KongZhengmin
 from .models_pytorch import KongZhengmin_Classifier
+from .models_pytorch import KongZhengmin_Forecaster
 from .models_pytorch import YildirimOzal
+from .models_pytorch import YildirimOzal_Forecaster
 from .models_pytorch import CaiWenjuan
+from .models_pytorch import CaiWenjuan_Forecaster
 from .models_pytorch import HtetMyetLynn
+from .models_pytorch import HtetMyetLynn_Forecaster
 from .models_pytorch import ZhangJin
 from .models_pytorch import ZhangJin_Classifier
+from .models_pytorch import ZhangJin_Forecaster
 from .models_pytorch import YaoQihang
 from .models_pytorch import YaoQihangClassifier
+from .models_pytorch import YaoQihang_Forecaster
 from .models_pytorch import YiboGao
 from .models_pytorch import YiboGaoClassifier
+from .models_pytorch import YiboGao_Forecaster
 from .models_pytorch import HongTan
 from .models_pytorch import HongTan_Classifier
+from .models_pytorch import HongTan_Forecaster
 from .models_pytorch import SharPar
 from .models_pytorch import SharPar_Classifier
+from .models_pytorch import SharPar_Forecaster
 from .models_pytorch import DaiXiLi
 from .models_pytorch import DaiXiLi_Classifier
+from .models_pytorch import DaiXiLi_Forecaster
 from .utils import TimeDistributed
 from .utils import flip_indices_for_conv_to_lstm
 from .utils import flip_indices_for_conv_to_lstm_reshape
@@ -143,47 +166,70 @@ __all__ = ['densenet_transition_block',
             'TSFEDL_BaseModule',
             'OhShuLih',
             'OhShuLih_Classifier',
+            'OhShuLih_Forecaster',
             'KhanZulfiqar',
             'KhanZulfiqar_Classifier',
+            'KhanZulfiqar_Forecaster',
             'ZhengZhenyu',
             'ZhengZhenyu_Classifier',
+            'ZhengZhenyu_Forecaster',
             'WangKejun',
             'WangKejun_Classifier',
+            'WangKejun_Forecaster',
             'ChenChen',
             'ChenChen_Classifier',
+            'ChenChen_Forecaster',
             'KimTaeYoung',
             'KimTaeYoung_Classifier',
+            'KimTaeYoung_Forecaster',
             'GenMinxing',
             'GenMinxing_Classifier',
+            'GenMinxing_Forecaster',
             'FuJiangmeng',
             'FuJiangmeng_Classifier',
+            'FuJiangmeng_Forecaster',
             'ShiHaotian',
             'ShiHaotian_Classifier',
+            'ShiHaotian_Forecaster',
             'HuangMeiLing',
             'HuangMeiLing_Classifier',
+            'HuangMeiLing_Forecaster',
             'LihOhShu',
             'LiOhShu_Classifier',
+            'LihOhShu_Forecaster',
             'GaoJunLi',
             'GaoJunLi_Classifier',
+            'GaoJunLi_Forecaster',
             'WeiXiaoyan',
             'WeiXiaoyan_Classifier',
+            'WeiXiaoyan_Forecaster',
             'KongZhengmin',
             'KongZhengmin_Classifier',
+            'KongZhengmin_Forecaster',
             'YildirimOzal',
+            'YildirimOzal_Forecaster',
             'CaiWenjuan',
+            'CaiWenjuan_Forecaster',
             'HtetMyetLynn',
+            'HtetMyetLynn_Forecaster',
             'ZhangJin',
             'ZhangJin_Classifier',
+            'ZhangJin_Forecaster',
             'YaoQihang',
             'YaoQihangClassifier',
+            'YaoQihang_Forecaster',
             'YiboGao',
             'YiboGaoClassifier',
+            'YiboGao_Forecaster',
             'HongTan',
             'HongTan_Classifier',
+            'HongTan_Forecaster',
             'SharPar',
             'SharPar_Classifier',
+            'SharPar_Forecaster',
             'DaiXiLi',
             'DaiXiLi_Classifier',
+            'DaiXiLi_Forecaster',
             'TimeDistributed',
             'flip_indices_for_conv_to_lstm',
             'flip_indices_for_conv_to_lstm_reshape',

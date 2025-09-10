@@ -127,6 +127,48 @@ class OhShuLih_Classifier(nn.Module):
     def forward(self, x):
         return self.model(x)
 
+class OhShuLih_Forecaster(nn.Module):
+    """
+    Forecasting head of the OhShuLih model.
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Number of input features. Default: 20.
+
+    Shape:
+        - Input:  (N, in_features)
+        - Output: (N, n_pred, out_features)
+    """
+
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 20):
+        super().__init__()
+
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+
+        # Linear projects input to (n_pred * out_features)
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Expect input of shape (N, in_features)
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.in_features}), "
+                f"but got {tuple(x.shape)}"
+            )
+
+        out = self.model(x)  # (N, n_pred * out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
+
 
 class OhShuLih(TSFEDL_BaseModule):
     """
@@ -265,6 +307,74 @@ class YiboGaoClassifier(nn.Module):
 
     def forward(self, x):
         return self.module(x)
+    
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class YiboGao_Forecaster(nn.Module):
+    """
+    Cabeza de forecasting para YiboGao.
+
+    Soporta entrada:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> se reduce a (N, F)
+
+    Args:
+        out_features (int): número de features por paso de predicción.
+        n_pred (int): número de pasos de predicción.
+        in_features (int, opcional): dimensión de feature F. Default: 1.
+        time_reduce (str, opcional): {'last','mean','attn'}. Default: 'last'.
+
+    Salida:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 1, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred debe ser > 0")
+        if out_features <= 0:
+            raise ValueError("out_features debe ser > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce debe ser 'last', 'mean' o 'attn'")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:  # atención
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)
+            weights = F.softmax(scores, dim=1)
+            return torch.einsum("nl,nlf->nf", weights, x)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Esperado (N,{self.in_features}), llegó {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Esperado (N,L,{self.in_features}), llegó {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Entrada 2D o 3D esperada, llegó {x.dim()}D con forma {tuple(x.shape)}")
+
+        out = self.model(feats)
+        return out.view(x.size(0), self.n_pred, self.out_features)
+
 
 
 class YiboGao(TSFEDL_BaseModule):
@@ -379,6 +489,74 @@ class YaoQihangClassifier(nn.Module):
         # NOTE:  This classifier must return the mean softmax over ALL TIMESTEPS. TAKE CARE OF THE LOSS FUNCTION!
         mean = torch.mean(F.softmax(x1, dim=2), dim=1)
         return mean
+    
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class YaoQihang_Forecaster(nn.Module):
+    """
+    Cabeza de forecasting para YaoQihang.
+
+    Soporta:
+        - Entrada 2D: (N, F)
+        - Entrada 3D: (N, L, F) -> se reduce a (N, F) con `time_reduce`.
+
+    Args:
+        out_features (int): número de features por paso de predicción.
+        n_pred (int): número de pasos de predicción.
+        in_features (int, opcional): dimensión de feature F. Default: 32.
+        time_reduce (str, opcional): {'last','mean','attn'}. Default: 'last'.
+
+    Salida:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 32, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred debe ser > 0")
+        if out_features <= 0:
+            raise ValueError("out_features debe ser > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce debe ser 'last', 'mean' o 'attn'")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]       # último paso temporal
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)     # media en el tiempo
+        else:  # atención
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)
+            return torch.einsum("nl,nlf->nf", weights, x)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Esperado (N,{self.in_features}), llegó {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Esperado (N,L,{self.in_features}), llegó {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Entrada esperada 2D o 3D, llegó {x.dim()}D con forma {tuple(x.shape)}")
+
+        out = self.model(feats)  # (N, n_pred*out_features)
+        return out.view(x.size(0), self.n_pred, self.out_features)
+
 
 
 class YaoQihang(TSFEDL_BaseModule):
@@ -469,6 +647,48 @@ class YaoQihang(TSFEDL_BaseModule):
             x = self.classifier(x)
 
         return x
+    
+class HtetMyetLynn_Forecaster(nn.Module):
+    """
+    Forecasting head of the HtetMyetLynn model.
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Number of input features. Default: 80.
+
+    Shape:
+        - Input:  (N, in_features)
+        - Output: (N, n_pred, out_features)
+    """
+
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 80):
+        super().__init__()
+
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+
+        # Linear projects input to (n_pred * out_features)
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Expect input of shape (N, in_features)
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.in_features}), "
+                f"but got {tuple(x.shape)}"
+            )
+
+        out = self.model(x)  # (N, n_pred * out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 
 class HtetMyetLynn(TSFEDL_BaseModule):
@@ -551,6 +771,26 @@ class HtetMyetLynn(TSFEDL_BaseModule):
             x = self.classifier(x[:, -1, :])  # get only the last timestep
 
         return x
+
+class YildirimOzal_Forecaster(nn.Module):
+    def __init__(self, in_features: int, out_features: int, n_pred: int):
+        super().__init__()
+        # La LSTM tiene hidden_size=32 → in_features=32
+        self.proj = nn.Linear(in_features, n_pred * out_features)
+        self.n_pred = n_pred
+        self.out_features = out_features
+
+    def forward(self, x):
+        # Espera entrada (N, in_features)
+        if x.dim() != 2 or x.size(1) != self.proj.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.proj.in_features}), got {tuple(x.shape)}"
+            )
+        x = self.proj(x)  # (N, n_pred*out_features)
+        x = x.view(x.size(0), self.n_pred, self.out_features)  # (N, n_pred, out_features)
+        return x
+
+
 
 
 class YildirimOzal(TSFEDL_BaseModule):
@@ -668,6 +908,47 @@ class YildirimOzal(TSFEDL_BaseModule):
             self.log('train_loss', loss)
             return loss
 
+class CaiWenjuan_Forecaster(nn.Module):
+    """
+    Forecasting head of the CaiWenjuan model.
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Number of input features. Default: 67.
+
+    Shape:
+        - Input:  (N, in_features)
+        - Output: (N, n_pred, out_features)
+    """
+
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 67):
+        super().__init__()
+
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+
+        # Linear projects input to (n_pred * out_features)
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Expect input of shape (N, in_features)
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.in_features}), "
+                f"but got {tuple(x.shape)}"
+            )
+
+        out = self.model(x)  # (N, n_pred * out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 class CaiWenjuan(TSFEDL_BaseModule):  # TODO: Squeeze and Activation units depends on input size.
     """
@@ -758,7 +1039,6 @@ class CaiWenjuan(TSFEDL_BaseModule):  # TODO: Squeeze and Activation units depen
 
         return x
 
-
 class ZhangJin_Classifier(nn.Module):
     """
     Classifier of the Zhang Jin model.
@@ -784,6 +1064,27 @@ class ZhangJin_Classifier(nn.Module):
 
     def forward(self, x):
         return self.linear(x[:, -1, :])
+
+class ZhangJin_Forecaster(nn.Module):
+    def __init__(self, in_features: int, out_features: int, n_pred: int = 5):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.model = nn.Linear(in_features, out_features * n_pred)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # ⚡ Saneado: aceptar (N, in_features) o (N, 1, in_features)
+        if x.dim() == 3 and x.size(1) == 1 and x.size(2) == self.in_features:
+            x = x.squeeze(1)  # (N, in_features)
+
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.in_features}), but got {tuple(x.shape)}"
+            )
+
+        y = self.model(x)  # (N, out_features * n_pred)
+        return y.view(x.size(0), self.n_pred, self.out_features)
 
 
 class ZhangJin(TSFEDL_BaseModule):
@@ -943,6 +1244,74 @@ class KongZhengmin_Classifier(nn.Module):
         else:
             return self.module(x[:, -1, :])
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class KongZhengmin_Forecaster(nn.Module):
+    """
+    Forecasting head for the KongZhengmin model.
+
+    Accepts:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> reduced to (N, F) via `time_reduce`
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Feature size per timestep F. Default: 64.
+        time_reduce (str, optional): {'last','mean','attn'}. Default: 'last'.
+
+    Output:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 64, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:  # attention pooling
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Expected 2D input (N, {self.in_features}), got {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Expected 3D input (N, L, {self.in_features}), got {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Expected 2D or 3D input, got {x.dim()}D with shape {tuple(x.shape)}")
+
+        out = self.model(feats)                                # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
+
 
 class KongZhengmin(TSFEDL_BaseModule):
     """
@@ -1037,6 +1406,47 @@ class WeiXiaoyan_Classifier(nn.Module):
     def forward(self, x):
         return self.module(x)
 
+class WeiXiaoyan_Forecaster(nn.Module):
+    """
+    Forecasting head of the WeiXiaoyan model.
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Number of input features. Default: 512.
+
+    Shape:
+        - Input:  (N, in_features)
+        - Output: (N, n_pred, out_features)
+    """
+
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 512):
+        super().__init__()
+
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+
+        # Linear projects input to (n_pred * out_features)
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Expect input of shape (N, in_features)
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.in_features}), "
+                f"but got {tuple(x.shape)}"
+            )
+
+        out = self.model(x)  # (N, n_pred * out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 class WeiXiaoyan(TSFEDL_BaseModule):
     """
@@ -1160,6 +1570,71 @@ class GaoJunLi_Classifier(nn.Module):
         else:
             return self.module(x[:,-1,:])
 
+class GaoJunLi_Forecaster(nn.Module):
+    """
+    Forecasting head for the GaoJunLi model.
+
+    Accepts:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> reduced to (N, F) via `time_reduce`
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Feature size per timestep F. Default: 64.
+        time_reduce (str, optional): {'last','mean','attn'}. Default: 'last'.
+
+    Output:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 64, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:
+            # simple attention over time
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Expected 2D input (N, {self.in_features}), got {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Expected 3D input (N, L, {self.in_features}), got {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Expected 2D or 3D input, got {x.dim()}D with shape {tuple(x.shape)}")
+
+        out = self.model(feats)  # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
+
 
 class GaoJunLi(TSFEDL_BaseModule):
     """
@@ -1251,6 +1726,76 @@ class LiOhShu_Classifier(nn.Module):
             return self.module(x)
         else:
             return self.module(x[:, -1, :])
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class LihOhShu_Forecaster(nn.Module):
+    """
+    Cabeza de forecasting para LihOhShu.
+
+    Acepta:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> se reduce a (N, F) vía `time_reduce`
+
+    Args:
+        out_features (int): nº de features por paso de predicción.
+        n_pred (int): nº de pasos a predecir.
+        in_features (int, opcional): tamaño de feature por timestep F. Por defecto: 10.
+        time_reduce (str, opcional): {'last','mean','attn'}. Por defecto: 'last'.
+
+    Salida:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 10, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            # atención temporal muy ligera
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:  # "attn"
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Acepta (N,F) o (N,L,F)
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Se esperaba entrada 2D (N, {self.in_features}), llegó {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Se esperaba entrada 3D (N, L, {self.in_features}), llegó {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Entrada 2D o 3D esperada, llegó {x.dim()}D con forma {tuple(x.shape)}")
+
+        out = self.model(feats)                                   # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 
 class LihOhShu(TSFEDL_BaseModule):
@@ -1369,6 +1914,70 @@ class KhanZulfiqar_Classifier(nn.Module):
         else:
             return self.module(x[:, -1, :])
 
+class KhanZulfiqar_Forecaster(nn.Module):
+    """
+    Forecasting head for the KhanZulfiqar model.
+
+    Accepts:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> reduced to (N, F) via `time_reduce`
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Feature size per timestep F. Default: 10.
+        time_reduce (str, optional): {'last','mean','attn'}. Default: 'last'.
+
+    Output:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 10, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Expected 2D input (N, {self.in_features}), got {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Expected 3D input (N, L, {self.in_features}), got {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Expected 2D or 3D input, got {x.dim()}D with shape {tuple(x.shape)}")
+
+        out = self.model(feats)                             # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
+
 
 class KhanZulfiqar(TSFEDL_BaseModule):
     """
@@ -1482,6 +2091,27 @@ class ZhengZhenyu_Classifier(nn.Module):
             return self.module(x)
         else:
             return self.module(x[:, -1, :])
+
+class ZhengZhenyu_Forecaster(nn.Module):
+    def __init__(self, in_features: int, out_features: int, n_pred: int = 5):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.model = nn.Linear(in_features, out_features * n_pred)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # ⚡ Aceptar (N, in_features) o (N, T, in_features)
+        if x.dim() == 3 and x.size(2) == self.in_features:
+            x = x[:, -1, :]  # coger último paso temporal
+
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.in_features}), but got {tuple(x.shape)}"
+            )
+
+        y = self.model(x)  # (N, out_features * n_pred)
+        return y.view(x.size(0), self.n_pred, self.out_features)
 
 
 class ZhengZhenyu(TSFEDL_BaseModule):
@@ -1636,6 +2266,73 @@ class WangKejun_Classifier(nn.Module):
         else:
             return self.module(x[:, -1, :])
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class WangKejun_Forecaster(nn.Module):
+    """
+    Cabeza de forecasting para WangKejun.
+
+    Soporta:
+        - Entrada 2D: (N, F)
+        - Entrada 3D: (N, L, F) -> se reduce a (N, F) vía `time_reduce`.
+
+    Args:
+        out_features (int): nº de features por paso de predicción.
+        n_pred (int): nº de pasos de predicción.
+        in_features (int, opcional): dimensión de feature F. Default: 256.
+        time_reduce (str, opcional): {'last','mean','attn'}. Default: 'last'.
+
+    Salida:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 256, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred debe ser > 0")
+        if out_features <= 0:
+            raise ValueError("out_features debe ser > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce debe ser 'last', 'mean' o 'attn'")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:  # attn
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Esperado (N,{self.in_features}), llegó {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Esperado (N,L,{self.in_features}), llegó {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Entrada esperada 2D/3D, llegó {x.dim()}D con forma {tuple(x.shape)}")
+
+        out = self.model(feats)  # (N, n_pred*out_features)
+        return out.view(x.size(0), self.n_pred, self.out_features)
+
 
 class WangKejun(TSFEDL_BaseModule):
     """
@@ -1749,6 +2446,82 @@ class ChenChen_Classifier(nn.Module):
             return self.module(x)
         else:
             return self.module(x[:, -1, :])
+
+class ChenChen_Forecaster(nn.Module):
+    """
+    Forecasting head of the ChenChen model.
+
+    Accepts either:
+        - 2D tensors: (N, F)
+        - 3D tensors: (N, L, F)  -> reduced to (N, F) via `time_reduce`
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Feature size per timestep (F). Default: 64.
+        time_reduce (str, optional): How to reduce time when input is 3D.
+            One of {"last", "mean", "attn"}. Default: "last".
+
+    Output shape:
+        (N, n_pred, out_features)
+    """
+
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 64, time_reduce: str = "last"):
+        super().__init__()
+
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        # Optional attention pooling parameters
+        if self.time_reduce == "attn":
+            # Simple content-based attention over time: score_t = x_t · w  (w trainable)
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        # Final projection to (n_pred * out_features)
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        x: (N, L, F) -> (N, F) according to self.time_reduce
+        """
+        if self.time_reduce == "last":
+            return x[:, -1, :]                          # (N, F)
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)                        # (N, F)
+        else:  # "attn"
+            # x: (N, L, F); attn_vector: (F,)
+            # scores: (N, L)
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)
+            weights = F.softmax(scores, dim=1)          # (N, L)
+            # weighted sum over time -> (N, F)
+            return torch.einsum("nl,nlf->nf", weights, x)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Accept (N, F) or (N, L, F)
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Expected 2D input (N, {self.in_features}), got {tuple(x.shape)}")
+            feats = x                                    # (N, F)
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Expected 3D input (N, L, {self.in_features}), got {tuple(x.shape)}")
+            feats = self._reduce_time(x)                 # (N, F)
+        else:
+            raise RuntimeError(f"Expected 2D or 3D input, got {x.dim()}D with shape {tuple(x.shape)}")
+
+        out = self.model(feats)                          # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 
 class ChenChen(TSFEDL_BaseModule):
@@ -1868,6 +2641,74 @@ class KimTaeYoung_Classifier(nn.Module):
         else:
             return self.module(x[:, -1, :])
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class KimTaeYoung_Forecaster(nn.Module):
+    """
+    Forecasting head for the KimTaeYoung model.
+
+    Accepts:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> reduced to (N, F) via `time_reduce`
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Feature size per timestep F. Default: 64.
+        time_reduce (str, optional): {'last','mean','attn'}. Default: 'last'.
+
+    Output:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 64, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Expected 2D input (N, {self.in_features}), got {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Expected 3D input (N, L, {self.in_features}), got {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Expected 2D or 3D input, got {x.dim()}D with shape {tuple(x.shape)}")
+
+        out = self.model(feats)                             # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
+
 
 class KimTaeYoung(TSFEDL_BaseModule):
     """
@@ -1977,6 +2818,70 @@ class GenMinxing_Classifier(nn.Module):
         else:
             return self.module(x[:, -1, :])
 
+class GenMinxing_Forecaster(nn.Module):
+    """
+    Forecasting head for the GenMinxing model.
+
+    Accepts:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> reduced to (N, F) via `time_reduce`
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Feature size per timestep F. Default: 80.
+        time_reduce (str, optional): {'last','mean','attn'}. Default: 'last'.
+
+    Output:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 80, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Expected 2D input (N, {self.in_features}), got {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Expected 3D input (N, L, {self.in_features}), got {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Expected 2D or 3D input, got {x.dim()}D with shape {tuple(x.shape)}")
+
+        out = self.model(feats)                             # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
+
 
 class GenMinxing(TSFEDL_BaseModule):
     """
@@ -2070,6 +2975,73 @@ class FuJiangmeng_Classifier(nn.Module):
             return self.module(x)
         else:
             return self.module(x[:, -1, :])
+
+class FuJiangmeng_Forecaster(nn.Module):
+    """
+    Forecasting head for the FuJiangmeng model.
+
+    Accepts:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> reduced to (N, F) via `time_reduce`
+
+    Args:
+        out_features (int): Features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Feature size per timestep (F). Default: 256.
+        time_reduce (str, optional): How to reduce time if input is 3D.
+            One of {"last", "mean", "attn"}. Default: "last".
+
+    Output:
+        (N, n_pred, out_features)
+    """
+
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 256, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:
+            # simple attention pooling over time
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)   # (N, L)
+            weights = F.softmax(scores, dim=1)                        # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)             # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Expected 2D input (N, {self.in_features}), got {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Expected 3D input (N, L, {self.in_features}), got {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Expected 2D or 3D input, got {x.dim()}D with shape {tuple(x.shape)}")
+
+        out = self.model(feats)                          # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 
 class FuJiangmeng(TSFEDL_BaseModule):
@@ -2180,6 +3152,74 @@ class ShiHaotian_Classifier(nn.Module):
             x1 = self.module1(x)
             x_conc = torch.cat((x1, x[:,-1,:]), 1)
             return self.module2(x_conc)
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class ShiHaotian_Forecaster(nn.Module):
+    """
+    Cabeza de forecasting para ShiHaotian.
+
+    Acepta:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> se reduce a (N, F) vía `time_reduce`
+
+    Args:
+        out_features (int): nº de features por paso de predicción.
+        n_pred (int): nº de pasos a predecir.
+        in_features (int, opcional): tamaño de feature por timestep F. Por defecto: 32.
+        time_reduce (str, opcional): {'last','mean','attn'}. Por defecto: 'last'.
+
+    Salida:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 32, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:  # "attn"
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Se esperaba 2D (N, {self.in_features}), llegó {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Se esperaba 3D (N, L, {self.in_features}), llegó {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Entrada 2D o 3D esperada, llegó {x.dim()}D con forma {tuple(x.shape)}")
+
+        out = self.model(feats)                                # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 
 class ShiHaotian(TSFEDL_BaseModule):
@@ -2302,6 +3342,71 @@ class HuangMeiLing_Classifier(nn.Module):
             return self.module(x[:, -1, :])
 
 
+class HuangMeiLing_Forecaster(nn.Module):
+    """
+    Forecasting head for the HuangMeiLing model.
+
+    Accepts:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> reduced to (N, F) via `time_reduce`
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Feature size per timestep F. Default: 9.
+        time_reduce (str, optional): {'last','mean','attn'}. Default: 'last'.
+
+    Output:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 9, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Expected 2D input (N, {self.in_features}), got {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Expected 3D input (N, L, {self.in_features}), got {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Expected 2D or 3D input, got {x.dim()}D with shape {tuple(x.shape)}")
+
+        out = self.model(feats)                             # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
+
+
 class HuangMeiLing(TSFEDL_BaseModule):
     """
      CNN model, employed for 2-D images of ECG data. This model is adapted for 1-D time series
@@ -2394,6 +3499,47 @@ class HongTan_Classifier(nn.Module):
     def forward(self, x):
         return self.model(x)
 
+class HongTan_Forecaster(nn.Module):
+    """
+    Forecasting head of the HongTan model.
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Number of input features. Default: 4.
+
+    Shape:
+        - Input:  (N, in_features)
+        - Output: (N, n_pred, out_features)
+    """
+
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 4):
+        super().__init__()
+
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+
+        # Linear projects input to (n_pred * out_features)
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Expect input of shape (N, in_features)
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.in_features}), "
+                f"but got {tuple(x.shape)}"
+            )
+
+        out = self.model(x)  # (N, n_pred * out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 class HongTan(TSFEDL_BaseModule):
     """
@@ -2508,6 +3654,71 @@ class SharPar_Classifier(nn.Module):
         else:
             return self.module(x[:, -1, :])
 
+class SharPar_Forecaster(nn.Module):
+    """
+    Cabeza de forecasting para SharPar.
+
+    Acepta:
+        - 2D: (N, F)
+        - 3D: (N, L, F) -> se reduce a (N, F) vía `time_reduce`
+
+    Args:
+        out_features (int): nº de features por paso de predicción.
+        n_pred (int): nº de pasos a predecir.
+        in_features (int, opcional): tamaño de feature por timestep F. Por defecto: 16.
+        time_reduce (str, opcional): {'last','mean','attn'}. Por defecto: 'last'.
+
+    Salida:
+        (N, n_pred, out_features)
+    """
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 16, time_reduce: str = "last"):
+        super().__init__()
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+        if time_reduce not in {"last", "mean", "attn"}:
+            raise ValueError("time_reduce must be one of {'last','mean','attn'}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+        self.time_reduce = time_reduce
+
+        if self.time_reduce == "attn":
+            # atención temporal simple: pesos por timestep
+            self.attn_vector = nn.Parameter(torch.zeros(in_features))
+            nn.init.normal_(self.attn_vector, std=0.02)
+
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def _reduce_time(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (N, L, F)
+        if self.time_reduce == "last":
+            return x[:, -1, :]
+        elif self.time_reduce == "mean":
+            return x.mean(dim=1)
+        else:  # "attn"
+            scores = torch.einsum("nlf,f->nl", x, self.attn_vector)  # (N, L)
+            weights = F.softmax(scores, dim=1)                       # (N, L)
+            return torch.einsum("nl,nlf->nf", weights, x)            # (N, F)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 2:
+            if x.size(1) != self.in_features:
+                raise RuntimeError(f"Se esperaba entrada 2D (N, {self.in_features}), llegó {tuple(x.shape)}")
+            feats = x
+        elif x.dim() == 3:
+            if x.size(2) != self.in_features:
+                raise RuntimeError(f"Se esperaba entrada 3D (N, L, {self.in_features}), llegó {tuple(x.shape)}")
+            feats = self._reduce_time(x)
+        else:
+            raise RuntimeError(f"Entrada 2D o 3D esperada, llegó {x.dim()}D con forma {tuple(x.shape)}")
+
+        out = self.model(feats)                             # (N, n_pred*out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
+
 
 class SharPar(TSFEDL_BaseModule):
     """
@@ -2614,6 +3825,47 @@ class DaiXiLi_Classifier(nn.Module):
     def forward(self, x):
         return self.module(x)
 
+class DaiXiLi_Forecaster(nn.Module):
+    """
+    Forecasting head of the DaiXiLi model.
+
+    Args:
+        out_features (int): Number of features per prediction step.
+        n_pred (int): Number of prediction steps.
+        in_features (int, optional): Number of input features. Default: 256.
+
+    Shape:
+        - Input:  (N, in_features)
+        - Output: (N, n_pred, out_features)
+    """
+
+    def __init__(self, out_features: int, n_pred: int, in_features: int = 256):
+        super().__init__()
+
+        if n_pred <= 0:
+            raise ValueError("n_pred must be > 0")
+
+        if out_features <= 0:
+            raise ValueError("out_features must be > 0")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.n_pred = n_pred
+
+        # Linear projects input to (n_pred * out_features)
+        self.model = nn.Linear(in_features, n_pred * out_features)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Expect input of shape (N, in_features)
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise RuntimeError(
+                f"Expected input of shape (N, {self.in_features}), "
+                f"but got {tuple(x.shape)}"
+            )
+
+        out = self.model(x)  # (N, n_pred * out_features)
+        out = out.reshape(x.size(0), self.n_pred, self.out_features)
+        return out
 
 class DaiXiLi(TSFEDL_BaseModule):
     """
