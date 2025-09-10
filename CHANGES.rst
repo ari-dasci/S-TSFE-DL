@@ -157,3 +157,15 @@ Fixed error with HongTan model, invalid call to arguments.
 - Deprecated:
 - Removed:
 - Fixed: HongTan model had an invalid call to arguments
+
+1.0.7.7 (10 Sept 2025)
+======================
+**Description**
+
+Added forecasting top modules for all PyTorch networks.
+
+- Added:
+- Changed:
+- Deprecated:
+- Removed:
+- Fixed: HongTan model had an invalid call to arguments
